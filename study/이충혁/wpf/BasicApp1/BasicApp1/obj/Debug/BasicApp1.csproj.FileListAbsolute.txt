@@ -1,0 +1,15 @@
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\bin\Debug\BasicApp1.exe.config
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\bin\Debug\BasicApp1.exe
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\bin\Debug\BasicApp1.pdb
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1.csproj.AssemblyReference.cache
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\MainWindow.g.cs
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\App.g.cs
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1_MarkupCompile.cache
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1_MarkupCompile.lref
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\MainWindow.baml
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1.g.resources
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1.Properties.Resources.resources
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1.csproj.GenerateResource.cache
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1.csproj.CoreCompileInputs.cache
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1.exe
+C:\Users\SSAFY\source\repos\wpf\BasicApp1\BasicApp1\obj\Debug\BasicApp1.pdb
