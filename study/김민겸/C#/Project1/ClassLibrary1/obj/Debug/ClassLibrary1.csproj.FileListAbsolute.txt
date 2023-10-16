@@ -4,3 +4,9 @@ C:\Users\SSAFY\Desktop\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.csproj.Ass
 C:\Users\SSAFY\Desktop\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.csproj.CoreCompileInputs.cache
 C:\Users\SSAFY\Desktop\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.dll
 C:\Users\SSAFY\Desktop\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.pdb
+C:\project\S09P31S102\study\김민겸\C#\Project1\ClassLibrary1\bin\Debug\ClassLibrary1.dll
+C:\project\S09P31S102\study\김민겸\C#\Project1\ClassLibrary1\bin\Debug\ClassLibrary1.pdb
+C:\project\S09P31S102\study\김민겸\C#\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.csproj.AssemblyReference.cache
+C:\project\S09P31S102\study\김민겸\C#\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.csproj.CoreCompileInputs.cache
+C:\project\S09P31S102\study\김민겸\C#\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.dll
+C:\project\S09P31S102\study\김민겸\C#\Project1\ClassLibrary1\obj\Debug\ClassLibrary1.pdb
