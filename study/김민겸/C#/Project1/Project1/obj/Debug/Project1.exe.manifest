@@ -49,19 +49,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>QWiKfD9z5oLAE0VxkZNPRzbn792U+2cdnUAoZtNpifI=</dsig:DigestValue>
+        <dsig:DigestValue>kWcfkrw+6thr2S9fcmqLG31rO/GzjK/JeC+iUQfYpEQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Project1.exe" size="7648">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Project1.exe" size="12768">
       <assemblyIdentity name="Project1" version="0.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ttACFsbtV/Ud3f+QIr0CbPippc2vKNHuXMYIVax2nzY=</dsig:DigestValue>
+        <dsig:DigestValue>td0qIet1kl4B8KeUDxM2rFXuoiuXecSBSENIXcg1hEU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
