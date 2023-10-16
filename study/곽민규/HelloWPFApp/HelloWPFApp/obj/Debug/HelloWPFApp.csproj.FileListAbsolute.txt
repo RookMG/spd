@@ -13,3 +13,13 @@ C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\HelloWPFApp.csproj
 C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\HelloWPFApp.csproj.CoreCompileInputs.cache
 C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\HelloWPFApp.exe
 C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\HelloWPFApp.pdb
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\EntityDetails.g.cs
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\EntityDetails.baml
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\MenuBar.g.cs
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\StatusBar.g.cs
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\ToolBar.g.cs
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\MenuBar.baml
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\StatusBar.baml
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\ToolBar.baml
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\MainDrawer.g.cs
+C:\Users\SSAFY\source\repos\HelloWPFApp\HelloWPFApp\obj\Debug\MainDrawer.baml

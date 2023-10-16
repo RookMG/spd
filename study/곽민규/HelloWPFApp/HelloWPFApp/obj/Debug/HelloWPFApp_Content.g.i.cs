@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("asset/icon/dot_16x.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("asset/icon/line_16x.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("asset/icon/polygon_16x.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("asset/icon/rectangle_16x.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("asset/icon/editlayouttable_16x.png")]
 
 
