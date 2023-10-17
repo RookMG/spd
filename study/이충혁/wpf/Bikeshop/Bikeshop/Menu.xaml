@@ -6,10 +6,30 @@
       xmlns:local="clr-namespace:Bikeshop"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      Background="{StaticResource background}"
       Title="Menu">
+    <Page.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse Fill="#AA000000"
+                                     Margin="10, 10, 0, 0" />
+                            <Ellipse Fill="{TemplateBinding Background}"
+                                     Margin="0, 0, 10, 10" />
+                            <Viewbox Margin="5, 5, 15, 15">
+                                <ContentPresenter />
+                            </Viewbox>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid>
-        <Button Content="Products" HorizontalAlignment="Left" Margin="58,142,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Products" HorizontalAlignment="Left" Margin="58,142,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_2"/>
         <Button Content="Live support" HorizontalAlignment="Left" Margin="314,142,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
         <Button Content="Email support" HorizontalAlignment="Left" Margin="535,142,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="99,258,0,0" TextWrapping="Wrap" Text="Adventure works" VerticalAlignment="Top" FontSize="24" FontStyle="Italic"/>
