@@ -6,72 +6,17 @@
         xmlns:local="clr-namespace:HelloWPFApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <DockPanel>
+    <DockPanel Background="WhiteSmoke">
         <StackPanel DockPanel.Dock="Top">
-            <Menu>
-                <MenuItem Header="파일(_F)">
-                    <MenuItem Header="열기(_O)" ></MenuItem>
-                    <MenuItem Header="저장(_S)"></MenuItem>
-                    <Separator />
-                    <MenuItem Header="끝내기(_X)"></MenuItem>
-                </MenuItem>
-
-                <MenuItem Header="편집(_E)">
-                    <MenuItem Header="실행 취소(_U)" ></MenuItem>
-                    <MenuItem Header="다시 실행(_R)"></MenuItem>
-                    <MenuItem Header="삭제(_D)"></MenuItem>
-                    <MenuItem Header="복사(_C)" ></MenuItem>
-                    <MenuItem Header="잘라내기(_T)"></MenuItem>
-                    <MenuItem Header="붙여넣기(_P)"></MenuItem>
-                </MenuItem>
-
-                <MenuItem Header="보기(_V)">
-                    <MenuItem Header="확대(_+)" ></MenuItem>
-                    <MenuItem Header="축소(_-)"></MenuItem>
-                    <MenuItem Header="도면을 창 크기에 맞추기"></MenuItem>
-                </MenuItem>
-
-                <MenuItem Header="CAD 파일(_C)">
-                    <MenuItem Header="컬러 도면 보기" ></MenuItem>
-                    <MenuItem Header="흑백 도면 보기"></MenuItem>
-                    <MenuItem Header="흰 배경색" ></MenuItem>
-                    <MenuItem Header="검은 배경색"></MenuItem>
-                    <Separator />
-                    <MenuItem Header="선 굵기 보기"></MenuItem>
-                    <Separator />
-                    <MenuItem Header="레이어 보기"></MenuItem>
-                </MenuItem>
-
-                <MenuItem Header="설정(_O)">
-                    <MenuItem Header="프로그램 정보" ></MenuItem>
-                </MenuItem>
-            </Menu>
+            <Frame Source="/MenuBar.xaml"/>
             <Separator />
-            <StackPanel Orientation="Horizontal" Height="20" Margin="2">
-                <Image Source="asset/icon/AddDocument_16x.png" Margin="3,0,3,0"/>
-                <Image Source="asset/icon/OpenFolder_16x.png" Margin="3,0,3,0"/>
-                <Image Source="asset/icon/Save_16x.png" Margin="3,0,3,0"/>
-                <Separator />
-                <Image Source="asset/icon/ZoomIn_16x.png" Margin="3,0,3,0"/>
-                <Image Source="asset/icon/ZoomOut_16x.png" Margin="3,0,3,0"/>
-                <Image Source="asset/icon/Dot_16x.png" Margin="3,0,3,0"/>
-                <Image Source="asset/icon/Line_16x.png" Margin="3,0,3,0"/>
-                <Image Source="asset/icon/Rectangle_16x.png" Margin="3,0,3,0"/>
-                <Image Source="asset/icon/Polygon_16x.png" Margin="3,0,3,0"/>
-            </StackPanel>
-            <Separator />
-            <StackPanel Orientation="Horizontal" Height="20" Margin="2">
-                <TextBlock Text="Layouts" VerticalAlignment="Center" Margin="10,0,80,0" />
-                <ComboBox Width="150">
-                    <ComboBoxItem Content="Model" IsSelected="True"/>
-                </ComboBox>
-            </StackPanel>
+            <Frame Source="/ToolBar.xaml"/>
         </StackPanel>
-        <Button DockPanel.Dock="Left" Content="Left Box" Width="200"></Button>
+        <Frame Source="/EntityDetails.xaml" Width="200" />
         <Grid>
             <DockPanel>
-                <Button DockPanel.Dock="Bottom"  Content="Status Bar"></Button>
-                <Button Content="Main Content"></Button>
+                <Frame DockPanel.Dock="Bottom" Source="/StatusBar.xaml"/>
+                <Frame Source="/MainDrawer.xaml"/>
             </DockPanel>
         </Grid>
     </DockPanel>
