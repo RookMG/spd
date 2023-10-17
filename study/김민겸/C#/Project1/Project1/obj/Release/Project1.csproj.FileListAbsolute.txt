@@ -1,0 +1,14 @@
+C:\Users\SSAFY\Desktop\Project1\Project1\bin\Release\Project1.exe.config
+C:\Users\SSAFY\Desktop\Project1\Project1\bin\Release\Project1.exe.manifest
+C:\Users\SSAFY\Desktop\Project1\Project1\bin\Release\Project1.application
+C:\Users\SSAFY\Desktop\Project1\Project1\bin\Release\Project1.exe
+C:\Users\SSAFY\Desktop\Project1\Project1\bin\Release\Project1.pdb
+C:\Users\SSAFY\Desktop\Project1\Project1\bin\Release\ClassLibrary1.dll
+C:\Users\SSAFY\Desktop\Project1\Project1\bin\Release\ClassLibrary1.pdb
+C:\Users\SSAFY\Desktop\Project1\Project1\obj\Release\Project1.csproj.AssemblyReference.cache
+C:\Users\SSAFY\Desktop\Project1\Project1\obj\Release\Project1.csproj.CoreCompileInputs.cache
+C:\Users\SSAFY\Desktop\Project1\Project1\obj\Release\Project1.exe.manifest
+C:\Users\SSAFY\Desktop\Project1\Project1\obj\Release\Project1.application
+C:\Users\SSAFY\Desktop\Project1\Project1\obj\Release\Project1.csproj.CopyComplete
+C:\Users\SSAFY\Desktop\Project1\Project1\obj\Release\Project1.exe
+C:\Users\SSAFY\Desktop\Project1\Project1\obj\Release\Project1.pdb
