@@ -19,10 +19,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Entity Checkbox Here" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <Image Grid.Row="0" Source="asset/sample/L1.png" Stretch="Fill"/>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <TextBlock Grid.Row="2" Text="Entity Details Here" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Image Grid.Row="2" Source="asset/sample/L2.png" Stretch="Fill"/>
         <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <TextBlock Grid.Row="4" Text="Entity Explaination Here" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Image Grid.Row="4" Source="asset/sample/L3.png" Stretch="Fill"/>
     </Grid>
 </Page>

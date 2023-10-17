@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("asset/icon/editlayouttable_16x.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("netdxf/bin/debug/net48/netdxf.dll")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("netdxf/bin/debug/net48/netdxf.pdb")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("netdxf/obj/debug/net48/netdxf.dll")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("netdxf/obj/debug/net48/netdxf.pdb")]
 
 

@@ -9,6 +9,6 @@
       Title="MainDrawer">
 
     <Grid Background="LightGray">
-        <TextBlock Text="Dxf Drawings Here" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Image Grid.Row="0" Source="asset/sample/C1.png" Stretch="Fill" />
     </Grid>
 </Page>
