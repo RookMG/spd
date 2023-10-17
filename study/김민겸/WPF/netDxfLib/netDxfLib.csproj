@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9EECCC41-2B66-4FCF-9DA4-679C18F851D1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>netDxfLib</RootNamespace>
+    <AssemblyName>netDxfLib</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\ExpenseIt\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\ExpenseIt\packages\System.Drawing.Primitives.4.3.0\lib\net45\System.Drawing.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\ExpenseIt\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\ExpenseIt\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\ExpenseIt\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\ExpenseIt\packages\System.Text.Encoding.CodePages.7.0.0\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AciColor.cs" />
+    <Compile Include="BezierCurve.cs" />
+    <Compile Include="BezierCurveCubic.cs" />
+    <Compile Include="BezierCurveQuadratic.cs" />
+    <Compile Include="Blocks\Block.cs" />
+    <Compile Include="Blocks\BlockAttributeDefinitionChangeEventArgs.cs" />
+    <Compile Include="Blocks\BlockEntityChangeEventArgs.cs" />
+    <Compile Include="Blocks\BlockRecord.cs" />
+    <Compile Include="Blocks\BlockTypeFlags.cs" />
+    <Compile Include="Blocks\EndBlock.cs" />
+    <Compile Include="BoundingRectangle.cs" />
+    <Compile Include="ClippingBoundary.cs" />
+    <Compile Include="ClippingBoundaryType.cs" />
+    <Compile Include="Collections\ApplicationRegistries.cs" />
+    <Compile Include="Collections\AttributeCollection.cs" />
+    <Compile Include="Collections\AttributeDefinitionDictionary.cs" />
+    <Compile Include="Collections\AttributeDefinitionDictionaryEventArgs.cs" />
+    <Compile Include="Collections\BlockRecords.cs" />
+    <Compile Include="Collections\DimensionStyleOverrideDictionary.cs" />
+    <Compile Include="Collections\DimensionStyleOverrideDictionaryEventArgs.cs" />
+    <Compile Include="Collections\DimensionStyles.cs" />
+    <Compile Include="Collections\DrawingEntities.cs" />
+    <Compile Include="Collections\DxfObjectReferences.cs" />
+    <Compile Include="Collections\EntityCollection.cs" />
+    <Compile Include="Collections\EntityCollectionEventArgs.cs" />
+    <Compile Include="Collections\Groups.cs" />
+    <Compile Include="Collections\ImageDefinitions.cs" />
+    <Compile Include="Collections\Layers.cs" />
+    <Compile Include="Collections\LayerStateManager.cs" />
+    <Compile Include="Collections\Layouts.cs" />
+    <Compile Include="Collections\Linetypes.cs" />
+    <Compile Include="Collections\MLineStyles.cs" />
+    <Compile Include="Collections\ObservableCollection.cs" />
+    <Compile Include="Collections\ObservableCollectionEventArgs.cs" />
+    <Compile Include="Collections\ObservableDictionary.cs" />
+    <Compile Include="Collections\ObservableDictionaryEventArgs.cs" />
+    <Compile Include="Collections\ShapeStyles.cs" />
+    <Compile Include="Collections\SupportFolders.cs" />
+    <Compile Include="Collections\TableObjects.cs" />
+    <Compile Include="Collections\TextStyles.cs" />
+    <Compile Include="Collections\UCSs.cs" />
+    <Compile Include="Collections\UnderlayDgnDefinitions.cs" />
+    <Compile Include="Collections\UnderlayDwfDefinitions.cs" />
+    <Compile Include="Collections\UnderlayPdfDefinitions.cs" />
+    <Compile Include="Collections\Views.cs" />
+    <Compile Include="Collections\VPorts.cs" />
+    <Compile Include="Collections\XDataDictionary.cs" />
+    <Compile Include="CoordinateSystem.cs" />
+    <Compile Include="DxfDocument.cs" />
+    <Compile Include="DxfObject.cs" />
+    <Compile Include="DxfObjectCode.cs" />
+    <Compile Include="DxfObjectReference.cs" />
+    <Compile Include="Entities\AlignedDimension.cs" />
+    <Compile Include="Entities\Angular2LineDimension.cs" />
+    <Compile Include="Entities\Angular3PointDimension.cs" />
+    <Compile Include="Entities\Arc.cs" />
+    <Compile Include="Entities\ArcLengthDimension.cs" />
+    <Compile Include="Entities\Attribute.cs" />
+    <Compile Include="Entities\AttributeChangeEventArgs.cs" />
+    <Compile Include="Entities\AttributeDefinition.cs" />
+    <Compile Include="Entities\AttributeFlags.cs" />
+    <Compile Include="Entities\Circle.cs" />
+    <Compile Include="Entities\DatumReferenceValue.cs" />
+    <Compile Include="Entities\DiametricDimension.cs" />
+    <Compile Include="Entities\Dimension.cs" />
+    <Compile Include="Entities\DimensionArrowhead.cs" />
+    <Compile Include="Entities\DimensionBlock.cs" />
+    <Compile Include="Entities\DimensionType.cs" />
+    <Compile Include="Entities\DimensionTypeFlags.cs" />
+    <Compile Include="Entities\Ellipse.cs" />
+    <Compile Include="Entities\EndSequence.cs" />
+    <Compile Include="Entities\EntityChangeEventArgs.cs" />
+    <Compile Include="Entities\EntityObject.cs" />
+    <Compile Include="Entities\EntityType.cs" />
+    <Compile Include="Entities\Face3D.cs" />
+    <Compile Include="Entities\Face3DEdgeFlags.cs" />
+    <Compile Include="Entities\Hatch.cs" />
+    <Compile Include="Entities\HatchBoundaryPath.cs" />
+    <Compile Include="Entities\HatchBoundaryPathTypeFlags.cs" />
+    <Compile Include="Entities\HatchFillType.cs" />
+    <Compile Include="Entities\HatchGradientPattern.cs" />
+    <Compile Include="Entities\HatchGradientPatternType.cs" />
+    <Compile Include="Entities\HatchPattern.cs" />
+    <Compile Include="Entities\HatchPatternLineDefinition.cs" />
+    <Compile Include="Entities\HatchStyle.cs" />
+    <Compile Include="Entities\HatchType.cs" />
+    <Compile Include="Entities\Image.cs" />
+    <Compile Include="Entities\ImageDisplayFlags.cs" />
+    <Compile Include="Entities\Insert.cs" />
+    <Compile Include="Entities\Leader.cs" />
+    <Compile Include="Entities\LeaderPathType.cs" />
+    <Compile Include="Entities\Line.cs" />
+    <Compile Include="Entities\LinearDimension.cs" />
+    <Compile Include="Entities\Mesh.cs" />
+    <Compile Include="Entities\MeshEdge.cs" />
+    <Compile Include="Entities\MLine.cs" />
+    <Compile Include="Entities\MLineFlags.cs" />
+    <Compile Include="Entities\MLineJustification.cs" />
+    <Compile Include="Entities\MLineVertex.cs" />
+    <Compile Include="Entities\MText.cs" />
+    <Compile Include="Entities\MTextAttachmentPoint.cs" />
+    <Compile Include="Entities\MTextDrawingDirection.cs" />
+    <Compile Include="Entities\MTextFormattingOptions.cs" />
+    <Compile Include="Entities\MTextLineSpacingStyle.cs" />
+    <Compile Include="Entities\MTextParagraphAlignment.cs" />
+    <Compile Include="Entities\MTextParagraphOptions.cs" />
+    <Compile Include="Entities\MTextParagraphVerticalAlignment.cs" />
+    <Compile Include="Entities\OrdinateDimension.cs" />
+    <Compile Include="Entities\OrdinateDimensionAxis.cs" />
+    <Compile Include="Entities\Point.cs" />
+    <Compile Include="Entities\PolyfaceMesh.cs" />
+    <Compile Include="Entities\PolyfaceMeshFace.cs" />
+    <Compile Include="Entities\PolygonMesh.cs" />
+    <Compile Include="Entities\Polyline.cs" />
+    <Compile Include="Entities\Polyline2D.cs" />
+    <Compile Include="Entities\Polyline2DVertex.cs" />
+    <Compile Include="Entities\Polyline3D.cs" />
+    <Compile Include="Entities\PolylineSmoothType.cs" />
+    <Compile Include="Entities\PolylineTypeFlags.cs" />
+    <Compile Include="Entities\RadialDimension.cs" />
+    <Compile Include="Entities\Ray.cs" />
+    <Compile Include="Entities\Shape.cs" />
+    <Compile Include="Entities\Solid.cs" />
+    <Compile Include="Entities\Spline.cs" />
+    <Compile Include="Entities\SplineCreationMethod.cs" />
+    <Compile Include="Entities\SplineKnotParameterization.cs" />
+    <Compile Include="Entities\SplineTypeFlags.cs" />
+    <Compile Include="Entities\Text.cs" />
+    <Compile Include="Entities\TextAligment.cs" />
+    <Compile Include="Entities\Tolerance.cs" />
+    <Compile Include="Entities\ToleranceEntry.cs" />
+    <Compile Include="Entities\ToleranceGeometricSymbol.cs" />
+    <Compile Include="Entities\ToleranceMaterialCondition.cs" />
+    <Compile Include="Entities\ToleranceValue.cs" />
+    <Compile Include="Entities\Trace.cs" />
+    <Compile Include="Entities\Underlay.cs" />
+    <Compile Include="Entities\UnderlayDisplayFlags.cs" />
+    <Compile Include="Entities\Vertex.cs" />
+    <Compile Include="Entities\VertexTypeFlags.cs" />
+    <Compile Include="Entities\Viewport.cs" />
+    <Compile Include="Entities\ViewportStatusFlags.cs" />
+    <Compile Include="Entities\Wipeout.cs" />
+    <Compile Include="Entities\XLine.cs" />
+    <Compile Include="GTE\BandedMatrix.cs" />
+    <Compile Include="GTE\BasisFunction.cs" />
+    <Compile Include="GTE\BezierCurve.cs" />
+    <Compile Include="GTE\BSplineCurve.cs" />
+    <Compile Include="GTE\BSplineCurveFit.cs" />
+    <Compile Include="GTE\BSplineReduction.cs" />
+    <Compile Include="GTE\BSplineSurface.cs" />
+    <Compile Include="GTE\BSplineSurfaceFit.cs" />
+    <Compile Include="GTE\GaussianElimination.cs" />
+    <Compile Include="GTE\GMatrix.cs" />
+    <Compile Include="GTE\GTE.cs" />
+    <Compile Include="GTE\GVector.cs" />
+    <Compile Include="GTE\Integration.cs" />
+    <Compile Include="GTE\IntrIntervals.cs" />
+    <Compile Include="GTE\LexicoArray2.cs" />
+    <Compile Include="GTE\NURBSCurve.cs" />
+    <Compile Include="GTE\NURBSSurface.cs" />
+    <Compile Include="GTE\ParametricCurve.cs" />
+    <Compile Include="GTE\ParametricSurface.cs" />
+    <Compile Include="GTE\RootBisection.cs" />
+    <Compile Include="GTE\RootsPolynominal.cs" />
+    <Compile Include="Header\AttMode.cs" />
+    <Compile Include="Header\DxfVersion.cs" />
+    <Compile Include="Header\HeaderVariable.cs" />
+    <Compile Include="Header\HeaderVariableCode.cs" />
+    <Compile Include="Header\HeaderVariables.cs" />
+    <Compile Include="Header\PointShape.cs" />
+    <Compile Include="IO\BinaryCodeValueReader.cs" />
+    <Compile Include="IO\BinaryCodeValueWriter.cs" />
+    <Compile Include="IO\DxfReader.cs" />
+    <Compile Include="IO\DxfVersionNotSupportedException.cs" />
+    <Compile Include="IO\DxfWriter.cs" />
+    <Compile Include="IO\ICodeValueReader.cs" />
+    <Compile Include="IO\ICodeValueWriter.cs" />
+    <Compile Include="IO\TextCodeValueReader.cs" />
+    <Compile Include="IO\TextCodeValueWriter.cs" />
+    <Compile Include="Lineweight.cs" />
+    <Compile Include="MathHelper.cs" />
+    <Compile Include="Matrix2.cs" />
+    <Compile Include="Matrix3.cs" />
+    <Compile Include="Matrix4.cs" />
+    <Compile Include="Objects\DictionaryCloningFlags.cs" />
+    <Compile Include="Objects\DictionaryObject.cs" />
+    <Compile Include="Objects\Group.cs" />
+    <Compile Include="Objects\GroupEntityChangeEventArgs.cs" />
+    <Compile Include="Objects\ImageDefinition.cs" />
+    <Compile Include="Objects\ImageDefinitionReactor.cs" />
+    <Compile Include="Objects\ImageDisplayQuality.cs" />
+    <Compile Include="Objects\LayerPropertiesFlags.cs" />
+    <Compile Include="Objects\LayerPropertiesRestoreFlags.cs" />
+    <Compile Include="Objects\LayerState.cs" />
+    <Compile Include="Objects\LayerStateProperties.cs" />
+    <Compile Include="Objects\Layout.cs" />
+    <Compile Include="Objects\MLineStyle.cs" />
+    <Compile Include="Objects\MLineStyleElement.cs" />
+    <Compile Include="Objects\MLineStyleElementChangeEventArgs.cs" />
+    <Compile Include="Objects\MLineStyleFlags.cs" />
+    <Compile Include="Objects\PaperMargin.cs" />
+    <Compile Include="Objects\PlotFlags.cs" />
+    <Compile Include="Objects\PlotPaperUnits.cs" />
+    <Compile Include="Objects\PlotRotation.cs" />
+    <Compile Include="Objects\PlotSettings.cs" />
+    <Compile Include="Objects\PlotType.cs" />
+    <Compile Include="Objects\RasterVariables.cs" />
+    <Compile Include="Objects\ShadePlotMode.cs" />
+    <Compile Include="Objects\ShadePlotResolutionMode.cs" />
+    <Compile Include="Objects\SupportedImageFormats.cs" />
+    <Compile Include="Objects\UnderlayDefinition.cs" />
+    <Compile Include="Objects\UnderlayDgnDefinition.cs" />
+    <Compile Include="Objects\UnderlayDwfDefinition.cs" />
+    <Compile Include="Objects\UnderlayPdfDefinition.cs" />
+    <Compile Include="Objects\UnderlayType.cs" />
+    <Compile Include="Objects\XRecord.cs" />
+    <Compile Include="Objects\XRecordEntry.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringEnum.cs" />
+    <Compile Include="SubclassMarker.cs" />
+    <Compile Include="Symbols.cs" />
+    <Compile Include="Tables\ApplicationRegistry.cs" />
+    <Compile Include="Tables\DimensionStyle.cs" />
+    <Compile Include="Tables\DimensionStyleAlternateUnits.cs" />
+    <Compile Include="Tables\DimensionStyleFitOptions.cs" />
+    <Compile Include="Tables\DimensionStyleFitTextMove.cs" />
+    <Compile Include="Tables\DimensionStyleOverride.cs" />
+    <Compile Include="Tables\DimensionStyleOverrideChangeEventArgs.cs" />
+    <Compile Include="Tables\DimensionStyleOverrideType.cs" />
+    <Compile Include="Tables\DimensionStyleTextDirection.cs" />
+    <Compile Include="Tables\DimensionStyleTextHorizontalPlacement.cs" />
+    <Compile Include="Tables\DimensionStyleTextVerticalPlacement.cs" />
+    <Compile Include="Tables\DimensionStyleTolerances.cs" />
+    <Compile Include="Tables\DimensionStyleTolerancesDisplayMethod.cs" />
+    <Compile Include="Tables\DimensionStyleTolerancesVerticalPlacement.cs" />
+    <Compile Include="Tables\FontStyle.cs" />
+    <Compile Include="Tables\Layer.cs" />
+    <Compile Include="Tables\LayerFlags.cs" />
+    <Compile Include="Tables\Linetype.cs" />
+    <Compile Include="Tables\LinetypeSegment.cs" />
+    <Compile Include="Tables\LinetypeSegmentChangeEventArgs.cs" />
+    <Compile Include="Tables\LinetypeSegmentRotationType.cs" />
+    <Compile Include="Tables\LinetypeSegmentType.cs" />
+    <Compile Include="Tables\LinetypeShapeSegment.cs" />
+    <Compile Include="Tables\LinetypeSimpleSegment.cs" />
+    <Compile Include="Tables\LinetypeTextSegment.cs" />
+    <Compile Include="Tables\ShapeStyle.cs" />
+    <Compile Include="Tables\TableObject.cs" />
+    <Compile Include="Tables\TableObjectChangedEventArgs.cs" />
+    <Compile Include="Tables\TextStyle.cs" />
+    <Compile Include="Tables\UCS.cs" />
+    <Compile Include="Tables\View.cs" />
+    <Compile Include="Tables\ViewMode.cs" />
+    <Compile Include="Tables\VPort.cs" />
+    <Compile Include="Transparency.cs" />
+    <Compile Include="Units\AngleDirection.cs" />
+    <Compile Include="Units\AngleUnitFormat.cs" />
+    <Compile Include="Units\AngleUnitType.cs" />
+    <Compile Include="Units\DrawingTime.cs" />
+    <Compile Include="Units\DrawingUnits.cs" />
+    <Compile Include="Units\FractionFormatType.cs" />
+    <Compile Include="Units\ImageResolutionUnits.cs" />
+    <Compile Include="Units\ImageUnits.cs" />
+    <Compile Include="Units\LinearUnitFormat.cs" />
+    <Compile Include="Units\LinearUnitType.cs" />
+    <Compile Include="Units\UnitHelper.cs" />
+    <Compile Include="Units\UnitStyleFormat.cs" />
+    <Compile Include="Vector2.cs" />
+    <Compile Include="Vector3.cs" />
+    <Compile Include="Vector4.cs" />
+    <Compile Include="XData.cs" />
+    <Compile Include="XDataCode.cs" />
+    <Compile Include="XDataRecord.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="GTE\README.md" />
+    <None Include="netDxf.csproj" />
+    <None Include="netDxf.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="netDxf.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
