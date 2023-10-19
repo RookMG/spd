@@ -29,5 +29,10 @@ namespace HelloWPFApp
         {
             MessageBox.Show("새 문서");
         }
+
+        private void OpenDocument(object sender, RoutedEventArgs e)
+        {
+            ((MainWindow)System.Windows.Application.Current.MainWindow).OpenDxf();
+        }
     }
 }
