@@ -1,0 +1,7 @@
+C:\Users\SSAFY\source\repos\MySuperBank\bin\Debug\MySuperBank.exe.config
+C:\Users\SSAFY\source\repos\MySuperBank\bin\Debug\MySuperBank.exe
+C:\Users\SSAFY\source\repos\MySuperBank\bin\Debug\MySuperBank.pdb
+C:\Users\SSAFY\source\repos\MySuperBank\obj\Debug\MySuperBank.csproj.AssemblyReference.cache
+C:\Users\SSAFY\source\repos\MySuperBank\obj\Debug\MySuperBank.csproj.CoreCompileInputs.cache
+C:\Users\SSAFY\source\repos\MySuperBank\obj\Debug\MySuperBank.exe
+C:\Users\SSAFY\source\repos\MySuperBank\obj\Debug\MySuperBank.pdb
