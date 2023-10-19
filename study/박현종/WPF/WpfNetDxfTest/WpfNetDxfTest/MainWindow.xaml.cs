@@ -36,9 +36,22 @@ namespace WpfNetDxfTest
 			// create a new document, by default it will create an AutoCad2000 DXF version
 			DxfDocument doc = new DxfDocument();
 			// an entity
-			var entity = new netDxf.Entities.Line(new Vector2(5, 5), new Vector2(10, 5));
+			List<Vector2> vectorList = new List<Vector2>()
+			{
+				new Vector2(9, 9),
+				new Vector2(9, 12),
+				new Vector2(12, 12),
+				new Vector2(12, 9)
+			};
+			var entityPoint1 = new netDxf.Entities.Point(new Vector2(3, 3));
+			var entityPoint2 = new netDxf.Entities.Point(new Vector2(6, 6));
+			var entityLine = new netDxf.Entities.Line(new Vector2(5, 5), new Vector2(10, 5));
+			var entityPolyline = new netDxf.Entities.Polyline2D(vectorList, true);
 			// add your entities here
-			doc.Entities.Add(entity);
+			doc.Entities.Add(entityPoint1);
+			doc.Entities.Add(entityPoint2);
+			doc.Entities.Add(entityLine);
+			doc.Entities.Add(entityPolyline);
 			// save to file
 			doc.Save(file);
 
