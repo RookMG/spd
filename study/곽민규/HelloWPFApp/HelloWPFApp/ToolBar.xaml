@@ -25,7 +25,7 @@
             <Button Click="NewDocument" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/AddDocument_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button Click="OpenDocument" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/OpenFolder_16x.png" />
             </Button>
             <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
