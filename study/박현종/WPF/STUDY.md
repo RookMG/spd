@@ -9,7 +9,7 @@
 
 # 기초
 
-## 솔루션 탐새기
+## 솔루션 탐색기
 
 솔루션 탐색기에서 현재 솔루션(프로젝트들을 담는 하나의 큰 프로젝트)에 등록된 프로젝트에 대한 정보와 구조들을 볼 수 있음
 
@@ -86,3 +86,72 @@ XY 평면 내의 X 및 Y축 방향은 임의의 방식으로 계산될 수 있�
 ### UCS(사용자 좌표계; User Coordinate System)
 
 UCS를 통해 입력된 2D 점은 OCS의 상응하는 2D 점으로 변환되며 UCS를 기준으로 이동되고 회전한다.
+
+<br>
+
+# 라이브러리
+
+라이브러리 프로젝트로 작업하여 .dll 라이브러리 파일로 만들면 팀원들에게도 배포 가능! <br>
+솔루션 탐색기의 참조에 추가하여 사용할 수 있다.
+
+## 참고한 라이브러리
+
+### [netDXF](https://github.com/haplokuon/netDxf/tree/master)
+
+엔티티를 dxf 포맷의 파일로 저장하고 불러오는 기능을 제공한다.<br>
+
+### [WPF UI](https://github.com/lepoco/wpfui)
+
+WPF UI 라이브러리를 제공한다.
+
+<br>
+
+# .NET 생태계
+
+### .Net Core
+
+윈도우, 리눅스, macOS 사용 가능합니다.
+
+- 모든 운영 체제에 대한 응용 프로그램을 구축하기 위한 새로운 오픈 소스 및 크로스 플랫폼 프레임 워크 입니다.
+- UWP 및 ASP.NET Core 만 지원합니다.
+- ASP.NET Core는 브라우저 기반 웹 응용 프로그램을 작성하는 데 사용합니다.
+- 경량화로 인해 매우 가볍다
+- Docker 사용 가능
+
+### .NET Core 이점
+
+새로운 프로그램을 구축해야 한다면 .NET Framework보다는 .NET Core이 좋습니다.
+
+- 마이크로 소프트사에서는 .NET Core v3.0을 발표했습니다.
+- 미래의 경우 .NET Core가 될 수 있습니다.
+- .NET Core 3.0 발표
+- WPF에서 Windows Forms을 지원합니다.
+- 즉. UWP/WPF 및 Windows Forms 간의 교차 개발도 지원합니다.
+- 이것은 최신 UWP 인터페이스를 Windows Forms 및 WPF로 가져올 수 있는 유연성을 제공합니다.
+
+### .Net Framework
+
+윈도우 및 웹 응용 프로그램을 사용 가능합니다.
+
+- Windows Forms, WPF/UWP를 사용하여 Windows 응용 프로그램을 빌드 할 수 있습니다.
+- ASP.NET MVC는 웹 응용 프로그램 작성에 사용합니다.
+- 다양한 기능과 확장성을 지원
+
+### .NET Framework 이점
+
+아무것도 모르는 상태에서, 빠르게 진행이 필요 할 경우, .NET Framework를 선택하세요.
+
+- .NET Core의 경우는 학습이 조금 더 어렵습니다.
+- .NET Framework는 현재 버전인 4.8이 마지막 버전으로 간주됩니다.
+- 지속적인 업그레이드와 변경을 하고 싶지 않을 경우 선택하세요.
+- 일하는데 안정적인 환경을 줍니다.
+
+<br>
+
+# 참고 문서
+
+- [다중 폼 함수 호출 전역 Mediator 클래스](https://blog.naver.com/goldrushing/221663952698)
+
+- [.NET Framework와 .NET Core](https://digiconfactory.tistory.com/entry/%EB%8B%B7%EB%84%B7WPF-%EA%B0%9C%EC%9A%94)
+
+- [MVVM 구조 간단한 예시](https://frozenpond.tistory.com/53)
