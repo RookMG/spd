@@ -1,0 +1,68 @@
+﻿<Window x:Class="MVVMtutorial.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MVVMtutorial.View"
+        xmlns:viewModel="clr-namespace:MVVMtutorial.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Dollar to Won" FontSize="50"></TextBlock>
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="dollar" FontSize="20"></TextBlock>
+        </Grid>
+
+        <Grid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox FontSize="20" Width="150" Text="{Binding Path=Dollar, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center"></TextBox>
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="won" FontSize="20"></TextBlock>
+        </Grid>
+
+        <Grid Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox FontSize="20" Width="150" Text="{Binding Path=Won}" IsReadOnly="True" TextAlignment="Center"></TextBox>
+        </Grid>
+
+
+
+
+
+
+        <ListView Grid.Column="0" Grid.Row="3" ItemsSource="{Binding Items}" Name="studentListView" FontSize="15">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="name" DisplayMemberBinding="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                    <GridViewColumn Header="age" DisplayMemberBinding="{Binding Path=Age, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                    <GridViewColumn Header="gender" DisplayMemberBinding="{Binding Path=Gender, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Grid Grid.Column="1" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="AddStudentBtn" Width="80" Height="30" Content="학생추가하기" ></Button>
+            <Button Grid.Column="1" Name="OneYearAfterBtn" Width="80" Height="30" Content="일년 후" ></Button>
+        </Grid>
+    </Grid>
+</Window>
