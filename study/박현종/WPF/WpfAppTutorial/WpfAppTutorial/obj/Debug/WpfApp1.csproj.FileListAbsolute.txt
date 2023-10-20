@@ -1,0 +1,15 @@
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\bin\Debug\WpfApp1.exe.config
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\bin\Debug\WpfApp1.exe
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\bin\Debug\WpfApp1.pdb
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1.csproj.AssemblyReference.cache
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\App.g.cs
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1_MarkupCompile.cache
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1_MarkupCompile.lref
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1.g.resources
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1.Properties.Resources.resources
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1.csproj.GenerateResource.cache
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1.csproj.CoreCompileInputs.cache
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1.exe
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\WpfApp1.pdb
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\Greetings.g.cs
+C:\project\S09P31S102\study\박현종\WPF\WpfApp1\WpfApp1\obj\Debug\Greetings.baml
