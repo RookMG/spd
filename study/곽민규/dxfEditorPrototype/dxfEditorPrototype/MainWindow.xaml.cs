@@ -41,13 +41,76 @@ namespace dxfEditorPrototype
         public MainWindow()
         {
             InitializeComponent();
+
+            #region 다른 페이지에서 사용할 수 있게 함수 등록
+
+            // 다른 페이지에서 사용하려면...
+            // Utils.Mediator.NotifyColleagues("등록한 string", 파라미터);
+
+            // 예시)
+            // Utils.Mediator.NotifyColleagues("MainWindow.OpenDxf", null);
+            // Utils.Mediator.NotifyColleagues("MainWindow.ColorScreen", true);
+
             Utils.Mediator.Register("MainWindow.OpenDxf", OpenDxf);
             Utils.Mediator.Register("MainWindow.NewDxf", NewDxf);
+            Utils.Mediator.Register("MainWindow.SaveDxf", SaveDxf);
+            Utils.Mediator.Register("MainWindow.SaveAsDxf", SaveAsDxf);
+            Utils.Mediator.Register("MainWindow.SaveBackupDxf", SaveBackupDxf);
+            Utils.Mediator.Register("MainWindow.Undo", Undo);
+            Utils.Mediator.Register("MainWindow.Redo", Redo);
+            Utils.Mediator.Register("MainWindow.DeleteEntities", DeleteEntities);
+            Utils.Mediator.Register("MainWindow.Copy", Copy);
+            Utils.Mediator.Register("MainWindow.Cut", Cut);
+            Utils.Mediator.Register("MainWindow.Paste", Paste);
+            Utils.Mediator.Register("MainWindow.DrawDot", DrawDot);
+            Utils.Mediator.Register("MainWindow.DrawLine", DrawLine);
+            Utils.Mediator.Register("MainWindow.DrawRectangle", DrawRectangle);
+            Utils.Mediator.Register("MainWindow.DrawPolygon", DrawPolygon);
+            Utils.Mediator.Register("MainWindow.CloneEntites", CloneEntities);
+            Utils.Mediator.Register("MainWindow.MoveEntities", MoveEntities);
+            Utils.Mediator.Register("MainWindow.ZoomIn", ZoomIn);
+            Utils.Mediator.Register("MainWindow.ZoomOut", ZoomOut);
+            Utils.Mediator.Register("MainWindow.MoveScreen", MoveScreen);
+            Utils.Mediator.Register("MainWindow.FitScreen", FitScreen);
+            Utils.Mediator.Register("MainWindow.ColorScreen", ColorScreen);
+            Utils.Mediator.Register("MainWindow.ColorBackground", ColorBackground);
+            Utils.Mediator.Register("MainWindow.ToggleGrid", ToggleGrid);
+            Utils.Mediator.Register("MainWindow.ToggleLineWidth", ToggleLineWidth);
+            Utils.Mediator.Register("MainWindow.ShowLayers", ShowLayers);
+            Utils.Mediator.Register("MainWindow.ChangeLayer", ChangeLayer);
+            Utils.Mediator.Register("MainWindow.DrawCanvas", DrawCanvas);
+            Utils.Mediator.Register("MainWindow.ShowEntityTypes", ShowEntityTypes);
+            Utils.Mediator.Register("MainWindow.ShowEntityProperties", ShowEntityProperties);
+            Utils.Mediator.Register("MainWindow.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
+            Utils.Mediator.Register("MainWindow.ShowMousePosition", ShowMousePosition);
+            Utils.Mediator.Register("MainWindow.ShowEntitiesPosition", ShowEntitiesPosition);
+            Utils.Mediator.Register("MainWindow.Exit", Exit);
+
+            #endregion
+
         }
 
+        // 현재 편집 중인 문서
+        // 다른 페이지에서 사용하려면...
+        // MainWindow.doc
+        // 예시)
+        // foreach (var line in MainWindow.doc.Entities.Lines) {...}
         public static DxfDocument doc;
 
 
+        // 기능 명세서 참고
+        // https://pattern-ounce-358.notion.site/a56b400c29784dc18bbf978384464316?pvs=4
+
+        #region 파일 입출력 관련 함수들
+
+        // 새 파일 만들기
+        public void NewDxf(object obj)
+        {
+            doc = new DxfDocument();
+            DrawCanvas(null);
+        }
+
+        // 파일 불러오기
         public void OpenDxf(object obj)
         {
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
@@ -57,20 +120,296 @@ namespace dxfEditorPrototype
             {
                 System.Windows.MessageBox.Show(dlgOpenFile.FileName);
                 doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
-                Test(dlgOpenFile.FileName, "test_log.txt");
+                // Test(dlgOpenFile.FileName, "test_log.txt");
             }
-
-
-            Utils.Mediator.NotifyColleagues("MainDrawer.Draw", null);
+            DrawCanvas(null);
         }
 
-        public void NewDxf(object obj)
+        // 파일 저장
+        public void SaveDxf(object obj)
         {
-            doc = new DxfDocument();
+            //TODO : 구현
 
-            Utils.Mediator.NotifyColleagues("MainDrawer.Draw", null);
         }
 
+        // 파일 다른 이름으로 저장
+        public void SaveAsDxf(object obj)
+        {
+            SaveFileDialog dlgSaveFile = new SaveFileDialog();
+
+            //TODO : 구현
+
+        }
+
+        // 파일 자동 임시저장
+        public void SaveBackupDxf(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        #endregion
+
+
+        #region 파일 편집 관련 함수들
+
+        // 실행 취소
+        public void Undo(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 다시 실행
+        public void Redo(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 삭제
+        public void DeleteEntities(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 복사
+        public void Copy(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 잘라내기
+        public void Cut(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 붙여넣기
+        public void Paste(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 점 그리기
+        public void DrawDot(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 선 그리기
+        public void DrawLine(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 직사각형 그리기
+        public void DrawRectangle(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 폴리곤 그리기
+        public void DrawPolygon(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 선택 도형 N*M개 복제
+        public void CloneEntities(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 선택 도형 이동
+        public void MoveEntities(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        #endregion
+
+
+        #region 화면 출력 관련 함수들
+
+        // 화면 확대
+        public void ZoomIn(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 화면 축소
+        public void ZoomOut(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 화면 이동
+        public void MoveScreen(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 도면을 창 크기에 맞추기
+        public void FitScreen(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 컬러 도면 보기, 흑백 도면 보기
+        public void ColorScreen(object obj)
+        {
+
+            //TODO : 구현
+            // ColorScreen("true") : 컬러 도면 보기
+            // ColorScreen("false") : 흑백 도면 보기
+
+        }
+
+        // 흰 배경색, 검은 배경색
+        public void ColorBackground(object obj)
+        {
+
+            //TODO : 구현
+            // ColorBackground("white") : 흰 배경색
+            // ColorBackground("black") : 검은 배경색
+
+        }
+
+        // 격자 표시
+        public void ToggleGrid(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 선 굵기 표시
+        public void ToggleLineWidth(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 레이어 보기
+        public void ShowLayers(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 레이어 변경
+        public void ChangeLayer(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 도면 화면에 그리기
+        public void DrawCanvas(object obj)
+        {
+
+            Utils.Mediator.NotifyColleagues("MainDrawer.DrawCanvas", null);
+
+        }
+
+        #endregion
+
+
+        #region 상세정보 출력 관련 함수들
+
+        // 엔티티 종류 보기
+        public void ShowEntityTypes(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 엔티티 속성
+        public void ShowEntityProperties(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 엔티티 속성 상세 설명
+        public void ShowEntityPropertyDetail(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        // 마우스 좌표 보기
+        public void ShowMousePosition(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+        
+        // 선택한 엔티티 좌표 보기
+        public void ShowEntitiesPosition(object obj)
+        {
+
+            //TODO : 구현
+
+        }
+
+        #endregion
+
+
+        #region 윈도우 관련 함수들
+
+        // 프로그램 종료
+        public void Exit(object obj)
+        {
+
+            //TODO : 구현
+            //저장하지 않은 내용 확인 필수!!
+
+        }
+
+        #endregion
+
+
+        #region 기타 디버깅용 함수들
         private static DxfDocument Test(string file, string output = null)
         {
             // optionally you can save the information to a text file
@@ -603,6 +942,7 @@ namespace dxfEditorPrototype
             }
             return dxf;
         }
+        #endregion
 
     }
 }

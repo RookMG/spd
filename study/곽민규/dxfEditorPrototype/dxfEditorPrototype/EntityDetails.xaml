@@ -20,7 +20,7 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <TreeView Grid.Row="0" />
+        <Image Grid.Row="0" Source="asset/sample/L1.png" Stretch="Fill"/>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
         <Image Grid.Row="2" Source="asset/sample/L2.png" Stretch="Fill"/>
         <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>

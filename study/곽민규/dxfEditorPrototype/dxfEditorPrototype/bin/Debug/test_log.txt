@@ -1,6 +1,6 @@
 FILE NAME: C:\Users\SSAFY\Desktop\sample.dxf
 	binary DXF: False
-	loading time: 0.032 seconds
+	loading time: 0.029 seconds
 
 FILE VERSION: AutoCad2018
 
@@ -158,18 +158,18 @@ Line Info :
 	StartPoint : 320, -170, 0; EndPoint : 330, -130, 0, Direction : 10, 40, 0, Thickness : 0, LineType : ByLayer
 	StartPoint : 320, -170, 0; EndPoint : 350, -180, 0, Direction : 30, -10, 0, Thickness : 0, LineType : ByLayer
 
-DXF version AutoCad2018 saved in 0.105 seconds
+DXF version AutoCad2018 saved in 0.104 seconds
 
 DXF version AutoCad2013 saved in 0.004 seconds
 
-DXF version AutoCad2010 saved in 0.006 seconds
+DXF version AutoCad2010 saved in 0.005 seconds
 
-DXF version AutoCad2007 saved in 0.004 seconds
+DXF version AutoCad2007 saved in 0.006 seconds
 
 DXF version AutoCad2004 saved in 0.004 seconds
 
-DXF version AutoCad2000 saved in 0.004 seconds
+DXF version AutoCad2000 saved in 0.005 seconds
 
 Binary DXF version AutoCad2010 saved in 0.004 seconds
 
-Binary DXF version AutoCad2010 loaded in 0.008 seconds
+Binary DXF version AutoCad2010 loaded in 0.01 seconds

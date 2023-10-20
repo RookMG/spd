@@ -10,8 +10,8 @@
 
     <Menu>
         <MenuItem Header="파일(_F)">
-            <MenuItem Header="새 파일(_N)" ></MenuItem>
-            <MenuItem Header="열기(_O)" ></MenuItem>
+            <MenuItem Header="새 파일(_N)" Click="NewDocument"></MenuItem>
+            <MenuItem Header="열기(_O)" Click="OpenDocument"></MenuItem>
             <MenuItem Header="저장(_S)"></MenuItem>
             <MenuItem Header="다른 이름으로 저장"></MenuItem>
             <Separator />
