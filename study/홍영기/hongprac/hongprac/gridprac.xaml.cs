@@ -13,16 +13,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfDrawTest
+namespace hongprac
 {
     /// <summary>
-    /// MainWindow.xaml에 대한 상호 작용 논리
+    /// gridprac.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class gridprac : Page
     {
-        public MainWindow()
+        public gridprac()
         {
             InitializeComponent();
+
+            DataContext = new MainViewModel();
         }
     }
 }
