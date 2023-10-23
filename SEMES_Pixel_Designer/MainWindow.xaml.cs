@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-//using System.Windows.Forms;
+using System.Windows.Forms;
 using netDxf;
 using netDxf.Blocks;
 using netDxf.Collections;
@@ -113,16 +113,16 @@ namespace SEMES_Pixel_Designer
         // 파일 불러오기
         public void OpenDxf(object obj)
         {
-            //OpenFileDialog dlgOpenFile = new OpenFileDialog();
-            //dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
+            OpenFileDialog dlgOpenFile = new OpenFileDialog();
+            dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
 
-            //if (dlgOpenFile.ShowDialog().ToString() == "OK")
-            //{
-            //    System.Windows.MessageBox.Show(dlgOpenFile.FileName);
-            //    doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
-            //    // Test(dlgOpenFile.FileName, "test_log.txt");
-            //}
-            //DrawCanvas(null);
+            if (dlgOpenFile.ShowDialog().ToString() == "OK")
+            {
+                System.Windows.MessageBox.Show(dlgOpenFile.FileName);
+                doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
+                // Test(dlgOpenFile.FileName, "test_log.txt");
+            }
+            DrawCanvas(null);
         }
 
         // 파일 저장
