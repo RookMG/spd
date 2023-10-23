@@ -9,6 +9,8 @@
       Title="StatusBar">
 
     <StackPanel Orientation="Horizontal" Height="20" >
-        <TextBlock Text="Mouse Position Here" VerticalAlignment="Center" Margin="10,0,10,0" />
+        <TextBlock Text="Mouse Position :" VerticalAlignment="Center" Margin="10,0,10,0" />
+        <TextBlock TextWrapping="Wrap" Text="x : "/>
+        <TextBlock TextWrapping="Wrap" Text="y :"/>
     </StackPanel>
 </Page>
