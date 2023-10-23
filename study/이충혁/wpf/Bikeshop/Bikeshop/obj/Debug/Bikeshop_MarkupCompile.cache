@@ -4,17 +4,34 @@
 winexe
 C#
 .cs
+<<<<<<< HEAD
 C:\Users\SSAFY\source\repos\wpf\Bikeshop\Bikeshop\obj\Debug\
+=======
+<<<<<<< HEAD
+C:\project\S09P31S102\study\이충혁\wpf\Bikeshop\Bikeshop\obj\Debug\
+=======
+C:\Users\SSAFY\Desktop\git\fork\S09P31S102\study\이충혁\wpf\Bikeshop\Bikeshop\obj\Debug\
+>>>>>>> d061a2170c80b3321aa21a95faa7a561c0a62eec
+>>>>>>> 1cdf8f63d85ef0d1a2a72a1489319a9ac2d38ada
 Bikeshop
 none
 false
 DEBUG;TRACE
+<<<<<<< HEAD
 C:\Users\SSAFY\source\repos\wpf\Bikeshop\Bikeshop\App.xaml
 51320194408
+=======
+<<<<<<< HEAD
+C:\project\S09P31S102\study\이충혁\wpf\Bikeshop\Bikeshop\App.xaml
+=======
+C:\Users\SSAFY\Desktop\git\fork\S09P31S102\study\이충혁\wpf\Bikeshop\Bikeshop\App.xaml
+>>>>>>> d061a2170c80b3321aa21a95faa7a561c0a62eec
+4-412731286
+>>>>>>> 1cdf8f63d85ef0d1a2a72a1489319a9ac2d38ada
 
 12-313167876
 13-1505183044
 Contact.xaml;Discussion.xaml;MainWindow.xaml;Menu.xaml;ProductsManagement.xaml;
 
-False
+True
 

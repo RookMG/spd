@@ -42,26 +42,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ClassLibrary1.dll" size="4096">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ClassLibrary1.dll" size="5120">
       <assemblyIdentity name="ClassLibrary1" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>QWiKfD9z5oLAE0VxkZNPRzbn792U+2cdnUAoZtNpifI=</dsig:DigestValue>
+        <dsig:DigestValue>vTGV5uocZyxn5jwbEZKQnysL4LRJcpmoQ/pY7IV4OWE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Project1.exe" size="7648">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Project1.exe" size="5600">
       <assemblyIdentity name="Project1" version="0.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ttACFsbtV/Ud3f+QIr0CbPippc2vKNHuXMYIVax2nzY=</dsig:DigestValue>
+        <dsig:DigestValue>vxWAOHc1+kCk9X0Du9+TPmrk1cKIk9f/egoJ9N1jT+Y=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34114.132
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTemplateBasic", "WpfApp7\DataTemplateBasic.csproj", "{12EC2475-2CF6-441F-AFC4-15E2CBF01DB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBasic", "WpfApp1\EventBasic.csproj", "{6531AF60-367E-46EF-BD11-8E672F937141}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfBase", "WpfBase\WpfBase.csproj", "{CFD3987D-2892-4377-ADCD-E8548A67B919}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12EC2475-2CF6-441F-AFC4-15E2CBF01DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12EC2475-2CF6-441F-AFC4-15E2CBF01DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12EC2475-2CF6-441F-AFC4-15E2CBF01DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12EC2475-2CF6-441F-AFC4-15E2CBF01DB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6531AF60-367E-46EF-BD11-8E672F937141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6531AF60-367E-46EF-BD11-8E672F937141}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6531AF60-367E-46EF-BD11-8E672F937141}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6531AF60-367E-46EF-BD11-8E672F937141}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFD3987D-2892-4377-ADCD-E8548A67B919}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFD3987D-2892-4377-ADCD-E8548A67B919}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFD3987D-2892-4377-ADCD-E8548A67B919}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFD3987D-2892-4377-ADCD-E8548A67B919}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B4C816E-0EA7-4920-80D3-C25780E981E3}
+	EndGlobalSection
+EndGlobal
