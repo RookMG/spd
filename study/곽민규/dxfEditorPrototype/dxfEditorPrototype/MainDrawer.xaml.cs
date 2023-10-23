@@ -43,10 +43,10 @@ namespace dxfEditorPrototype
             WpfPlot1.Plot.AxisScaleLock(true);
 
             WpfPlot1.Plot.Style(ScottPlot.Style.Black);
-            Utils.Mediator.Register("MainDrawer.Draw", Draw);
+            Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
 
         }
-        public void Draw(object obj)
+        public void DrawCanvas(object obj)
         {
             foreach (var line in MainWindow.doc.Entities.Lines)
             {
