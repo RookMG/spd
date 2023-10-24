@@ -386,9 +386,8 @@ namespace SEMES_Pixel_Designer
         // 선택한 엔티티 좌표 보기
         public void ShowEntitiesPosition(object obj)
         {
-
             //TODO : 구현
-
+            Utils.Mediator.NotifyColleagues("StatusBar.PrintEntityPosition", obj);
         }
 
         #endregion
