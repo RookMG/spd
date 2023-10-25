@@ -114,7 +114,7 @@ namespace SEMES_Pixel_Designer
         // MainWindow.doc
         // 예시)
         // foreach (var line in MainWindow.doc.Entities.Lines) {...}
-        public static DxfDocument doc;
+        public static DxfDocument doc = new DxfDocument();
 
 
         // 기능 명세서 참고
@@ -162,7 +162,7 @@ namespace SEMES_Pixel_Designer
             if (dlgSaveAsFile.ShowDialog().ToString() == "OK")
             {
                 System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
-                // Test(dlgOpenFile.FileName, "test_log.txt");
+                doc.Save(dlgSaveAsFile.FileName);
             }
 
             //TODO : 구현
