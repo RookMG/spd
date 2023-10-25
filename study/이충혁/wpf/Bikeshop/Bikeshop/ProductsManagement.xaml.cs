@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BikeShop;
 
 namespace Bikeshop
 {
@@ -20,9 +21,15 @@ namespace Bikeshop
     /// </summary>
     public partial class ProductsManagement : Page
     {
+        ProductsFactory factory = new ProductsFactory();
         public ProductsManagement()
         {
             InitializeComponent();
+        }
+
+        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dataGrid.ItemsSource = factory.FindProducts(textBox.Text);
         }
     }
 }
