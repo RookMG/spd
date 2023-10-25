@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-//using System.Windows.Forms;
+using System.Windows.Forms;
 using netDxf;
 using netDxf.Blocks;
 using netDxf.Collections;
@@ -30,6 +30,7 @@ using FontStyle = netDxf.Tables.FontStyle;
 using Image = netDxf.Entities.Image;
 using Point = netDxf.Entities.Point;
 using Trace = netDxf.Entities.Trace;
+using SEMES_Pixel_Designer.Utils;
 
 namespace SEMES_Pixel_Designer
 {
@@ -51,17 +52,35 @@ namespace SEMES_Pixel_Designer
             // Utils.Mediator.NotifyColleagues("MainWindow.OpenDxf", null);
             // Utils.Mediator.NotifyColleagues("MainWindow.ColorScreen", true);
 
-            Utils.Mediator.Register("MainWindow.OpenDxf", OpenDxf);
             Utils.Mediator.Register("MainWindow.NewDxf", NewDxf);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(NewDxf), new KeyGesture(Key.N, ModifierKeys.Control)));
+
+            Utils.Mediator.Register("MainWindow.OpenDxf", OpenDxf);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(OpenDxf), new KeyGesture(Key.O, ModifierKeys.Control)));
+
             Utils.Mediator.Register("MainWindow.SaveDxf", SaveDxf);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(SaveDxf), new KeyGesture(Key.S, ModifierKeys.Control)));
+
             Utils.Mediator.Register("MainWindow.SaveAsDxf", SaveAsDxf);
             Utils.Mediator.Register("MainWindow.SaveBackupDxf", SaveBackupDxf);
             Utils.Mediator.Register("MainWindow.Undo", Undo);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(Undo), new KeyGesture(Key.Z, ModifierKeys.Control)));
+
             Utils.Mediator.Register("MainWindow.Redo", Redo);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(Redo), new KeyGesture(Key.Y, ModifierKeys.Control)));
+
             Utils.Mediator.Register("MainWindow.DeleteEntities", DeleteEntities);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(DeleteEntities), new KeyGesture(Key.Delete)));
+
             Utils.Mediator.Register("MainWindow.Copy", Copy);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(Copy), new KeyGesture(Key.C, ModifierKeys.Control)));
+
             Utils.Mediator.Register("MainWindow.Cut", Cut);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(Cut), new KeyGesture(Key.X, ModifierKeys.Control)));
+
             Utils.Mediator.Register("MainWindow.Paste", Paste);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(Paste), new KeyGesture(Key.V, ModifierKeys.Control)));
+
             Utils.Mediator.Register("MainWindow.DrawDot", DrawDot);
             Utils.Mediator.Register("MainWindow.DrawLine", DrawLine);
             Utils.Mediator.Register("MainWindow.DrawRectangle", DrawRectangle);
@@ -106,6 +125,8 @@ namespace SEMES_Pixel_Designer
         // 새 파일 만들기
         public void NewDxf(object obj)
         {
+            // TODO : 편집 중인 파일이 있다면 저장할지 확인
+
             doc = new DxfDocument();
             DrawCanvas(null);
         }
@@ -113,16 +134,16 @@ namespace SEMES_Pixel_Designer
         // 파일 불러오기
         public void OpenDxf(object obj)
         {
-            //OpenFileDialog dlgOpenFile = new OpenFileDialog();
-            //dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
+            OpenFileDialog dlgOpenFile = new OpenFileDialog();
+            dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
 
-            //if (dlgOpenFile.ShowDialog().ToString() == "OK")
-            //{
-            //    System.Windows.MessageBox.Show(dlgOpenFile.FileName);
-            //    doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
-            //    // Test(dlgOpenFile.FileName, "test_log.txt");
-            //}
-            //DrawCanvas(null);
+            if (dlgOpenFile.ShowDialog().ToString() == "OK")
+            {
+                System.Windows.MessageBox.Show(dlgOpenFile.FileName);
+                doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
+                // Test(dlgOpenFile.FileName, "test_log.txt");
+            }
+            DrawCanvas(null);
         }
 
         // 파일 저장
@@ -135,7 +156,14 @@ namespace SEMES_Pixel_Designer
         // 파일 다른 이름으로 저장
         public void SaveAsDxf(object obj)
         {
-            //SaveFileDialog dlgSaveFile = new SaveFileDialog();
+            SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
+            dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
+
+            if (dlgSaveAsFile.ShowDialog().ToString() == "OK")
+            {
+                System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
+                // Test(dlgOpenFile.FileName, "test_log.txt");
+            }
 
             //TODO : 구현
 
