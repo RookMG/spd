@@ -17,56 +17,57 @@
                     <Setter Property="Margin" Value="3,0,3,0"/>
                     <Setter Property="BorderThickness" Value="0"/>
                     <Setter Property="Background" Value="WhiteSmoke"/>
+                    <Setter Property="Command" Value="{Binding DelCommand}"/>
                 </Style>
             </StackPanel.Resources>
 
 
-            <Button Click="NewDocument" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.NewDxf" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/AddDocument_16x.png" />
             </Button>
-            <Button Click="OpenDocument" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.OpenDxf" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/OpenFolder_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.SaveDxf" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/Save_16x.png" />
             </Button>
 
             <Rectangle  VerticalAlignment="Stretch"  HorizontalAlignment="Center" Margin="5,0,5,0" Fill="LightGray" Width="1"/>
 
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.Undo" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/StepBackwards_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.Redo" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/StepForward_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.ZoomIn" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/ZoomIn_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.ZoomOut" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/ZoomOut_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/FitToScreen_16x.png" />
             </Button>
 
             <Rectangle  VerticalAlignment="Stretch"  HorizontalAlignment="Center" Margin="5,0,5,0" Fill="LightGray" Width="1"/>
 
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DrawDot" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/Dot_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DrawLine" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/Line_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DrawRectangle" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/Rectangle_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DrawPolygon" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/Polygon_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DeleteEntities" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/Trash_16x.png" />
             </Button>
-            <Button BorderThickness="0" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.CloneEntities" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="asset/icon/EditLayoutTable_16x.png" />
             </Button>
 

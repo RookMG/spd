@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SEMES_Pixel_Designer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace SEMES_Pixel_Designer
         public ToolBar()
         {
             InitializeComponent();
+            DataContext = new CommandDataContext();
         }
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SEMES_Pixel_Designer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,16 +24,7 @@ namespace SEMES_Pixel_Designer
         public MenuBar()
         {
             InitializeComponent();
-        }
-
-        private void NewDocument(object sender, RoutedEventArgs e)
-        {
-            Utils.Mediator.NotifyColleagues("MainWindow.NewDxf", null);
-        }
-
-        private void OpenDocument(object sender, RoutedEventArgs e)
-        {
-            Utils.Mediator.NotifyColleagues("MainWindow.OpenDxf", null);
+            DataContext = new CommandDataContext();
         }
     }
 }
