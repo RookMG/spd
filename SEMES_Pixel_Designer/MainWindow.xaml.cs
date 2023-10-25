@@ -115,6 +115,7 @@ namespace SEMES_Pixel_Designer
         // 예시)
         // foreach (var line in MainWindow.doc.Entities.Lines) {...}
         public static DxfDocument doc = new DxfDocument();
+        public static string fileName = null;
 
 
         // 기능 명세서 참고
@@ -129,6 +130,7 @@ namespace SEMES_Pixel_Designer
 
             doc = new DxfDocument();
             DrawCanvas(null);
+            fileName = null;
         }
 
         // 파일 불러오기
@@ -141,6 +143,7 @@ namespace SEMES_Pixel_Designer
             {
                 System.Windows.MessageBox.Show(dlgOpenFile.FileName);
                 doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
+                fileName = dlgOpenFile.FileName;
                 // Test(dlgOpenFile.FileName, "test_log.txt");
             }
             DrawCanvas(null);
@@ -149,14 +152,15 @@ namespace SEMES_Pixel_Designer
         // 파일 저장
         public void SaveDxf(object obj)
         {
-            //TODO : 구현
-
+            if (fileName == null) SaveAsDxf(null);
+            else doc.Save(fileName);
         }
 
         // 파일 다른 이름으로 저장
         public void SaveAsDxf(object obj)
         {
             SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
+            dlgSaveAsFile.Title = "파일 저장";
             dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
 
             if (dlgSaveAsFile.ShowDialog().ToString() == "OK")
@@ -164,9 +168,6 @@ namespace SEMES_Pixel_Designer
                 System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
                 doc.Save(dlgSaveAsFile.FileName);
             }
-
-            //TODO : 구현
-
         }
 
         // 파일 자동 임시저장
