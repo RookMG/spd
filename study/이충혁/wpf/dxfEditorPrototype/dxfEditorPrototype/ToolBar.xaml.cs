@@ -1,5 +1,4 @@
-﻿using SEMES_Pixel_Designer.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SEMES_Pixel_Designer
+namespace dxfEditorPrototype
 {
     /// <summary>
     /// ToolBar.xaml에 대한 상호 작용 논리
@@ -24,12 +23,11 @@ namespace SEMES_Pixel_Designer
         public ToolBar()
         {
             InitializeComponent();
-            DataContext = new CommandDataContext();
         }
-
 
         private void NewDocument(object sender, RoutedEventArgs e)
         {
+
             Utils.Mediator.NotifyColleagues("MainWindow.NewDxf", null);
         }
 

@@ -7,22 +7,11 @@
       mc:Ignorable="d" 
       d:DesignHeight="20" d:DesignWidth="800"
       Title="MenuBar">
+
     <Menu>
-        <Menu.Resources>
-            <Style x:Key="ThemeMenuItemStyle" TargetType="MenuItem">
-                <Setter Property="Header" Value="{Binding Name}"></Setter>
-                <Setter Property="Command" Value="{Binding ActivateCommand}"/>
-                <Setter Property="IsChecked" Value="{Binding IsActive}" />
-                <Setter Property="IsCheckable" Value="True"/>
-            </Style>
-        </Menu.Resources>
-        <MenuItem Header="Themes" ItemsSource="{Binding Themes}"
-              ItemContainerStyle="{StaticResource ThemeMenuItemStyle}"  />
-    </Menu>
-    <!--<Menu>
         <MenuItem Header="파일(_F)">
-            <MenuItem Header="새 파일(_N)" Click="NewDocument"></MenuItem>
-            <MenuItem Header="열기(_O)" Click="OpenDocument"></MenuItem>
+            <MenuItem Header="새 파일(_N)" ></MenuItem>
+            <MenuItem Header="열기(_O)" ></MenuItem>
             <MenuItem Header="저장(_S)"></MenuItem>
             <MenuItem Header="다른 이름으로 저장"></MenuItem>
             <Separator />
@@ -58,5 +47,5 @@
         <MenuItem Header="설정(_O)">
             <MenuItem Header="프로그램 정보" ></MenuItem>
         </MenuItem>
-    </Menu>-->
+    </Menu>
 </Page>

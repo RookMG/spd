@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
-namespace SEMES_Pixel_Designer.Utils
+namespace dxfEditorPrototype.Utils
 {
     static public class Mediator
     {
@@ -43,7 +39,6 @@ namespace SEMES_Pixel_Designer.Utils
         //호출하기
         static public void NotifyColleagues(string token, object args)
         {
-            MessageBox.Show("Debug : "+token+" 함수 실행");
             if (pl_dict.ContainsKey(token))
                 foreach (var callback in pl_dict[token])
                     callback(args);
