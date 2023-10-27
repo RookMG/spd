@@ -96,6 +96,7 @@
     <Compile Include="ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\DelegateCommand.cs" />
     <Compile Include="Utils\Mediator.cs" />
     <Page Include="EntityDetails.xaml">
       <SubType>Designer</SubType>
