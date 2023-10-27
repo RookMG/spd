@@ -9,6 +9,9 @@
       Title="StatusBar">
 
     <StackPanel Orientation="Horizontal" Height="20" >
-        <TextBlock Text="Mouse Position Here" VerticalAlignment="Center" Margin="10,0,10,0" />
+        <TextBlock Text="Mouse Position :" VerticalAlignment="Center" Margin="10,0,10,0" />
+        <TextBlock x:Name="posi_x" TextWrapping="Wrap" Width="60" Text="{Binding x_position}"/>
+        <TextBlock x:Name="posi_y" TextWrapping="Wrap" Width="60" Text="{Binding y_position}"/>
+        <TextBlock TextWrapping="Wrap" Text=" File Path :   "/>
     </StackPanel>
 </Page>

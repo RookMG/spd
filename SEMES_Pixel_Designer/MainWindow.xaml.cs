@@ -408,17 +408,15 @@ namespace SEMES_Pixel_Designer
         // 마우스 좌표 보기
         public void ShowMousePosition(object obj)
         {
-
             //TODO : 구현
-
+            Utils.Mediator.NotifyColleagues("StatusBar.ShowMousePosition", obj);
         }
 
         // 선택한 엔티티 좌표 보기
         public void ShowEntitiesPosition(object obj)
         {
-
             //TODO : 구현
-
+            Utils.Mediator.NotifyColleagues("StatusBar.PrintEntityPosition", obj);
         }
 
         #endregion

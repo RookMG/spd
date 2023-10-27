@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:SEMES_Pixel_Designer"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      xmlns:ScottPlot="clr-namespace:ScottPlot;assembly=ScottPlot.WPF"
       Title="MainDrawer">
 
     <!--
@@ -13,5 +14,7 @@
     Ex)
         <ScottPlot:WpfPlot x:Name="WpfPlot1" />
     -->
-    <TextBlock Grid.Row="0" Text="그림판..." VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30"/>
+    <Canvas MouseMove="MouseMoveHandler"
+          Background="white">
+    </Canvas>
 </Page>
