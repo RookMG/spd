@@ -108,7 +108,9 @@ namespace SEMES_Pixel_Designer.Utils
             polygon = new Polygon();
             polygon.MouseLeftButtonDown += MouseLeftButtonDown;
             polygon.MouseLeftButtonUp += MouseLeftButtonUp;
-            polygon.Fill = Brushes.Lavender;
+            polygon.Fill = Brushes.Transparent;
+            polygon.Stroke = Brushes.Black;
+            polygon.StrokeThickness = 1;
 
             points = new List<PointEntity>();
 
@@ -116,7 +118,7 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
 
-        public void AddPoint(int x, int y)
+        public void AddPoint(double x, double y)
         {
             var idx = polygon.Points.Count;
             polygon.Points.Add(new System.Windows.Point(x, y));
@@ -148,7 +150,6 @@ namespace SEMES_Pixel_Designer.Utils
             for (int i = 0; i < polygon.Points.Count; i++)
             {
                 updatePoint(offsets[i].X + e.GetPosition(MainDrawer.CanvasRef).X, offsets[i].Y + e.GetPosition(MainDrawer.CanvasRef).Y, i);
-                // polygon.Points[i] = new Point(offsets[i].X + e.GetPosition(MainDrawer.CanvasRef).X, offsets[i].Y + e.GetPosition(MainDrawer.CanvasRef).Y);
             }
         }
 
