@@ -38,12 +38,6 @@
     <Reference Include="netDxf, Version=2022.11.2.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
       <HintPath>packages\netDxf.2022.11.2\lib\net45\netDxf.dll</HintPath>
     </Reference>
-    <Reference Include="ScottPlot, Version=4.1.68.0, Culture=neutral, PublicKeyToken=86698dc10387c39e, processorArchitecture=MSIL">
-      <HintPath>packages\ScottPlot.4.1.68\lib\net462\ScottPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="ScottPlot.WPF, Version=4.1.68.0, Culture=neutral, PublicKeyToken=e53b06131e34a3aa, processorArchitecture=MSIL">
-      <HintPath>packages\ScottPlot.WPF.4.1.68\lib\net48\ScottPlot.WPF.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -81,29 +75,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="EntityDetails.xaml.cs">
+    <Compile Include="View\EntityDetails.xaml.cs">
       <DependentUpon>EntityDetails.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainDrawer.xaml.cs">
+    <Compile Include="View\MainDrawer.xaml.cs">
       <DependentUpon>MainDrawer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MenuBar.xaml.cs">
+    <Compile Include="View\MenuBar.xaml.cs">
       <DependentUpon>MenuBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StatusBar.xaml.cs">
+    <Compile Include="View\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ToolBar.xaml.cs">
+    <Compile Include="View\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\DelegateCommand.cs" />
-    <Compile Include="Utils\EntityWrapper.cs" />
-    <Compile Include="Utils\Mediator.cs" />
-    <Page Include="EntityDetails.xaml">
+    <Compile Include="Util\DelegateCommand.cs" />
+    <Compile Include="Util\EntityWrapper.cs" />
+    <Compile Include="Util\Mediator.cs" />
+    <Page Include="View\EntityDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainDrawer.xaml">
+    <Page Include="View\MainDrawer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -119,15 +113,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MenuBar.xaml">
+    <Page Include="View\MenuBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="StatusBar.xaml">
+    <Page Include="View\StatusBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ToolBar.xaml">
+    <Page Include="View\ToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -150,7 +144,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="View\packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -159,48 +153,51 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Resource Include="asset\icon\AddDocument_16x.png">
+    <Folder Include="Model\" />
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\AddDocument_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\Dot_16x.png">
+    <Resource Include="Asset\icon\Dot_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\EditLayoutTable_16x.png">
+    <Resource Include="Asset\icon\EditLayoutTable_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\FitToScreen_16x.png">
+    <Resource Include="Asset\icon\FitToScreen_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\Line_16x.png">
+    <Resource Include="Asset\icon\Line_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\OpenFolder_16x.png">
+    <Resource Include="Asset\icon\OpenFolder_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\Polygon_16x.png">
+    <Resource Include="Asset\icon\Polygon_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\Rectangle_16x.png">
+    <Resource Include="Asset\icon\Rectangle_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\Save_16x.png">
+    <Resource Include="Asset\icon\Save_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\StepBackwards_16x.png">
+    <Resource Include="Asset\icon\StepBackwards_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\StepForward_16x.png">
+    <Resource Include="Asset\icon\StepForward_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\Trash_16x.png">
+    <Resource Include="Asset\icon\Trash_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\ZoomIn_16x.png">
+    <Resource Include="Asset\icon\ZoomIn_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="asset\icon\ZoomOut_16x.png">
+    <Resource Include="Asset\icon\ZoomOut_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
