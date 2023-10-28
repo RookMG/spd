@@ -9,15 +9,15 @@
 
     <DockPanel Background="WhiteSmoke">
         <StackPanel DockPanel.Dock="Top">
-            <Frame Source="/MenuBar.xaml"/>
+            <Frame Source="/View/MenuBar.xaml"/>
             <Separator />
-            <Frame Source="/ToolBar.xaml"/>
+            <Frame Source="/View/ToolBar.xaml"/>
         </StackPanel>
-        <Frame Source="/EntityDetails.xaml" Width="200" />
+        <Frame Source="/View/EntityDetails.xaml" Width="200" />
         <Grid>
             <DockPanel>
-                <Frame DockPanel.Dock="Bottom" Source="/StatusBar.xaml"/>
-                <Frame Source="/MainDrawer.xaml"/>
+                <Frame DockPanel.Dock="Bottom" Source="/View/StatusBar.xaml"/>
+                <Frame Source="/View/MainDrawer.xaml"/>
             </DockPanel>
         </Grid>
     </DockPanel>

@@ -25,15 +25,7 @@ namespace SEMES_Pixel_Designer
             InitializeComponent();
 
             // TODO : 초기화 함수들 작성
-            Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
 
-        }
-        public void DrawCanvas(object obj)
-        {
-            // TODO : 화면에 그리는 부분
-            // 
-            // MVVM이라면 이곳에서 ViewModel 변경
-            // MVVM이 아니라면 이곳에서 화면에 그리는 로직 작성
         }
     }
 }

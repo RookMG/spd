@@ -26,16 +26,5 @@ namespace SEMES_Pixel_Designer
             InitializeComponent();
             DataContext = new CommandDataContext();
         }
-
-
-        private void NewDocument(object sender, RoutedEventArgs e)
-        {
-            Utils.Mediator.NotifyColleagues("MainWindow.NewDxf", null);
-        }
-
-        private void OpenDocument(object sender, RoutedEventArgs e)
-        {
-            Utils.Mediator.NotifyColleagues("MainWindow.OpenDxf", null);
-        }
     }
 }
