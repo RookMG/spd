@@ -326,6 +326,7 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
+            Utils.Mediator.NotifyColleagues("MainDrawer.FitScreen", null);
 
         }
 
