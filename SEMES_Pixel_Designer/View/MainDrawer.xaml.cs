@@ -24,9 +24,9 @@ namespace SEMES_Pixel_Designer
         public MainDrawer()
         {
             InitializeComponent();
+
         }
 
-        static public MainCanvas CanvasRef;
     }
 
     public class MainCanvas : Canvas
@@ -34,7 +34,11 @@ namespace SEMES_Pixel_Designer
         public MainCanvas()
         {
             // 초기설정
-            MainDrawer.CanvasRef = this;
+            Coordinates.CanvasRef = this;
+            SizeChanged += new SizeChangedEventHandler((object sender, SizeChangedEventArgs e) => { 
+                DrawCanvas(null);
+            });
+
             PolygonEntity.BindCanvasAction = Children.Add;
             PointEntity.BindCanvasAction = Children.Add;
             PointEntity.SetX = SetLeft;
@@ -47,44 +51,33 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
 
 
-
-
-
-            PolygonEntity ptest = new PolygonEntity();
-            ptest.AddPoint(200, 200);
-            ptest.AddPoint(300, 200);
-
-            PolygonEntity ptest2 = new PolygonEntity();
-            ptest2.AddPoint(100, 100);
-            ptest2.AddPoint(300, 150);
-            ptest2.AddPoint(200, 100);
-            ptest2.AddPoint(200, 50);
-
-            PolygonEntity ptest3 = new PolygonEntity();
-            ptest3.AddPoint(10, 100);
-            ptest3.AddPoint(30, 150);
-            ptest3.AddPoint(70, 100);
-            ptest3.AddPoint(20, 50);
-
         }
 
         public void DrawCanvas(object obj)
         {
             Children.Clear();
-
+            List<double> x = new List<double>(), y = new List<double>();
             List<PolygonEntity> Lines = new List<PolygonEntity>();
             foreach (var line in MainWindow.doc.Entities.Lines)
             {
-                var lineEntity = new PolygonEntity();
-                //MessageBox.Show(line.StartPoint.ToString());
-                //lineEntity.AddPoint(line.StartPoint.X, line.StartPoint.Y);
-                //lineEntity.AddPoint(line.EndPoint.X, line.EndPoint.Y);
+                x.Add(line.StartPoint.X);
+                y.Add(line.StartPoint.Y);
+                x.Add(line.EndPoint.X);
+                y.Add(line.EndPoint.Y);
+            }
+            Coordinates.updateRange(x, y);
 
-                lineEntity.AddPoint(100, 100);
-                lineEntity.AddPoint(300, 150);
+
+            foreach (var line in MainWindow.doc.Entities.Lines)
+            {
+                var lineEntity = new PolygonEntity();
+                lineEntity.AddPoint(line.StartPoint.X, line.StartPoint.Y);
+                lineEntity.AddPoint(line.EndPoint.X, line.EndPoint.Y);
+
                 Lines.Add(lineEntity);
             }
-
+            //MessageBox.Show(Coordinates.minX + " , " + Coordinates.minY + " , " + Coordinates.maxX + " , " + Coordinates.maxY);
+            //MessageBox.Show(Coordinates.CanvasRef.ActualHeight+" , "+Coordinates.CanvasRef.ActualWidth);
         }
 
     }
