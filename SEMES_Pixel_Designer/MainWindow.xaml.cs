@@ -146,6 +146,19 @@ namespace SEMES_Pixel_Designer
                 fileName = dlgOpenFile.FileName;
                 // Test(dlgOpenFile.FileName, "test_log.txt");
             }
+
+            for(int i= doc.Entities.Polylines3D.Count()-1;i>=0;i--)
+            {
+                Polyline3D polyline3D = doc.Entities.Polylines3D.ElementAt(i);
+                List<Vector2> vertexes = new List<Vector2>();
+                foreach(var vertex in polyline3D.Vertexes)
+                {
+                    vertexes.Add(new Vector2(vertex.X, vertex.Y));
+                }
+                doc.Entities.Add(new Polyline2D(vertexes));
+                doc.Entities.Remove(polyline3D);
+            }
+
             DrawCanvas(null);
         }
 
