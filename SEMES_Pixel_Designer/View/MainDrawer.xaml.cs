@@ -53,6 +53,7 @@ namespace SEMES_Pixel_Designer
 
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
+            Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen );
 
             MouseWheel += _MouseWheel;
             MouseRightButtonDown += _MouseRightButtonDown;
@@ -64,6 +65,12 @@ namespace SEMES_Pixel_Designer
         {
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
+        }
+
+        public void FitScreen(object obj)
+        {
+            Coordinates.UpdateRange(MainWindow.doc.Entities);
+            UpdateCanvas();
         }
 
         public void DrawCanvas(object obj)
