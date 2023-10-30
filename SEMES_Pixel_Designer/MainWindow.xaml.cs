@@ -144,6 +144,7 @@ namespace SEMES_Pixel_Designer
                 System.Windows.MessageBox.Show(dlgOpenFile.FileName);
                 doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
                 fileName = dlgOpenFile.FileName;
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
                 // Test(dlgOpenFile.FileName, "test_log.txt");
             }
             DrawCanvas(null);
@@ -167,6 +168,9 @@ namespace SEMES_Pixel_Designer
             {
                 System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
                 doc.Save(dlgSaveAsFile.FileName);
+
+                fileName = dlgSaveAsFile.FileName;
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
             }
         }
 
@@ -416,7 +420,14 @@ namespace SEMES_Pixel_Designer
         public void ShowEntitiesPosition(object obj)
         {
             //TODO : 구현
-            Utils.Mediator.NotifyColleagues("StatusBar.PrintEntityPosition", obj);
+            if(fileName == null)
+            {
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", null);
+            }
+            else
+            {
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
+            }
         }
 
         #endregion
