@@ -41,7 +41,7 @@ namespace SEMES_Pixel_Designer
         {
             // 초기설정
             Coordinates.CanvasRef = this;
-            SizeChanged += new SizeChangedEventHandler((object sender, SizeChangedEventArgs e) => UpdateCanavs());
+            SizeChanged += new SizeChangedEventHandler((object sender, SizeChangedEventArgs e) => UpdateCanvas());
 
             PolygonEntity.BindCanvasAction = Children.Add;
             PointEntity.BindCanvasAction = Children.Add;
@@ -60,7 +60,7 @@ namespace SEMES_Pixel_Designer
 
         }
 
-        public void UpdateCanavs()
+        public void UpdateCanvas()
         {
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
@@ -98,7 +98,7 @@ namespace SEMES_Pixel_Designer
             Coordinates.minX -= xFactor * mousePostion.X / ActualWidth;
             Coordinates.maxY += yFactor * mousePostion.Y / ActualHeight;
             Coordinates.minY -= yFactor * (ActualHeight - mousePostion.Y) / ActualHeight;
-            UpdateCanavs();
+            UpdateCanvas();
         }
 
 
@@ -122,7 +122,7 @@ namespace SEMES_Pixel_Designer
             Coordinates.maxY = dy + Coordinates.maxY - Coordinates.minY + offset[3];
             Coordinates.minY = dy + offset[3];
 
-            UpdateCanavs();
+            UpdateCanvas();
         }
 
         private void _MouseRightButtonUp(object sender, MouseButtonEventArgs e)
