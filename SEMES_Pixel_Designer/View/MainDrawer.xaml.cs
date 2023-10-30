@@ -31,13 +31,17 @@ namespace SEMES_Pixel_Designer
 
     public class MainCanvas : Canvas
     {
+
+
+        public List<PolygonEntity> Lines = new List<PolygonEntity>();
+        public List<PolygonEntity> Polylines = new List<PolygonEntity>();
+        public double[] offset = null;
+
         public MainCanvas()
         {
             // 초기설정
             Coordinates.CanvasRef = this;
-            SizeChanged += new SizeChangedEventHandler((object sender, SizeChangedEventArgs e) => { 
-                DrawCanvas(null);
-            });
+            SizeChanged += new SizeChangedEventHandler((object sender, SizeChangedEventArgs e) => UpdateCanavs());
 
             PolygonEntity.BindCanvasAction = Children.Add;
             PointEntity.BindCanvasAction = Children.Add;
@@ -50,35 +54,81 @@ namespace SEMES_Pixel_Designer
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
 
+            MouseWheel += _MouseWheel;
+            MouseRightButtonDown += _MouseRightButtonDown;
+            MouseRightButtonUp += _MouseRightButtonUp;
 
+        }
+
+        public void UpdateCanavs()
+        {
+            foreach (PolygonEntity line in Lines) line.ReDraw();
+            foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
         }
 
         public void DrawCanvas(object obj)
         {
             Children.Clear();
-            List<double> x = new List<double>(), y = new List<double>();
-            List<PolygonEntity> Lines = new List<PolygonEntity>();
-            foreach (var line in MainWindow.doc.Entities.Lines)
-            {
-                x.Add(line.StartPoint.X);
-                y.Add(line.StartPoint.Y);
-                x.Add(line.EndPoint.X);
-                y.Add(line.EndPoint.Y);
-            }
-            Coordinates.updateRange(x, y);
 
+            Coordinates.UpdateRange(MainWindow.doc.Entities);
+
+
+            Lines.Clear();
+            Polylines.Clear();
 
             foreach (var line in MainWindow.doc.Entities.Lines)
             {
-                var lineEntity = new PolygonEntity();
-                lineEntity.AddPoint(line.StartPoint.X, line.StartPoint.Y);
-                lineEntity.AddPoint(line.EndPoint.X, line.EndPoint.Y);
-
-                Lines.Add(lineEntity);
+                Lines.Add(new PolygonEntity(line));
             }
-            //MessageBox.Show(Coordinates.minX + " , " + Coordinates.minY + " , " + Coordinates.maxX + " , " + Coordinates.maxY);
-            //MessageBox.Show(Coordinates.CanvasRef.ActualHeight+" , "+Coordinates.CanvasRef.ActualWidth);
+
+            foreach (var polyline in MainWindow.doc.Entities.Polylines2D)
+            {
+                Polylines.Add(new PolygonEntity(polyline));
+            }
+
         }
 
+        private void _MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            float scaleFactor = 0.1f;
+            Point mousePostion = e.GetPosition(this);
+            double xFactor = (Coordinates.maxX - Coordinates.minX) * (e.Delta < 0 ? scaleFactor : -scaleFactor),
+                yFactor = (Coordinates.maxY - Coordinates.minY) * (e.Delta < 0 ? scaleFactor : -scaleFactor);
+            Coordinates.maxX += xFactor * (ActualWidth - mousePostion.X) / ActualWidth;
+            Coordinates.minX -= xFactor * mousePostion.X / ActualWidth;
+            Coordinates.maxY += yFactor * mousePostion.Y / ActualHeight;
+            Coordinates.minY -= yFactor * (ActualHeight - mousePostion.Y) / ActualHeight;
+            UpdateCanavs();
+        }
+
+
+        private void _MouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            offset = new double[] { e.GetPosition(this).X, e.GetPosition(this).Y, Coordinates.minX , Coordinates.minY };
+            MouseMove += _MouseMove;
+        }
+
+        private void _MouseMove(object sender, MouseEventArgs e)
+        {
+            if (offset == null) return;
+            double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth, 
+                dy = (Coordinates.maxY - Coordinates.minY) * (e.GetPosition(this).Y - offset[1]) / ActualHeight;
+            //MessageBox.Show(string.Format("{0},{1},{2},{3} -> {4},{5}",
+            //    Coordinates.minX, Coordinates.minY, Coordinates.maxX, Coordinates.maxY, 
+            //    dx, dy));
+            Coordinates.maxX = dx + Coordinates.maxX - Coordinates.minX + offset[2];
+            Coordinates.minX = dx + offset[2];
+
+            Coordinates.maxY = dy + Coordinates.maxY - Coordinates.minY + offset[3];
+            Coordinates.minY = dy + offset[3];
+
+            UpdateCanavs();
+        }
+
+        private void _MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MouseMove -= _MouseMove;
+            offset = null;
+        }
     }
 }
