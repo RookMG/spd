@@ -291,7 +291,7 @@ namespace SEMES_Pixel_Designer
         public void DrawPolygon(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DrawPolygon",null);
 
         }
 

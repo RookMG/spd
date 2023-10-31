@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Ellipse = System.Windows.Shapes.Ellipse;
 
 namespace SEMES_Pixel_Designer
 {
@@ -38,6 +39,8 @@ namespace SEMES_Pixel_Designer
         public List<PolygonEntity> Lines = new List<PolygonEntity>();
         public List<PolygonEntity> Polylines = new List<PolygonEntity>();
         public double[] offset = null;
+        public Polygon drawingPolygon = null;
+        public Ellipse drawingEllipse = null;
 
         public MainCanvas()
         {
@@ -58,32 +61,13 @@ namespace SEMES_Pixel_Designer
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
+            Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
 
             MouseWheel += _MouseWheel;
             MouseRightButtonDown += _MouseRightButtonDown;
             MouseRightButtonUp += _MouseRightButtonUp;
 
 
-            #region test
-            for (int r=0;r<20;r++)
-            {
-                for(int c = 0; c < 20; c++) { 
-                    List<Vector2> vertexes = new List<Vector2>();
-                    vertexes.Add(new Vector2(r * 5, c * 5));
-                    vertexes.Add(new Vector2(r * 5 + 3, c * 5));
-                    vertexes.Add(new Vector2(r * 5 + 3, c * 5 + 3));
-                    vertexes.Add(new Vector2(r * 5, c * 5 + 3 ));
-
-                    MainWindow.doc.Entities.Add(new Polyline2D(vertexes));
-                }
-            }
-
-            Loaded += delegate
-            {
-                // access ActualWidth and ActualHeight here
-                DrawCanvas(null);
-            };
-            #endregion
 
         }
 
@@ -164,10 +148,75 @@ namespace SEMES_Pixel_Designer
             UpdateCanvas();
         }
 
-        private void _MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void _MouseRightButtonUp(object sender, MouseEventArgs e)
         {
             MouseMove -= _MouseMove;
             offset = null;
         }
+
+        private void DrawPolygon(object obj)
+        {
+            drawingPolygon = new Polygon
+            {
+                Fill = Brushes.Transparent,
+                Stroke = Brushes.Black,
+                StrokeDashOffset = 1,
+            };
+
+            drawingEllipse = new Ellipse
+            {
+                Fill = Brushes.Transparent,
+                Stroke = Brushes.Black,
+                Width = 5,
+                Height = 5,
+            };
+
+            Children.Add(drawingPolygon);
+            Children.Add(drawingEllipse);
+            drawingPolygon.Points.Add(new System.Windows.Point(-10, -10));
+
+            MouseMove += DrawPolygon_MouseMove;
+            MouseLeftButtonUp += DrawPolygon_MouseLeftButtonUp;
+            MouseRightButtonUp += DrawPolygon_MouseRightButtonUp;
+            MouseRightButtonDown -= _MouseRightButtonDown;
+            MouseRightButtonUp -= _MouseRightButtonUp;
+        }
+
+        private void DrawPolygon_MouseMove(object sender, MouseEventArgs e)
+        {
+            SetLeft(drawingEllipse, e.GetPosition(this).X - 2.5);
+            SetTop(drawingEllipse, e.GetPosition(this).Y - 2.5);
+            drawingPolygon.Points[drawingPolygon.Points.Count - 1] = new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y);
+        }
+        private void DrawPolygon_MouseLeftButtonUp(object sender, MouseEventArgs e)
+        {
+            drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+        }
+        
+        private void DrawPolygon_MouseRightButtonUp(object sender, MouseEventArgs e)
+        {
+
+            Children.Remove(drawingPolygon);
+            Children.Remove(drawingEllipse);
+            drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count-1);
+            List<Vector2> vertexes = new List<Vector2>();
+            foreach (var point in drawingPolygon.Points)
+            {
+                vertexes.Add(new Vector2(Coordinates.ToDxfX(point.X), Coordinates.ToDxfY(point.Y)));
+            }
+
+            Polyline2D polyline = new Polyline2D(vertexes);
+            MainWindow.doc.Entities.Add(polyline);
+            Polylines.Add(new PolygonEntity(polyline));
+
+
+            MouseMove -= DrawPolygon_MouseMove;
+            MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
+            MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
+            MouseRightButtonDown += _MouseRightButtonDown;
+            MouseRightButtonUp += _MouseRightButtonUp;
+        }
+
+
     }
 }
