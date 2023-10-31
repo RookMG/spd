@@ -1,4 +1,5 @@
 ﻿using netDxf.Collections;
+using netDxf.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,6 @@ namespace SEMES_Pixel_Designer.Utils
                     y.Add(point.Position.Y);
                 }
             }
-
             if (x.Count <= 0) return;
             minX = x.Min();
             minY = y.Min();
@@ -64,31 +64,32 @@ namespace SEMES_Pixel_Designer.Utils
             return (CanvasRef.ActualHeight - screenY) * (maxY - minY) / CanvasRef.ActualHeight + minY;
         }
 
+
     }
 
 
     public class PointEntity
     {
-        public Ellipse point, selectArea;
+        public System.Windows.Shapes.Ellipse point, selectArea;
 
         private UIElement source = null;
         private bool isDragging = false;
-        private Point position, offset;
+        private System.Windows.Point position, offset;
         private Action<double, double> updateParentAction;
 
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement, double> SetX, SetY;
-        public static double P_RADIUS = 5, SELECT_RADIUS = 10;
+        public static readonly double P_RADIUS = 5, SELECT_RADIUS = 10;
 
         public PointEntity(double x, double y, Action<double, double> updateParentAction)
         {
-            point = new Ellipse
+            point = new System.Windows.Shapes.Ellipse
             {
                 Width = P_RADIUS * 2,
                 Height = P_RADIUS * 2,
                 Fill = Brushes.Black,
             };
-            selectArea = new Ellipse
+            selectArea = new System.Windows.Shapes.Ellipse
             {
                 Width = SELECT_RADIUS * 2,
                 Height = SELECT_RADIUS * 2,
@@ -97,7 +98,7 @@ namespace SEMES_Pixel_Designer.Utils
             };
             selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             selectArea.MouseLeftButtonUp += MouseLeftButtonUp;
-            position = new Point(x, y);
+            position = new System.Windows.Point(x, y);
 
             BindCanvasAction(point);
             BindCanvasAction(selectArea);
@@ -154,11 +155,15 @@ namespace SEMES_Pixel_Designer.Utils
 
     public class PolygonEntity
     {
-        public Polygon polygon;
+        public Polygon polygon, selectArea;
         private UIElement source = null;
 
         private PointCollection offsets = null;
         private List<PointEntity> points = null;
+
+        // dxf 파일에 직접 접근할 때 사용
+        private EntityObject entityObject = null;
+
         private List<double[]> dxfCoords = new List<double[]>();
         private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
 
@@ -170,20 +175,31 @@ namespace SEMES_Pixel_Designer.Utils
         // 단독으로 사용 X
         public void init()
         {
+            // 생성자 아님!
+            // 생성시 공통적으로 호출되는 내용들
+
             polygon = new Polygon();
-            polygon.MouseLeftButtonDown += MouseLeftButtonDown;
-            polygon.MouseLeftButtonUp += MouseLeftButtonUp;
+            selectArea = new Polygon();
+
+
+            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
+            selectArea.MouseLeftButtonUp += MouseLeftButtonUp;
             polygon.Fill = Brushes.Transparent;
             polygon.Stroke = Brushes.Black;
             polygon.StrokeThickness = 1;
+
+            selectArea.Stroke = Brushes.Transparent;
+            selectArea.StrokeThickness = 10;
             points = new List<PointEntity>();
             BindCanvasAction(polygon);
+            BindCanvasAction(selectArea);
         }
 
         // Line 생성자
         public PolygonEntity(netDxf.Entities.Line line)
         {
             init();
+            entityObject = line;
             setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
             setDxfCoordAction.Add((double x, double y) => { line.EndPoint = new netDxf.Vector3(x, y, 0); });
             dxfCoords.Add(new double[] { line.StartPoint.X, line.StartPoint.Y });
@@ -197,6 +213,7 @@ namespace SEMES_Pixel_Designer.Utils
         public PolygonEntity(netDxf.Entities.Polyline2D polyline)
         {
             init();
+            entityObject = polyline;
             setDxfCoordAction = new List<Action<double, double>>();
             foreach (var point in polyline.Vertexes)
             {
@@ -215,6 +232,7 @@ namespace SEMES_Pixel_Designer.Utils
             double screenX = Coordinates.ToScreenX(dxfX);
             double screenY = Coordinates.ToScreenY(dxfY);
             polygon.Points.Add(new System.Windows.Point(screenX, screenY));
+            selectArea.Points.Add(new System.Windows.Point(screenX, screenY));
             points.Add(new PointEntity(screenX, screenY, (nx, ny) => { UpdatePoint(nx, ny, idx, true); }));
         }
         public void AddPoint(netDxf.Vector2 point)
@@ -239,7 +257,8 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void UpdatePoint(double screenX, double screenY, int idx, bool updateDxf)
         {
-            polygon.Points[idx] = new Point(screenX, screenY);
+            polygon.Points[idx] = new System.Windows.Point(screenX, screenY);
+            selectArea.Points[idx] = new System.Windows.Point(screenX, screenY);
             points[idx].MovePosition(screenX, screenY);
 
             double dxfX = Coordinates.ToDxfX(screenX);
@@ -258,9 +277,9 @@ namespace SEMES_Pixel_Designer.Utils
             offsets = new PointCollection();
             for (int i = 0; i < polygon.Points.Count; i++)
             {
-                offsets.Add(new Point(polygon.Points[i].X - e.GetPosition(Coordinates.CanvasRef).X, polygon.Points[i].Y - e.GetPosition(Coordinates.CanvasRef).Y));
+                offsets.Add(new System.Windows.Point(polygon.Points[i].X - e.GetPosition(Coordinates.CanvasRef).X, polygon.Points[i].Y - e.GetPosition(Coordinates.CanvasRef).Y));
             }
-            polygon.MouseMove += MouseMove;
+            selectArea.MouseMove += MouseMove;
         }
 
         private void MouseMove(object sender, MouseEventArgs e)
@@ -275,7 +294,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            polygon.MouseMove -= MouseMove;
+            selectArea.MouseMove -= MouseMove;
             for (int i = 0; i < polygon.Points.Count; i++)
             {
                 UpdatePoint(offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X, offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y, i, true);

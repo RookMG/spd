@@ -49,7 +49,7 @@ namespace SEMES_Pixel_Designer
             PointEntity.SetY = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
-            Background = Brushes.Beige;
+            Background = Brushes.White;
 
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
@@ -65,6 +65,7 @@ namespace SEMES_Pixel_Designer
         {
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
+
         }
 
         public void FitScreen(object obj)
@@ -120,9 +121,6 @@ namespace SEMES_Pixel_Designer
             if (offset == null) return;
             double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth, 
                 dy = (Coordinates.maxY - Coordinates.minY) * (e.GetPosition(this).Y - offset[1]) / ActualHeight;
-            //MessageBox.Show(string.Format("{0},{1},{2},{3} -> {4},{5}",
-            //    Coordinates.minX, Coordinates.minY, Coordinates.maxX, Coordinates.maxY, 
-            //    dx, dy));
             Coordinates.maxX = dx + Coordinates.maxX - Coordinates.minX + offset[2];
             Coordinates.minX = dx + offset[2];
 
