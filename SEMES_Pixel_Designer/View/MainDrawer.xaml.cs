@@ -101,8 +101,27 @@ namespace SEMES_Pixel_Designer
 
         private List<Line> _gridLines = new List<Line>();
         private Color _lineColor = Color.FromArgb(0xFF, 0x66, 0x66, 0x66);
-        public float Zoomfactor { get; set; } = 1.1f;
 
+        private float _zoomfactor = 1.1f;
+
+        //public float Zoomfactor { get; set; } = 1.1f;
+        public float Zoomfactor
+        {
+            get { return _zoomfactor; }
+            set
+            {
+                if (value >= 0 && value <= 10f) // 예: 0에서 100 사이의 값으로 제한
+                {
+                    _zoomfactor = value;
+                }
+                else
+                {
+                    // 범위를 넘어갔을 때 처리
+                    // 여기에 예외를 던지거나, 다른 처리를 수행할 수 있습니다.
+                }
+                //OnPropertyChanged(nameof(Zoomfactor); // OnPropertyChanged 메서드는 INotifyPropertyChanged 구현에 필요합니다.
+            }
+        }
         #endregion
 
 
@@ -167,10 +186,9 @@ namespace SEMES_Pixel_Designer
             PointEntity.BindCanvasAction = Children.Add;
             PointEntity.SetX = SetLeft;
             PointEntity.SetY = SetTop;
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(SPDCanvas), new FrameworkPropertyMetadata(typeof(SPDCanvas)));
             ClipToBounds = true;
             Background = Brushes.Beige;
-
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
 
