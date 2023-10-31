@@ -31,6 +31,7 @@ using Image = netDxf.Entities.Image;
 using Point = netDxf.Entities.Point;
 using Trace = netDxf.Entities.Trace;
 using SEMES_Pixel_Designer.Utils;
+using System.ComponentModel;
 
 namespace SEMES_Pixel_Designer
 {
@@ -42,6 +43,8 @@ namespace SEMES_Pixel_Designer
         public MainWindow()
         {
             InitializeComponent();
+            Closing += ExitHandler;
+
 
             #region 다른 페이지에서 사용할 수 있게 함수 등록
 
@@ -126,22 +129,34 @@ namespace SEMES_Pixel_Designer
         // 새 파일 만들기
         public void NewDxf(object obj)
         {
-            // TODO : 편집 중인 파일이 있다면 저장할지 확인
+            if (!ConfirmSave("새 파일")) return;
 
             doc = new DxfDocument();
             DrawCanvas(null);
             fileName = null;
         }
 
+        // 파일 저장 확인
+        public bool ConfirmSave(string title)
+        {
+            if(Mediator.FileChangeCount == 0) return true;
+            MessageBoxResult result = System.Windows.MessageBox.Show("저장되지 않은 편집 내용이 있습니다. 저장하시겠습니까?", title, MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.Cancel) return false;
+            if (result == MessageBoxResult.Yes) SaveDxf(null);
+            return true;
+        }
+
         // 파일 불러오기
         public void OpenDxf(object obj)
         {
+            if (!ConfirmSave("파일 불러오기")) return;
+
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
             {
-                System.Windows.MessageBox.Show(dlgOpenFile.FileName);
+                // System.Windows.MessageBox.Show(dlgOpenFile.FileName);
                 doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
                 fileName = dlgOpenFile.FileName;
                 // Test(dlgOpenFile.FileName, "test_log.txt");
@@ -178,7 +193,7 @@ namespace SEMES_Pixel_Designer
 
             if (dlgSaveAsFile.ShowDialog().ToString() == "OK")
             {
-                System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
+                // System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
                 doc.Save(dlgSaveAsFile.FileName);
             }
         }
@@ -439,12 +454,15 @@ namespace SEMES_Pixel_Designer
         #region 윈도우 관련 함수들
 
         // 프로그램 종료
-        public void Exit(object obj)
+        public void Exit(object sender)
         {
+            if (!ConfirmSave("프로그램 종료")) this.Close();
+        }
 
-            //TODO : 구현
-            //저장하지 않은 내용 확인 필수!!
 
+        public void ExitHandler(object sender, CancelEventArgs e)
+        {
+            e.Cancel = !ConfirmSave("프로그램 종료");
         }
 
         #endregion
