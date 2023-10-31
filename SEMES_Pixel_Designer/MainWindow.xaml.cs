@@ -134,6 +134,7 @@ namespace SEMES_Pixel_Designer
             doc = new DxfDocument();
             DrawCanvas(null);
             fileName = null;
+            Mediator.FileChangeCount = 0;
         }
 
         // 파일 저장 확인
@@ -182,6 +183,7 @@ namespace SEMES_Pixel_Designer
         {
             if (fileName == null) SaveAsDxf(null);
             else doc.Save(fileName);
+            Mediator.FileChangeCount = 0;
         }
 
         // 파일 다른 이름으로 저장
@@ -195,15 +197,17 @@ namespace SEMES_Pixel_Designer
             {
                 // System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
                 doc.Save(dlgSaveAsFile.FileName);
+                fileName = dlgSaveAsFile.FileName;
             }
+            Mediator.FileChangeCount = 0;
         }
 
         // 파일 자동 임시저장
         public void SaveBackupDxf(object obj)
         {
-
-            //TODO : 구현
-
+            string backupName = fileName == null ? "./tmpFile.dxf" : fileName;
+            backupName.Replace("dxf", "bak");
+            doc.Save(backupName);
         }
 
         #endregion
