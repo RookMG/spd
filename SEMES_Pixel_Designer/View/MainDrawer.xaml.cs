@@ -1,4 +1,6 @@
-﻿using SEMES_Pixel_Designer.Utils;
+﻿using netDxf;
+using netDxf.Entities;
+using SEMES_Pixel_Designer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,11 +42,13 @@ namespace SEMES_Pixel_Designer
         public MainCanvas()
         {
             // 초기설정
-            Coordinates.CanvasRef = this;
-            SizeChanged += new SizeChangedEventHandler((object sender, SizeChangedEventArgs e) => UpdateCanvas());
 
-            PolygonEntity.BindCanvasAction = Children.Add;
-            PointEntity.BindCanvasAction = Children.Add;
+            Coordinates.CanvasRef = this;
+            SizeChanged += new SizeChangedEventHandler(ResizeWindow);
+
+            Coordinates.BindCanvasAction = Children.Add;
+            Coordinates.UnbindCanvasAction = Children.Remove;
+            Coordinates.SetZIndexAction = SetZIndex;
             PointEntity.SetX = SetLeft;
             PointEntity.SetY = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
@@ -53,11 +57,33 @@ namespace SEMES_Pixel_Designer
 
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
-            Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen );
+            Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
 
             MouseWheel += _MouseWheel;
             MouseRightButtonDown += _MouseRightButtonDown;
             MouseRightButtonUp += _MouseRightButtonUp;
+
+
+            #region test
+            for (int r=0;r<20;r++)
+            {
+                for(int c = 0; c < 20; c++) { 
+                    List<Vector2> vertexes = new List<Vector2>();
+                    vertexes.Add(new Vector2(r * 5, c * 5));
+                    vertexes.Add(new Vector2(r * 5 + 3, c * 5));
+                    vertexes.Add(new Vector2(r * 5 + 3, c * 5 + 3));
+                    vertexes.Add(new Vector2(r * 5, c * 5 + 3 ));
+
+                    MainWindow.doc.Entities.Add(new Polyline2D(vertexes));
+                }
+            }
+
+            Loaded += delegate
+            {
+                // access ActualWidth and ActualHeight here
+                DrawCanvas(null);
+            };
+            #endregion
 
         }
 
@@ -66,6 +92,13 @@ namespace SEMES_Pixel_Designer
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
 
+        }
+
+        public void ResizeWindow(object sender, SizeChangedEventArgs e)
+        {
+            Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
+            Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
+            UpdateCanvas();
         }
 
         public void FitScreen(object obj)
@@ -96,10 +129,11 @@ namespace SEMES_Pixel_Designer
 
         }
 
+
         private void _MouseWheel(object sender, MouseWheelEventArgs e)
         {
             float scaleFactor = 0.1f;
-            Point mousePostion = e.GetPosition(this);
+            System.Windows.Point mousePostion = e.GetPosition(this);
             double xFactor = (Coordinates.maxX - Coordinates.minX) * (e.Delta < 0 ? scaleFactor : -scaleFactor),
                 yFactor = (Coordinates.maxY - Coordinates.minY) * (e.Delta < 0 ? scaleFactor : -scaleFactor);
             Coordinates.maxX += xFactor * (ActualWidth - mousePostion.X) / ActualWidth;
