@@ -15,9 +15,11 @@ namespace SEMES_Pixel_Designer.Utils
 
     public static class Coordinates
     {
-        public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0;
+        public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0;
         public static MainCanvas CanvasRef;
-
+        public static Func<UIElement, int> BindCanvasAction;
+        public static Action<UIElement> UnbindCanvasAction;
+        public static Action<UIElement, int> SetZIndexAction;
 
         public static void UpdateRange(DrawingEntities entities)
         {
@@ -42,8 +44,25 @@ namespace SEMES_Pixel_Designer.Utils
             minY = y.Min();
             maxX = x.Max();
             maxY = y.Max();
-        }
+            AdjustRatio();
 
+        }
+        public static void AdjustRatio()
+        {
+            if ((maxY - minY) / (maxX - minX) > CanvasRef.ActualHeight / CanvasRef.ActualWidth)
+            {
+                double dx = (maxY - minY) * CanvasRef.ActualWidth / (CanvasRef.ActualHeight) - maxX + minX;
+                maxX += dx / 2;
+                minX -= dx / 2;
+            }
+            else
+            {
+                double dy = (maxX - minX) * CanvasRef.ActualHeight / (CanvasRef.ActualWidth) - maxY + minY;
+                maxY += dy / 2;
+                minY -= dy / 2;
+            }
+            ratio = CanvasRef.ActualWidth / (maxX - minX);
+        }
         public static double ToScreenX(double dxfX)
         {
             return (dxfX - minX) * CanvasRef.ActualWidth / (maxX - minX);
@@ -64,6 +83,10 @@ namespace SEMES_Pixel_Designer.Utils
             return (CanvasRef.ActualHeight - screenY) * (maxY - minY) / CanvasRef.ActualHeight + minY;
         }
 
+        public static string ToolTip(double dxfX, double dxfY)
+        {
+            return string.Format("({0},{1})",dxfX,dxfY);
+        }
 
     }
 
@@ -77,9 +100,8 @@ namespace SEMES_Pixel_Designer.Utils
         private System.Windows.Point position, offset;
         private Action<double, double> updateParentAction;
 
-        public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement, double> SetX, SetY;
-        public static readonly double P_RADIUS = 5, SELECT_RADIUS = 10;
+        public static readonly double P_RADIUS = 4, SELECT_RADIUS = 8;
 
         public PointEntity(double x, double y, Action<double, double> updateParentAction)
         {
@@ -100,14 +122,28 @@ namespace SEMES_Pixel_Designer.Utils
             selectArea.MouseLeftButtonUp += MouseLeftButtonUp;
             position = new System.Windows.Point(x, y);
 
-            BindCanvasAction(point);
-            BindCanvasAction(selectArea);
+            Coordinates.SetZIndexAction(point, 3);
+            Coordinates.SetZIndexAction(selectArea, 4);
+            // BindCanvasAction(point);
+            // BindCanvasAction(selectArea);
             UpdatePosition();
             this.updateParentAction = updateParentAction;
         }
 
         public PointEntity(double x, double y) : this(x, y, null)
         {
+        }
+
+        public void BindCanvas()
+        {
+            Coordinates.BindCanvasAction(point);
+            Coordinates.BindCanvasAction(selectArea);
+        }
+
+        public void UnbindCanvas()
+        {
+            Coordinates.UnbindCanvasAction(point);
+            Coordinates.UnbindCanvasAction(selectArea);
         }
 
         private void UpdatePosition()
@@ -164,12 +200,11 @@ namespace SEMES_Pixel_Designer.Utils
         // dxf 파일에 직접 접근할 때 사용
         private EntityObject entityObject = null;
 
-        private bool selected = false;
+        private bool selected = false, visible = false;
 
         private List<double[]> dxfCoords = new List<double[]>();
         private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
 
-        public static Func<UIElement, int> BindCanvasAction;
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
 
 
@@ -193,8 +228,11 @@ namespace SEMES_Pixel_Designer.Utils
             selectArea.Stroke = Brushes.Transparent;
             selectArea.StrokeThickness = 10;
             points = new List<PointEntity>();
-            BindCanvasAction(polygon);
-            BindCanvasAction(selectArea);
+            Coordinates.SetZIndexAction(polygon, 1);
+            Coordinates.SetZIndexAction(selectArea, 2);
+
+            //Coordinates.BindCanvasAction(polygon);
+            //Coordinates.BindCanvasAction(selectArea);
         }
 
         // Line 생성자
@@ -208,6 +246,7 @@ namespace SEMES_Pixel_Designer.Utils
             dxfCoords.Add(new double[] { line.EndPoint.X, line.EndPoint.Y });
             AddPoint(line.StartPoint);
             AddPoint(line.EndPoint);
+            ReDraw();
         }
 
         // 2d polyline 생성자
@@ -223,6 +262,7 @@ namespace SEMES_Pixel_Designer.Utils
                 dxfCoords.Add(new double[] { point.Position.X, point.Position.Y });
                 AddPoint(point.Position);
             }
+            ReDraw();
         }
         #endregion
 
@@ -235,7 +275,9 @@ namespace SEMES_Pixel_Designer.Utils
             double screenY = Coordinates.ToScreenY(dxfY);
             polygon.Points.Add(new System.Windows.Point(screenX, screenY));
             selectArea.Points.Add(new System.Windows.Point(screenX, screenY));
-            points.Add(new PointEntity(screenX, screenY, (nx, ny) => { UpdatePoint(nx, ny, idx, true); }));
+            PointEntity p = new PointEntity(screenX, screenY, (nx, ny) => { UpdatePoint(nx, ny, idx, true); });
+            p.selectArea.ToolTip = Coordinates.ToolTip(dxfX, dxfY);
+            points.Add(p);
         }
         public void AddPoint(netDxf.Vector2 point)
         {
@@ -249,7 +291,28 @@ namespace SEMES_Pixel_Designer.Utils
         public void ReDraw()
         {
             if (dxfCoords == null) return;
-            for (int i = 0; i < polygon.Points.Count; i++) UpdatePoint(i);
+            bool inCanvas = false;
+            for (int i = 0; i < polygon.Points.Count; i++)
+            {
+                UpdatePoint(i);
+                if (Coordinates.minX < dxfCoords[i][0] && Coordinates.maxX > dxfCoords[i][0]
+                    && Coordinates.minY < dxfCoords[i][1] && Coordinates.maxY > dxfCoords[i][1]) inCanvas = true;
+            }
+            if (inCanvas == visible) return;
+            if (inCanvas)
+            {
+                visible = true;
+
+                Coordinates.BindCanvasAction(polygon);
+                Coordinates.BindCanvasAction(selectArea);
+            }
+            else
+            {
+                visible = false;
+
+                Coordinates.UnbindCanvasAction(polygon);
+                Coordinates.UnbindCanvasAction(selectArea);
+            }
         }
 
         private void UpdatePoint(int idx)
@@ -266,6 +329,8 @@ namespace SEMES_Pixel_Designer.Utils
             double dxfX = Coordinates.ToDxfX(screenX);
             double dxfY = Coordinates.ToDxfY(screenY);
 
+            points[idx].selectArea.ToolTip = Coordinates.ToolTip(dxfX, dxfY);
+
             if (!updateDxf) return;
             setDxfCoordAction[idx](dxfX, dxfY);
             dxfCoords[idx][0] = dxfX;
@@ -281,11 +346,13 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 selectedEntities.Add(this);
                 polygon.Stroke = Brushes.Red;
+                foreach (PointEntity point in points) point.BindCanvas();
             }
             else
             {
                 selectedEntities.Remove(this);
                 polygon.Stroke = Brushes.Black;
+                foreach (PointEntity point in points) point.UnbindCanvas();
             }
             selected = status;
         }
@@ -311,7 +378,6 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ClearSelected();
                 ToggleSelected(true);
-                return;
             }
 
 
