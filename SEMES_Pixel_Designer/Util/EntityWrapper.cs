@@ -164,10 +164,13 @@ namespace SEMES_Pixel_Designer.Utils
         // dxf 파일에 직접 접근할 때 사용
         private EntityObject entityObject = null;
 
+        private bool selected = false;
+
         private List<double[]> dxfCoords = new List<double[]>();
         private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
 
         public static Func<UIElement, int> BindCanvasAction;
+        public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
 
 
         #region 생성자
@@ -183,7 +186,6 @@ namespace SEMES_Pixel_Designer.Utils
 
 
             selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
-            selectArea.MouseLeftButtonUp += MouseLeftButtonUp;
             polygon.Fill = Brushes.Transparent;
             polygon.Stroke = Brushes.Black;
             polygon.StrokeThickness = 1;
@@ -270,16 +272,62 @@ namespace SEMES_Pixel_Designer.Utils
             dxfCoords[idx][1] = dxfY;
         }
 
+        private void ToggleSelected(bool status)
+        {
+            if (status == selected) return;
+
+            // TODO : 구현
+            if (status)
+            {
+                selectedEntities.Add(this);
+                polygon.Stroke = Brushes.Red;
+            }
+            else
+            {
+                selectedEntities.Remove(this);
+                polygon.Stroke = Brushes.Black;
+            }
+            selected = status;
+        }
+
+        static public void ClearSelected()
+        {
+            while (selectedEntities.Count > 0) selectedEntities[0].ToggleSelected(false);
+        }
+
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                ToggleSelected(!selected);
+                return;
+            }
+            else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                ToggleSelected(true);
+                return;
+            }
+            else if (!selected)
+            {
+                ClearSelected();
+                ToggleSelected(true);
+                return;
+            }
+
+
             source = (UIElement)sender;
             Mouse.Capture(source);
-            offsets = new PointCollection();
-            for (int i = 0; i < polygon.Points.Count; i++)
+
+            foreach(PolygonEntity selectedEntity in selectedEntities)
             {
-                offsets.Add(new System.Windows.Point(polygon.Points[i].X - e.GetPosition(Coordinates.CanvasRef).X, polygon.Points[i].Y - e.GetPosition(Coordinates.CanvasRef).Y));
+                selectedEntity.offsets = new PointCollection();
+                for (int i = 0; i < selectedEntity.polygon.Points.Count; i++)
+                {
+                    selectedEntity.offsets.Add(new System.Windows.Point(selectedEntity.polygon.Points[i].X - e.GetPosition(Coordinates.CanvasRef).X, selectedEntity.polygon.Points[i].Y - e.GetPosition(Coordinates.CanvasRef).Y));
+                }
+                Coordinates.CanvasRef.MouseMove += selectedEntity.MouseMove;
+                Coordinates.CanvasRef.MouseLeftButtonUp += selectedEntity.MouseLeftButtonUp;
             }
-            selectArea.MouseMove += MouseMove;
         }
 
         private void MouseMove(object sender, MouseEventArgs e)
@@ -294,13 +342,15 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            selectArea.MouseMove -= MouseMove;
+            Coordinates.CanvasRef.MouseMove -= MouseMove;
+            Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             for (int i = 0; i < polygon.Points.Count; i++)
             {
                 UpdatePoint(offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X, offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y, i, true);
             }
             Mouse.Capture(null);
             offsets = null;
+
         }
 
     }
