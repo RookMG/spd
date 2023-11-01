@@ -25,8 +25,27 @@ namespace SEMES_Pixel_Designer
         {
             InitializeComponent();
         }
-
         static public SPDCanvas CanvasRef;
+        private void ChangeBackgroundColor_Click(object sender, RoutedEventArgs e)
+        {
+            if(mainCanvas.Background == Brushes.Black)
+            {
+                mainCanvas.Background = Brushes.White;
+                foreach (var polygonEntity in mainCanvas.Children.OfType<PolygonEntity>())
+                {
+                    polygonEntity.ChangePolygonColor();
+                }
+            }
+            else
+            {
+                mainCanvas.Background = Brushes.Black;
+                foreach (var polygonEntity in mainCanvas.Children.OfType<PolygonEntity>())
+                {
+                    polygonEntity.ChangePolygonColor();
+                }
+            }
+        }
+
     }
 
     public class MainCanvas : Canvas
@@ -92,7 +111,6 @@ namespace SEMES_Pixel_Designer
     public class SPDCanvas : Canvas
     {
         #region 변수 모음
-
         private readonly MatrixTransform _transform = new MatrixTransform();
         private Point _initialMousePosition;
         private bool _dragging;
@@ -101,27 +119,7 @@ namespace SEMES_Pixel_Designer
 
         private List<Line> _gridLines = new List<Line>();
         private Color _lineColor = Color.FromArgb(0xFF, 0x66, 0x66, 0x66);
-
-        private float _zoomfactor = 1.1f;
-
-        //public float Zoomfactor { get; set; } = 1.1f;
-        public float Zoomfactor
-        {
-            get { return _zoomfactor; }
-            set
-            {
-                if (value >= 0 && value <= 10f) // 예: 0에서 100 사이의 값으로 제한
-                {
-                    _zoomfactor = value;
-                }
-                else
-                {
-                    // 범위를 넘어갔을 때 처리
-                    // 여기에 예외를 던지거나, 다른 처리를 수행할 수 있습니다.
-                }
-                //OnPropertyChanged(nameof(Zoomfactor); // OnPropertyChanged 메서드는 INotifyPropertyChanged 구현에 필요합니다.
-            }
-        }
+        public float Zoomfactor { get; set; } = 1.1f;
         #endregion
 
 
@@ -129,10 +127,11 @@ namespace SEMES_Pixel_Designer
         public SPDCanvas()
         {
             MainDrawer.CanvasRef = this;
-            MouseDown += PanAndZoomCanvas_MouseDown;
-            MouseUp += PanAndZoomCanvas_MouseUp;
-            MouseMove += PanAndZoomCanvas_MouseMove;
-            MouseWheel += PanAndZoomCanvas_MouseWheel;
+
+            MouseDown += Canvas_MouseDown;
+            MouseUp += Canvas_MouseUp;
+            MouseMove += Canvas_MouseMove;
+            MouseWheel += Canvas_MouseWheel;
 
             for (int x = -4000; x <= 4000; x += 100)
             {
@@ -188,13 +187,9 @@ namespace SEMES_Pixel_Designer
             PointEntity.SetY = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SPDCanvas), new FrameworkPropertyMetadata(typeof(SPDCanvas)));
             ClipToBounds = true;
-            Background = Brushes.Beige;
+            Background = Brushes.White;
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
-
-
-
-
 
             PolygonEntity ptest = new PolygonEntity();
             ptest.AddPoint(200, 200);
@@ -212,15 +207,11 @@ namespace SEMES_Pixel_Designer
             ptest3.AddPoint(70, 100);
             ptest3.AddPoint(20, 50);
 
-
-
         }
 
 
 
-
-
-        public void PanAndZoomCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        public void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Right)
             {
@@ -242,13 +233,13 @@ namespace SEMES_Pixel_Designer
             }
         }
 
-        public void PanAndZoomCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        public void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             _dragging = false;
             _selectedElement = null;
         }
 
-        public void PanAndZoomCanvas_MouseMove(object sender, MouseEventArgs e)
+        public void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.RightButton == MouseButtonState.Pressed)
             {
@@ -276,7 +267,7 @@ namespace SEMES_Pixel_Designer
             }
         }
 
-        public void PanAndZoomCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        public void Canvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             float scaleFactor = Zoomfactor;
             if (e.Delta < 0)
@@ -316,7 +307,7 @@ namespace SEMES_Pixel_Designer
                 //MessageBox.Show(line.StartPoint.ToString());
                 //lineEntity.AddPoint(line.StartPoint.X, line.StartPoint.Y);
                 //lineEntity.AddPoint(line.EndPoint.X, line.EndPoint.Y);
-
+             
                 lineEntity.AddPoint(100, 100);
                 lineEntity.AddPoint(300, 150);
                 Lines.Add(lineEntity);
