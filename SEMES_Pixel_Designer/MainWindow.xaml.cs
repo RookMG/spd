@@ -219,7 +219,8 @@ namespace SEMES_Pixel_Designer
         public void Undo(object obj)
         {
 
-            //TODO : 구현
+            Mediator.Undo();
+
 
         }
 
@@ -227,7 +228,7 @@ namespace SEMES_Pixel_Designer
         public void Redo(object obj)
         {
 
-            //TODO : 구현
+            Mediator.Redo();
 
         }
 
@@ -235,7 +236,7 @@ namespace SEMES_Pixel_Designer
         public void DeleteEntities(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DeleteEntities",obj);
 
         }
 
@@ -291,7 +292,7 @@ namespace SEMES_Pixel_Designer
         public void DrawPolygon(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DrawPolygon",null);
 
         }
 

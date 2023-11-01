@@ -1,4 +1,6 @@
-﻿using SEMES_Pixel_Designer.Utils;
+﻿using netDxf;
+using netDxf.Entities;
+using SEMES_Pixel_Designer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Ellipse = System.Windows.Shapes.Ellipse;
 
 namespace SEMES_Pixel_Designer
 {
@@ -24,7 +27,15 @@ namespace SEMES_Pixel_Designer
         public MainDrawer()
         {
             InitializeComponent();
+            mainCanvas.ClipToBounds = true;
 
+            // 성능 체크 해봐야함. 화면이 제대로 업데이트 되지 않는 문제가 있음
+            //mainCanvas.CacheMode = new BitmapCache
+            //{
+            //    EnableClearType=false,
+            //    RenderAtScale=1,
+            //    SnapsToDevicePixels=false,
+            //};
         }
 
     }
@@ -36,15 +47,18 @@ namespace SEMES_Pixel_Designer
         public List<PolygonEntity> Lines = new List<PolygonEntity>();
         public List<PolygonEntity> Polylines = new List<PolygonEntity>();
         public double[] offset = null;
+        public Polygon drawingPolygon = null;
+        public Ellipse drawingEllipse = null;
 
         public MainCanvas()
         {
             // 초기설정
             Coordinates.CanvasRef = this;
-            SizeChanged += new SizeChangedEventHandler((object sender, SizeChangedEventArgs e) => UpdateCanvas());
+            SizeChanged += new SizeChangedEventHandler(ResizeWindow);
 
-            PolygonEntity.BindCanvasAction = Children.Add;
-            PointEntity.BindCanvasAction = Children.Add;
+            Coordinates.BindCanvasAction = Children.Add;
+            Coordinates.UnbindCanvasAction = Children.Remove;
+            Coordinates.SetZIndexAction = SetZIndex;
             PointEntity.SetX = SetLeft;
             PointEntity.SetY = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
@@ -53,11 +67,17 @@ namespace SEMES_Pixel_Designer
 
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
-            Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen );
-
+            Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
+            Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
+            Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
+                DeleteEntities(PolygonEntity.selectedEntities); 
+            });
             MouseWheel += _MouseWheel;
             MouseRightButtonDown += _MouseRightButtonDown;
             MouseRightButtonUp += _MouseRightButtonUp;
+
+            
+
 
         }
 
@@ -66,6 +86,13 @@ namespace SEMES_Pixel_Designer
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
 
+        }
+
+        public void ResizeWindow(object sender, SizeChangedEventArgs e)
+        {
+            Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
+            Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
+            UpdateCanvas();
         }
 
         public void FitScreen(object obj)
@@ -77,6 +104,7 @@ namespace SEMES_Pixel_Designer
         public void DrawCanvas(object obj)
         {
             Children.Clear();
+            UpdateLayout();
 
             Coordinates.UpdateRange(MainWindow.doc.Entities);
 
@@ -96,10 +124,11 @@ namespace SEMES_Pixel_Designer
 
         }
 
+
         private void _MouseWheel(object sender, MouseWheelEventArgs e)
         {
             float scaleFactor = 0.1f;
-            Point mousePostion = e.GetPosition(this);
+            System.Windows.Point mousePostion = e.GetPosition(this);
             double xFactor = (Coordinates.maxX - Coordinates.minX) * (e.Delta < 0 ? scaleFactor : -scaleFactor),
                 yFactor = (Coordinates.maxY - Coordinates.minY) * (e.Delta < 0 ? scaleFactor : -scaleFactor);
             Coordinates.maxX += xFactor * (ActualWidth - mousePostion.X) / ActualWidth;
@@ -130,10 +159,102 @@ namespace SEMES_Pixel_Designer
             UpdateCanvas();
         }
 
-        private void _MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void _MouseRightButtonUp(object sender, MouseEventArgs e)
         {
             MouseMove -= _MouseMove;
             offset = null;
+        }
+
+        private void DrawPolygon(object obj)
+        {
+            drawingPolygon = new Polygon
+            {
+                Fill = Brushes.Transparent,
+                Stroke = Brushes.Black,
+                StrokeDashOffset = 1,
+            };
+
+            drawingEllipse = new Ellipse
+            {
+                Fill = Brushes.Transparent,
+                Stroke = Brushes.Black,
+                Width = 5,
+                Height = 5,
+            };
+
+            Children.Add(drawingPolygon);
+            Children.Add(drawingEllipse);
+            drawingPolygon.Points.Add(new System.Windows.Point(-10, -10));
+
+            MouseMove += DrawPolygon_MouseMove;
+            MouseLeftButtonUp += DrawPolygon_MouseLeftButtonUp;
+            MouseRightButtonUp += DrawPolygon_MouseRightButtonUp;
+            MouseRightButtonDown -= _MouseRightButtonDown;
+            MouseRightButtonUp -= _MouseRightButtonUp;
+        }
+
+        private void DrawPolygon_MouseMove(object sender, MouseEventArgs e)
+        {
+            SetLeft(drawingEllipse, e.GetPosition(this).X - 2.5);
+            SetTop(drawingEllipse, e.GetPosition(this).Y - 2.5);
+            drawingPolygon.Points[drawingPolygon.Points.Count - 1] = new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y);
+        }
+        private void DrawPolygon_MouseLeftButtonUp(object sender, MouseEventArgs e)
+        {
+            drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+        }
+        
+        private void DrawPolygon_MouseRightButtonUp(object sender, MouseEventArgs e)
+        {
+
+            Children.Remove(drawingPolygon);
+            Children.Remove(drawingEllipse);
+            drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count-1);
+            PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon);
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    Polylines.Add(polygonEntity);
+                },
+                () => { 
+                    Polylines.Remove(polygonEntity);
+                    polygonEntity.Delete();
+                },
+                () =>
+                {
+                    Polylines.Add(polygonEntity);
+                    polygonEntity.Restore();
+                },
+                () =>
+                {
+                    polygonEntity.Remove();
+                }
+            ));
+
+            UpdateLayout();
+            MouseMove -= DrawPolygon_MouseMove;
+            MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
+            MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
+            MouseRightButtonDown += _MouseRightButtonDown;
+            MouseRightButtonUp += _MouseRightButtonUp;
+        }
+
+        private void DeleteEntities(IEnumerable<PolygonEntity> entities)
+        {
+            List<PolygonEntity> target = new List<PolygonEntity>(entities);
+            if (target.Count == 0) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Restore();
+                },
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Delete();
+                },
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Remove();
+                }
+            ));
         }
     }
 }
