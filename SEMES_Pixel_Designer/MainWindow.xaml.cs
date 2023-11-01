@@ -321,7 +321,7 @@ namespace SEMES_Pixel_Designer
         public void ZoomIn(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.Zoom",-0.1);
 
         }
 
@@ -329,7 +329,7 @@ namespace SEMES_Pixel_Designer
         public void ZoomOut(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.Zoom",0.1);
 
         }
 

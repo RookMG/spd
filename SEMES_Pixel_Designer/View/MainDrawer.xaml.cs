@@ -69,6 +69,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
             Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
+            Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
                 DeleteEntities(PolygonEntity.selectedEntities); 
             });
@@ -83,6 +84,7 @@ namespace SEMES_Pixel_Designer
 
         public void UpdateCanvas()
         {
+            Coordinates.DrawGrid();
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
         }
@@ -106,7 +108,7 @@ namespace SEMES_Pixel_Designer
             UpdateLayout();
 
             Coordinates.UpdateRange(MainWindow.doc.Entities);
-
+            Coordinates.DrawGrid();
 
             Lines.Clear();
             Polylines.Clear();
@@ -123,19 +125,27 @@ namespace SEMES_Pixel_Designer
 
         }
 
+        public void Zoom(object scaleFactor)
+        {
+            Zoom((double)scaleFactor, new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
+        }
+
+        public void Zoom(double scaleFactor, System.Windows.Point center)
+        {
+            double xFactor = (Coordinates.maxX - Coordinates.minX) * scaleFactor,
+                yFactor = (Coordinates.maxY - Coordinates.minY) * scaleFactor;
+            Coordinates.maxX += xFactor * (ActualWidth - center.X) / ActualWidth;
+            Coordinates.minX -= xFactor * center.X / ActualWidth;
+            Coordinates.maxY += yFactor * center.Y / ActualHeight;
+            Coordinates.minY -= yFactor * (ActualHeight - center.Y) / ActualHeight;
+            Coordinates.AdjustRatio();
+            UpdateCanvas();
+        }
 
         private void _MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            float scaleFactor = 0.1f;
-            System.Windows.Point mousePostion = e.GetPosition(this);
-            double xFactor = (Coordinates.maxX - Coordinates.minX) * (e.Delta < 0 ? scaleFactor : -scaleFactor),
-                yFactor = (Coordinates.maxY - Coordinates.minY) * (e.Delta < 0 ? scaleFactor : -scaleFactor);
-            Coordinates.maxX += xFactor * (ActualWidth - mousePostion.X) / ActualWidth;
-            Coordinates.minX -= xFactor * mousePostion.X / ActualWidth;
-            Coordinates.maxY += yFactor * mousePostion.Y / ActualHeight;
-            Coordinates.minY -= yFactor * (ActualHeight - mousePostion.Y) / ActualHeight;
-            Coordinates.AdjustRatio();
-            UpdateCanvas();
+            double scaleFactor = 0.1;
+            Zoom(e.Delta < 0 ? scaleFactor : -scaleFactor, e.GetPosition(this));
         }
 
 

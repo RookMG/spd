@@ -16,14 +16,18 @@ namespace SEMES_Pixel_Designer.Utils
 
     public static class Coordinates
     {
-        public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0;
+        public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5;
         public static MainCanvas CanvasRef;
+        public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
+        public static SolidColorBrush brush = new SolidColorBrush(Color.FromArgb(0x66, 0x66, 0x66, 0x66));
+
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
 
         public static void UpdateRange(DrawingEntities entities)
         {
+            gridSpacing = 0.5;
             List<double> x = new List<double>(), y = new List<double>();
             foreach (netDxf.Entities.Line line in entities.Lines)
             {
@@ -46,8 +50,8 @@ namespace SEMES_Pixel_Designer.Utils
             maxX = x.Max();
             maxY = y.Max();
             AdjustRatio();
-
         }
+
         public static void AdjustRatio()
         {
             if ((maxY - minY) / (maxX - minX) > CanvasRef.ActualHeight / CanvasRef.ActualWidth)
@@ -64,6 +68,51 @@ namespace SEMES_Pixel_Designer.Utils
             }
             ratio = CanvasRef.ActualWidth / (maxX - minX);
         }
+        public static void DrawGrid()
+        {
+            gridSpacing = Math.Pow(10, Math.Floor(Math.Log10(Math.Max(maxY - minY, maxX - minX))));
+            double sX = Math.Floor(minX / gridSpacing) * gridSpacing, eX = (1 + Math.Floor(maxX / gridSpacing)) * gridSpacing,
+                 sY = Math.Floor(minY / gridSpacing) * gridSpacing, eY = (1 + Math.Floor(maxY / gridSpacing)) * gridSpacing;
+            foreach (System.Windows.Shapes.Line line in gridLines) UnbindCanvasAction(line);
+            gridLines.Clear();
+            for (double mx = sX; mx <= eX; mx += gridSpacing)
+            {
+                for (int i=0;i<10;i++)
+                {
+                    double x = mx + i * gridSpacing / 10;
+                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
+                    {
+                        Stroke = brush,
+                        X1 = ToScreenX(x),
+                        Y1 = ToScreenY(sY),
+                        X2 = ToScreenX(x),
+                        Y2 = ToScreenY(eY),
+                        StrokeThickness = i==0?3:1
+                    };
+                    gridLines.Add(line);
+                    BindCanvasAction(line);
+                }
+            }
+            for (double my = sY; my <= eY; my += gridSpacing)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    double y = my + i * gridSpacing / 10;
+                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
+                    {
+                        Stroke = brush,
+                        X1 = ToScreenX(sX),
+                        Y1 = ToScreenY(y),
+                        X2 = ToScreenX(eX),
+                        Y2 = ToScreenY(y),
+                        StrokeThickness = i==0?3:1
+                    };
+                    gridLines.Add(line);
+                    BindCanvasAction(line);
+                }
+            }
+        }
+
         public static double ToScreenX(double dxfX)
         {
             return (dxfX - minX) * CanvasRef.ActualWidth / (maxX - minX);
