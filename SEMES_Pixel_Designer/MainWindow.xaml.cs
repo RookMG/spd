@@ -206,7 +206,7 @@ namespace SEMES_Pixel_Designer
         public void SaveBackupDxf(object obj)
         {
             string backupName = fileName == null ? "./tmpFile.dxf" : fileName;
-            backupName.Replace("dxf", "bak");
+            backupName = backupName.Substring(0, backupName.Length - 3) + "bak";
             doc.Save(backupName);
         }
 

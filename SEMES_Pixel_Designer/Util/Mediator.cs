@@ -14,7 +14,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         // Deque처럼 사용
         static private List<UndoableAction> UndoStack = new List<UndoableAction>(), RedoStack = new List<UndoableAction>();
-        static private readonly int UNDO_LIMIT = 50;
+        static private readonly int UNDO_LIMIT = 50, BACKUP_PER_ACTION_COUNT = 5;
         static public int FileChangeCount = 0;
 
         //등록 또는 덮어쓰기
@@ -57,6 +57,7 @@ namespace SEMES_Pixel_Designer.Utils
                 UndoStack.RemoveAt(0);
             }
             FileChangeCount++;
+            if (FileChangeCount % BACKUP_PER_ACTION_COUNT == 0) NotifyColleagues("MainWindow.SaveBackupDxf", null);
         }
 
         static public void Undo()
