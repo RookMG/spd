@@ -27,7 +27,15 @@ namespace SEMES_Pixel_Designer
         public MainDrawer()
         {
             InitializeComponent();
+            mainCanvas.ClipToBounds = true;
 
+            // 성능 체크 해봐야함. 화면이 제대로 업데이트 되지 않는 문제가 있음
+            //mainCanvas.CacheMode = new BitmapCache
+            //{
+            //    EnableClearType=false,
+            //    RenderAtScale=1,
+            //    SnapsToDevicePixels=false,
+            //};
         }
 
     }
@@ -45,7 +53,6 @@ namespace SEMES_Pixel_Designer
         public MainCanvas()
         {
             // 초기설정
-
             Coordinates.CanvasRef = this;
             SizeChanged += new SizeChangedEventHandler(ResizeWindow);
 
@@ -62,11 +69,14 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
             Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
-
+            Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
+                DeleteEntities(PolygonEntity.selectedEntities); 
+            });
             MouseWheel += _MouseWheel;
             MouseRightButtonDown += _MouseRightButtonDown;
             MouseRightButtonUp += _MouseRightButtonUp;
 
+            
 
 
         }
@@ -94,6 +104,7 @@ namespace SEMES_Pixel_Designer
         public void DrawCanvas(object obj)
         {
             Children.Clear();
+            UpdateLayout();
 
             Coordinates.UpdateRange(MainWindow.doc.Entities);
 
@@ -199,17 +210,28 @@ namespace SEMES_Pixel_Designer
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
             drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count-1);
-            List<Vector2> vertexes = new List<Vector2>();
-            foreach (var point in drawingPolygon.Points)
-            {
-                vertexes.Add(new Vector2(Coordinates.ToDxfX(point.X), Coordinates.ToDxfY(point.Y)));
-            }
+            PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon);
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    Polylines.Add(polygonEntity);
+                },
+                () => { 
+                    Polylines.Remove(polygonEntity);
+                    polygonEntity.Delete();
+                },
+                () =>
+                {
+                    Polylines.Add(polygonEntity);
+                    polygonEntity.Restore();
+                },
+                () =>
+                {
+                    polygonEntity.Remove();
+                }
+            ));
 
-            Polyline2D polyline = new Polyline2D(vertexes);
-            MainWindow.doc.Entities.Add(polyline);
-            Polylines.Add(new PolygonEntity(polyline));
-
-
+            UpdateLayout();
             MouseMove -= DrawPolygon_MouseMove;
             MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
             MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
@@ -217,6 +239,22 @@ namespace SEMES_Pixel_Designer
             MouseRightButtonUp += _MouseRightButtonUp;
         }
 
-
+        private void DeleteEntities(IEnumerable<PolygonEntity> entities)
+        {
+            List<PolygonEntity> target = new List<PolygonEntity>(entities);
+            if (target.Count == 0) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Restore();
+                },
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Delete();
+                },
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Remove();
+                }
+            ));
+        }
     }
 }

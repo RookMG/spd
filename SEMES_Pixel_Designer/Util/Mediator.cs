@@ -14,7 +14,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         // Deque처럼 사용
         static private List<UndoableAction> UndoStack = new List<UndoableAction>(), RedoStack = new List<UndoableAction>();
-        static private readonly int UNDO_LIMIT = 20;
+        static private readonly int UNDO_LIMIT = 50;
         static public int FileChangeCount = 0;
 
         //등록 또는 덮어쓰기
@@ -41,8 +41,10 @@ namespace SEMES_Pixel_Designer.Utils
             if (callback_dict.ContainsKey(token)) callback_dict[token](args);
         }
 
-        static public void AddUndoStack(UndoableAction action)
+
+        static public void ExecuteUndoableAction(UndoableAction action)
         {
+            action.InitAction();
             for (int i = RedoStack.Count - 1; i >= 0; i--)
             {
                 RedoStack[i].PopAction();
@@ -77,13 +79,25 @@ namespace SEMES_Pixel_Designer.Utils
 
         public class UndoableAction
         {
-            public Action UndoAction, RedoAction, PopAction;
+            public Action InitAction { get; set; }
+            public Action UndoAction { get; set; }
+            public Action RedoAction { get; set; }
+            public Action PopAction { get; set; }
 
-            public UndoableAction(Action UndoAction, Action RedoAction, Action PopAction)
+            public UndoableAction(Action initAction, Action undoAction, Action redoAction, Action popAction)
             {
-                this.UndoAction = UndoAction;
-                this.RedoAction = RedoAction;
-                this.PopAction = PopAction;
+                InitAction = initAction;
+                UndoAction = undoAction;
+                RedoAction = redoAction;
+                PopAction = popAction;
+            }
+
+            public UndoableAction( Action undoAction, Action redoAction, Action popAction)
+            {
+                InitAction = redoAction;
+                UndoAction = undoAction;
+                RedoAction = redoAction;
+                PopAction = popAction;
             }
 
         }

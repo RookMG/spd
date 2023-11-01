@@ -1,4 +1,5 @@
-﻿using netDxf.Collections;
+﻿using netDxf;
+using netDxf.Collections;
 using netDxf.Entities;
 using System;
 using System.Collections.Generic;
@@ -85,7 +86,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         public static string ToolTip(double dxfX, double dxfY)
         {
-            return string.Format("({0},{1})",dxfX,dxfY);
+            return string.Format("x : {0}, y : {1}",dxfX,dxfY);
         }
 
     }
@@ -264,6 +265,29 @@ namespace SEMES_Pixel_Designer.Utils
             }
             ReDraw();
         }
+
+        public PolygonEntity(Polygon polygon)
+        {
+            List<Vector2> vertexes = new List<Vector2>();
+            foreach (var point in polygon.Points)
+            {
+                vertexes.Add(new Vector2(Coordinates.ToDxfX(point.X), Coordinates.ToDxfY(point.Y)));
+            }
+            Polyline2D polyline = new Polyline2D(vertexes);
+            MainWindow.doc.Entities.Add(polyline);
+
+
+            init();
+            entityObject = polyline;
+            setDxfCoordAction = new List<Action<double, double>>();
+            foreach (var point in polyline.Vertexes)
+            {
+                setDxfCoordAction.Add((double x, double y) => { point.Position = new netDxf.Vector2(x, y); });
+                dxfCoords.Add(new double[] { point.Position.X, point.Position.Y });
+                AddPoint(point.Position);
+            }
+            ReDraw();
+        }
         #endregion
 
 
@@ -313,6 +337,29 @@ namespace SEMES_Pixel_Designer.Utils
                 Coordinates.UnbindCanvasAction(polygon);
                 Coordinates.UnbindCanvasAction(selectArea);
             }
+        }
+
+        public void Delete()
+        {
+            ToggleSelected(false);
+            polygon.Visibility = Visibility.Collapsed;
+            Coordinates.UnbindCanvasAction(polygon);
+            Coordinates.UnbindCanvasAction(selectArea);
+            MainWindow.doc.Entities.Remove(entityObject);
+        }
+        public void Restore()
+        {
+            polygon.Visibility = Visibility.Visible;
+            Coordinates.BindCanvasAction(polygon);
+            Coordinates.BindCanvasAction(selectArea);
+            MainWindow.doc.Entities.Add(entityObject);
+        }
+        public void Remove()
+        {
+            // TODO : 인스턴스 삭제 방법 찾기
+            polygon.Visibility = Visibility.Collapsed;
+            Coordinates.UnbindCanvasAction(polygon);
+            Coordinates.UnbindCanvasAction(selectArea);
         }
 
         private void UpdatePoint(int idx)
