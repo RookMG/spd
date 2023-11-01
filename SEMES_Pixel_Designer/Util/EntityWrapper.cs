@@ -367,6 +367,11 @@ namespace SEMES_Pixel_Designer.Utils
             UpdatePoint(Coordinates.ToScreenX(dxfCoords[idx][0]), Coordinates.ToScreenY(dxfCoords[idx][1]), idx, false);
         }
 
+        private void UpdatePoint(List<double[]> positions)
+        {
+            for(int i=0;i<positions.Count;i++) UpdatePoint(Coordinates.ToScreenX(positions[i][0]), Coordinates.ToScreenY(positions[i][1]), i, true);
+        }
+
         private void UpdatePoint(double screenX, double screenY, int idx, bool updateDxf)
         {
             polygon.Points[idx] = new System.Windows.Point(screenX, screenY);
@@ -425,6 +430,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ClearSelected();
                 ToggleSelected(true);
+                return;
             }
 
 
@@ -438,18 +444,20 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     selectedEntity.offsets.Add(new System.Windows.Point(selectedEntity.polygon.Points[i].X - e.GetPosition(Coordinates.CanvasRef).X, selectedEntity.polygon.Points[i].Y - e.GetPosition(Coordinates.CanvasRef).Y));
                 }
-                Coordinates.CanvasRef.MouseMove += selectedEntity.MouseMove;
-                Coordinates.CanvasRef.MouseLeftButtonUp += selectedEntity.MouseLeftButtonUp;
             }
+            Coordinates.CanvasRef.MouseMove += MouseMove;
+            Coordinates.CanvasRef.MouseLeftButtonUp += MouseLeftButtonUp;
         }
 
         private void MouseMove(object sender, MouseEventArgs e)
         {
-            if (offsets == null) return;
-
-            for (int i = 0; i < polygon.Points.Count; i++)
+            foreach (PolygonEntity selectedEntity in selectedEntities)
             {
-                UpdatePoint(offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X, offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y, i, false);
+                if (selectedEntity.offsets == null) continue;
+                for (int i = 0; i < selectedEntity.polygon.Points.Count; i++)
+                {
+                    selectedEntity.UpdatePoint(selectedEntity.offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X, selectedEntity.offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y, i, false);
+                }
             }
         }
 
@@ -457,10 +465,30 @@ namespace SEMES_Pixel_Designer.Utils
         {
             Coordinates.CanvasRef.MouseMove -= MouseMove;
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
-            for (int i = 0; i < polygon.Points.Count; i++)
+            List<Action> forward = new List<Action>(), backward = new List<Action>();
+            foreach (PolygonEntity selectedEntity in selectedEntities)
             {
-                UpdatePoint(offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X, offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y, i, true);
+                List<double[]> from = new List<double[]>(), to = new List<double[]>();
+                for (int i = 0; i < selectedEntity.polygon.Points.Count; i++)
+                {
+                    from.Add(selectedEntity.dxfCoords[i].Clone() as double[]);
+                    to.Add(new double[] { Coordinates.ToDxfX(selectedEntity.offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(selectedEntity.offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y) });
+                }
+                forward.Add(() => { selectedEntity.UpdatePoint(to); });
+                backward.Add(() => { selectedEntity.UpdatePoint(from); });
             }
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    foreach (Action action in backward) action();
+                },
+                () => {
+                    foreach (Action action in forward) action();
+                },
+                () => {
+                }
+            ));
+
             Mouse.Capture(null);
             offsets = null;
 

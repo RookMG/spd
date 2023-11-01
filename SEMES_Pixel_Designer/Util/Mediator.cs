@@ -84,6 +84,7 @@ namespace SEMES_Pixel_Designer.Utils
             public Action RedoAction { get; set; }
             public Action PopAction { get; set; }
 
+
             public UndoableAction(Action initAction, Action undoAction, Action redoAction, Action popAction)
             {
                 InitAction = initAction;
@@ -92,12 +93,8 @@ namespace SEMES_Pixel_Designer.Utils
                 PopAction = popAction;
             }
 
-            public UndoableAction( Action undoAction, Action redoAction, Action popAction)
+            public UndoableAction(Action undoAction, Action redoAction, Action popAction) : this(redoAction, undoAction, redoAction, popAction)
             {
-                InitAction = redoAction;
-                UndoAction = undoAction;
-                RedoAction = redoAction;
-                PopAction = popAction;
             }
 
         }
