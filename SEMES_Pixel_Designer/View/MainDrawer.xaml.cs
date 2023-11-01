@@ -85,7 +85,6 @@ namespace SEMES_Pixel_Designer
         {
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
-
         }
 
         public void ResizeWindow(object sender, SizeChangedEventArgs e)
@@ -135,6 +134,7 @@ namespace SEMES_Pixel_Designer
             Coordinates.minX -= xFactor * mousePostion.X / ActualWidth;
             Coordinates.maxY += yFactor * mousePostion.Y / ActualHeight;
             Coordinates.minY -= yFactor * (ActualHeight - mousePostion.Y) / ActualHeight;
+            Coordinates.AdjustRatio();
             UpdateCanvas();
         }
 
