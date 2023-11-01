@@ -59,12 +59,14 @@ namespace SEMES_Pixel_Designer
             Coordinates.BindCanvasAction = Children.Add;
             Coordinates.UnbindCanvasAction = Children.Remove;
             Coordinates.SetZIndexAction = SetZIndex;
-            PointEntity.SetX = SetLeft;
-            PointEntity.SetY = SetTop;
+            Coordinates.SetLeftAction = SetLeft;
+            Coordinates.SetTopAction = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
             Background = Brushes.White;
 
+            Children.Add(Coordinates.gridInfoText);
+            SetZIndex(Coordinates.gridInfoText,-1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
@@ -87,6 +89,12 @@ namespace SEMES_Pixel_Designer
             Coordinates.DrawGrid();
             foreach (PolygonEntity line in Lines) line.ReDraw();
             foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
+            foreach (System.Windows.Shapes.Line gridLine in Coordinates.gridLines)
+            {
+                gridLine.MouseWheel += _MouseWheel;
+                gridLine.MouseRightButtonDown += _MouseRightButtonDown;
+                gridLine.MouseRightButtonUp += _MouseRightButtonUp;
+            }
         }
 
         public void ResizeWindow(object sender, SizeChangedEventArgs e)
@@ -105,6 +113,8 @@ namespace SEMES_Pixel_Designer
         public void DrawCanvas(object obj)
         {
             Children.Clear();
+            Children.Add(Coordinates.gridInfoText);
+            SetZIndex(Coordinates.gridInfoText, -1);
             UpdateLayout();
 
             Coordinates.UpdateRange(MainWindow.doc.Entities);
@@ -145,7 +155,7 @@ namespace SEMES_Pixel_Designer
         private void _MouseWheel(object sender, MouseWheelEventArgs e)
         {
             double scaleFactor = 0.1;
-            Zoom(e.Delta < 0 ? scaleFactor : -scaleFactor, e.GetPosition(this));
+            Zoom(e.Delta < 0 ? scaleFactor * 1.1 : -scaleFactor, e.GetPosition(this));
         }
 
 
@@ -177,6 +187,7 @@ namespace SEMES_Pixel_Designer
 
         private void DrawPolygon(object obj)
         {
+            PolygonEntity.ClearSelected();
             drawingPolygon = new Polygon
             {
                 Fill = Brushes.Transparent,

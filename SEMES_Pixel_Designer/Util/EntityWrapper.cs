@@ -19,11 +19,16 @@ namespace SEMES_Pixel_Designer.Utils
         public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5;
         public static MainCanvas CanvasRef;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
-        public static SolidColorBrush brush = new SolidColorBrush(Color.FromArgb(0x66, 0x66, 0x66, 0x66));
+        public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
+        public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x66, 0x66, 0x66, 0x66)),
+            solidBrush = new SolidColorBrush(Colors.Black);
 
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
+        public static Action<UIElement, double> SetLeftAction, SetTopAction;
+
+        public static readonly double MINIMUM_VISIBLE_SIZE = 3;
 
         public static void UpdateRange(DrawingEntities entities)
         {
@@ -82,7 +87,7 @@ namespace SEMES_Pixel_Designer.Utils
                     double x = mx + i * gridSpacing / 10;
                     System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
                     {
-                        Stroke = brush,
+                        Stroke = gridBrush,
                         X1 = ToScreenX(x),
                         Y1 = ToScreenY(sY),
                         X2 = ToScreenX(x),
@@ -91,16 +96,17 @@ namespace SEMES_Pixel_Designer.Utils
                     };
                     gridLines.Add(line);
                     BindCanvasAction(line);
+                    SetZIndexAction(line, -1);
                 }
             }
             for (double my = sY; my <= eY; my += gridSpacing)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    double y = my + i * gridSpacing / 10;
+                    double y = my + i * gridSpacing * 0.1;
                     System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
                     {
-                        Stroke = brush,
+                        Stroke = gridBrush,
                         X1 = ToScreenX(sX),
                         Y1 = ToScreenY(y),
                         X2 = ToScreenX(eX),
@@ -109,8 +115,26 @@ namespace SEMES_Pixel_Designer.Utils
                     };
                     gridLines.Add(line);
                     BindCanvasAction(line);
+                    SetZIndexAction(line, -1);
                 }
             }
+
+            System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
+            {
+                Stroke = solidBrush,
+                X1 = 10+ToScreenX(minX),
+                Y1 = CanvasRef.ActualHeight - 10,
+                X2 = 10+ToScreenX(minX + gridSpacing*0.1),
+                Y2 = CanvasRef.ActualHeight - 10,
+                StrokeThickness = 3
+            };
+
+            gridLines.Add(infoLine);
+            BindCanvasAction(infoLine);
+            SetZIndexAction(infoLine, -1);
+            gridInfoText.Text = " : " + gridSpacing*0.1;
+            SetLeftAction(gridInfoText, 15 + ToScreenX(minX + gridSpacing * 0.1));
+            SetTopAction(gridInfoText, CanvasRef.ActualHeight - 10 - gridInfoText.FontSize );
         }
 
         public static double ToScreenX(double dxfX)
@@ -150,7 +174,6 @@ namespace SEMES_Pixel_Designer.Utils
         private System.Windows.Point position, offset;
         private Action<double, double> updateParentAction;
 
-        public static Action<UIElement, double> SetX, SetY;
         public static readonly double P_RADIUS = 4, SELECT_RADIUS = 8;
 
         public PointEntity(double x, double y, Action<double, double> updateParentAction)
@@ -210,10 +233,10 @@ namespace SEMES_Pixel_Designer.Utils
 
         public void MovePosition(double x, double y)
         {
-            SetX(point, x - P_RADIUS);
-            SetY(point, y - P_RADIUS);
-            SetX(selectArea, x - SELECT_RADIUS);
-            SetY(selectArea, y - SELECT_RADIUS);
+            Coordinates.SetLeftAction(point, x - P_RADIUS);
+            Coordinates.SetTopAction(point, y - P_RADIUS);
+            Coordinates.SetLeftAction(selectArea, x - SELECT_RADIUS);
+            Coordinates.SetTopAction(selectArea, y - SELECT_RADIUS);
         }
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
@@ -250,7 +273,7 @@ namespace SEMES_Pixel_Designer.Utils
         // dxf 파일에 직접 접근할 때 사용
         private EntityObject entityObject = null;
 
-        private bool selected = false, visible = false;
+        private bool selected = false, visible = false, deleted = false;
 
         private List<double[]> dxfCoords = new List<double[]>();
         private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
@@ -363,26 +386,34 @@ namespace SEMES_Pixel_Designer.Utils
 
         public void ReDraw()
         {
-            if (dxfCoords == null) return;
-            bool inCanvas = false;
+            if (dxfCoords == null || deleted) return;
+            List<double> x = new List<double>(), y = new List<double>();
             for (int i = 0; i < polygon.Points.Count; i++)
             {
                 UpdatePoint(i);
-                if (Coordinates.minX < dxfCoords[i][0] && Coordinates.maxX > dxfCoords[i][0]
-                    && Coordinates.minY < dxfCoords[i][1] && Coordinates.maxY > dxfCoords[i][1]) inCanvas = true;
+                x.Add(Coordinates.ToScreenX(dxfCoords[i][0]));
+                y.Add(Coordinates.ToScreenY(dxfCoords[i][1]));
             }
-            if (inCanvas == visible) return;
-            if (inCanvas)
+            double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max(), width = Coordinates.CanvasRef.ActualWidth, height = Coordinates.CanvasRef.ActualHeight;
+            bool valid = 
+                // 최소 크기 이상
+                (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
+                // 화면에 포함됨
+                &&((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height));
+            if (valid == visible) return;
+            if (valid)
             {
                 visible = true;
-
+                polygon.Visibility = Visibility.Visible;
+                selectArea.Visibility = Visibility.Visible;
                 Coordinates.BindCanvasAction(polygon);
                 Coordinates.BindCanvasAction(selectArea);
             }
             else
             {
                 visible = false;
-
+                polygon.Visibility = Visibility.Collapsed;
+                selectArea.Visibility = Visibility.Collapsed;
                 Coordinates.UnbindCanvasAction(polygon);
                 Coordinates.UnbindCanvasAction(selectArea);
             }
@@ -395,6 +426,7 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.UnbindCanvasAction(polygon);
             Coordinates.UnbindCanvasAction(selectArea);
             MainWindow.doc.Entities.Remove(entityObject);
+            deleted = true;
         }
         public void Restore()
         {
@@ -402,13 +434,11 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.BindCanvasAction(polygon);
             Coordinates.BindCanvasAction(selectArea);
             MainWindow.doc.Entities.Add(entityObject);
+            deleted = false;
         }
         public void Remove()
         {
             // TODO : 인스턴스 삭제 방법 찾기
-            polygon.Visibility = Visibility.Collapsed;
-            Coordinates.UnbindCanvasAction(polygon);
-            Coordinates.UnbindCanvasAction(selectArea);
         }
 
         private void UpdatePoint(int idx)
