@@ -543,6 +543,7 @@ namespace SEMES_Pixel_Designer.Utils
             MainWindow.doc.Entities.Add(entityObject);
             foreach (PointEntity pointEntity in points) pointEntity.Restore();
             deleted = false;
+            ReDraw();
         }
         public void Remove()
         {
