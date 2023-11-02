@@ -65,5 +65,5 @@ namespace SEMES_Pixel_Designer
                     ((StackPanel)posi_x.Parent).Children.Add(add_textblock);
                 }
             }*/
-        }
+    }
 }
