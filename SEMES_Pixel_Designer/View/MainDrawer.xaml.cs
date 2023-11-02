@@ -49,7 +49,7 @@ namespace SEMES_Pixel_Designer
         public double[] offset = null;
         public Polygon drawingPolygon = null;
         public Ellipse drawingEllipse = null;
-        public readonly double PASTE_OFFSET = 5;
+        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = 10;
         public int pasteCount = 0;
         public MainCanvas()
         {
@@ -76,14 +76,12 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.Paste", Paste);
             Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
-                DeleteEntities(PolygonEntity.selectedEntities); 
+                DeleteEntities(selectedEntities); 
             });
-            MouseWheel += _MouseWheel;
-            MouseRightButtonDown += _MouseRightButtonDown;
-            MouseRightButtonUp += _MouseRightButtonUp;
 
-            
-
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseWheel += Zoom_MouseWheel;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
         }
 
@@ -94,9 +92,9 @@ namespace SEMES_Pixel_Designer
             foreach (PolygonEntity line in DrawingEntities) line.ReDraw();
             foreach (System.Windows.Shapes.Line gridLine in Coordinates.gridLines)
             {
-                gridLine.MouseWheel += _MouseWheel;
-                gridLine.MouseRightButtonDown += _MouseRightButtonDown;
-                gridLine.MouseRightButtonUp += _MouseRightButtonUp;
+                gridLine.MouseLeftButtonDown += Select_MouseLeftButtonDown;
+                gridLine.MouseWheel += Zoom_MouseWheel;
+                gridLine.MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
         }
 
@@ -193,7 +191,7 @@ namespace SEMES_Pixel_Designer
 
             List<CopyData> clipboardBackup = new List<CopyData>();
             foreach (CopyData copyData in clipboard) clipboardBackup.Add(copyData);
-            PolygonEntity.CopySelected();
+            CopySelected();
 
             List<PolygonEntity> cloned = new List<PolygonEntity>();
             foreach (CopyData data in clipboard)
@@ -266,20 +264,142 @@ namespace SEMES_Pixel_Designer
             UpdateCanvas();
         }
 
-        private void _MouseWheel(object sender, MouseWheelEventArgs e)
+        private void DeleteEntities(IEnumerable<PolygonEntity> entities)
+        {
+            List<PolygonEntity> target = new List<PolygonEntity>(entities);
+            if (target.Count == 0) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Restore();
+                },
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Delete();
+                },
+                () => {
+                    foreach (PolygonEntity entity in target) entity.Remove();
+                }
+            ));
+        }
+
+        private void DrawPolygon(object obj)
+        {
+            ClearSelected();
+            drawingPolygon = new Polygon
+            {
+                Fill = Brushes.Transparent,
+                Stroke = Brushes.Black,
+            };
+            drawingPolygon.StrokeDashArray.Add(5);
+            drawingPolygon.StrokeDashArray.Add(5);
+
+            drawingEllipse = new Ellipse
+            {
+                Fill = Brushes.Transparent,
+                Stroke = Brushes.Black,
+                Width = 5,
+                Height = 5,
+            };
+
+            drawingPolygon.Points.Add(new System.Windows.Point());
+            SetLeft(drawingEllipse, -10);
+            SetTop(drawingEllipse, -10);
+
+            Children.Add(drawingPolygon);
+            Children.Add(drawingEllipse);
+
+
+            MouseLeftButtonDown -= Select_MouseLeftButtonDown;
+            MouseRightButtonDown -= MoveCanvas_MouseRightButtonDown;
+
+            MouseMove += DrawPolygon_MouseMove;
+            MouseLeftButtonUp += DrawPolygon_MouseLeftButtonUp;
+            MouseRightButtonUp += DrawPolygon_MouseRightButtonUp;
+
+        }
+
+
+
+
+        #region 마우스 이벤트
+        private void Zoom_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             double scaleFactor = 0.1;
             Zoom(e.Delta < 0 ? scaleFactor * 1.1 : -scaleFactor, e.GetPosition(this));
         }
 
 
-        private void _MouseRightButtonDown(object sender, MouseEventArgs e)
+        public void Select_MouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+
+            drawingPolygon = new Polygon
+            {
+                Fill = Brushes.Transparent,
+                Stroke = Brushes.Black,
+                StrokeThickness = 0.5
+            };
+            drawingPolygon.StrokeDashArray.Add(5);
+            drawingPolygon.StrokeDashArray.Add(5);
+
+            drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+            drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+            drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+            drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+
+
+            Children.Add(drawingPolygon);
+
+            MouseMove += Select_MouseMove;
+            MouseLeftButtonUp += Select_MouseLeftButtonUp;
+        }
+        private void Select_MouseMove(object sender, MouseEventArgs e)
+        {
+            drawingPolygon.Points[1] = new System.Windows.Point(drawingPolygon.Points[0].X, e.GetPosition(this).Y);
+            drawingPolygon.Points[2] = new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y);
+            drawingPolygon.Points[3] = new System.Windows.Point(e.GetPosition(this).X, drawingPolygon.Points[0].Y);
+        }
+        private void Select_MouseLeftButtonUp(object sender, MouseEventArgs e)
+        {
+            double minSelX = Math.Min(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
+                   maxSelX = Math.Max(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
+                   minSelY = Math.Min(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y),
+                   maxSelY = Math.Max(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y);
+            if (maxSelX + maxSelY - minSelX - minSelY > MIN_SELECT_LENGTH && !Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                ClearSelected();
+            }
+            // TODO: 영역 안의 폴리곤 선택
+
+            List<double> x = new List<double>(), y = new List<double>();
+            foreach (PolygonEntity entity in DrawingEntities)
+            {
+                
+                x.Clear();
+                y.Clear();
+                foreach(var point in entity.polygon.Points)
+                {
+                    x.Add(point.X);
+                    y.Add(point.Y);
+                }
+                double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
+                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY) entity.ToggleSelected((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) ?!entity.selected: true);
+            }
+
+            Children.Remove(drawingPolygon);
+
+            MouseMove -= Select_MouseMove;
+            MouseLeftButtonUp -= Select_MouseLeftButtonUp;
+        }
+        
+
+        private void MoveCanvas_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
             offset = new double[] { e.GetPosition(this).X, e.GetPosition(this).Y, Coordinates.minX , Coordinates.minY };
-            MouseMove += _MouseMove;
+            MouseMove += MoveCanvas_MouseMove;
+            MouseRightButtonUp += MoveCanvas_MouseRightButtonUp;
         }
 
-        private void _MouseMove(object sender, MouseEventArgs e)
+        private void MoveCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (offset == null) return;
             double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth, 
@@ -293,40 +413,12 @@ namespace SEMES_Pixel_Designer
             UpdateCanvas();
         }
 
-        private void _MouseRightButtonUp(object sender, MouseEventArgs e)
+        private void MoveCanvas_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
-            MouseMove -= _MouseMove;
+            MouseMove -= MoveCanvas_MouseMove;
             offset = null;
         }
 
-        private void DrawPolygon(object obj)
-        {
-            PolygonEntity.ClearSelected();
-            drawingPolygon = new Polygon
-            {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
-                StrokeDashOffset = 1,
-            };
-
-            drawingEllipse = new Ellipse
-            {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
-                Width = 5,
-                Height = 5,
-            };
-
-            Children.Add(drawingPolygon);
-            Children.Add(drawingEllipse);
-            drawingPolygon.Points.Add(new System.Windows.Point(-10, -10));
-
-            MouseMove += DrawPolygon_MouseMove;
-            MouseLeftButtonUp += DrawPolygon_MouseLeftButtonUp;
-            MouseRightButtonUp += DrawPolygon_MouseRightButtonUp;
-            MouseRightButtonDown -= _MouseRightButtonDown;
-            MouseRightButtonUp -= _MouseRightButtonUp;
-        }
 
         private void DrawPolygon_MouseMove(object sender, MouseEventArgs e)
         {
@@ -345,8 +437,9 @@ namespace SEMES_Pixel_Designer
             MouseMove -= DrawPolygon_MouseMove;
             MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
             MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
-            MouseRightButtonDown += _MouseRightButtonDown;
-            MouseRightButtonUp += _MouseRightButtonUp;
+
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
@@ -375,23 +468,6 @@ namespace SEMES_Pixel_Designer
 
             UpdateLayout();
         }
-
-        private void DeleteEntities(IEnumerable<PolygonEntity> entities)
-        {
-            List<PolygonEntity> target = new List<PolygonEntity>(entities);
-            if (target.Count == 0) return;
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    foreach (PolygonEntity entity in target) entity.Restore();
-                },
-                () => {
-                    foreach (PolygonEntity entity in target) entity.Delete();
-                },
-                () => {
-                    foreach (PolygonEntity entity in target) entity.Remove();
-                }
-            ));
-        }
+        #endregion
     }
 }

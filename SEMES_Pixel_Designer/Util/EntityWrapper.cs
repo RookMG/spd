@@ -171,7 +171,7 @@ namespace SEMES_Pixel_Designer.Utils
         public System.Windows.Shapes.Ellipse point, selectArea;
 
         private UIElement source = null;
-        private bool isDragging = false;
+        private bool isDragging = false, deleted = false;
         private System.Windows.Point position, offset;
         private Action<double, double> updateParentAction;
 
@@ -232,6 +232,27 @@ namespace SEMES_Pixel_Designer.Utils
             if (updateParentAction != null) updateParentAction(x, y);
         }
 
+        public void Delete()
+        {
+            point.Visibility = Visibility.Collapsed;
+            selectArea.Visibility = Visibility.Collapsed;
+            Coordinates.UnbindCanvasAction(point);
+            Coordinates.UnbindCanvasAction(selectArea);
+            deleted = true;
+        }
+        public void Restore()
+        {
+            point.Visibility = Visibility.Visible;
+            selectArea.Visibility = Visibility.Visible;
+            Coordinates.BindCanvasAction(point);
+            Coordinates.BindCanvasAction(selectArea);
+            deleted = false;
+        }
+        public void Remove()
+        {
+            // TODO : 인스턴스 삭제 방법 찾기
+        }
+
         public void MovePosition(double x, double y)
         {
             Coordinates.SetLeftAction(point, x - P_RADIUS);
@@ -242,6 +263,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             source = (UIElement)sender;
             Mouse.Capture(source);
             isDragging = true;
@@ -258,6 +280,7 @@ namespace SEMES_Pixel_Designer.Utils
         private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             selectArea.MouseMove -= MouseMove;
+            Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             Mouse.Capture(null);
             isDragging = false;
 
@@ -303,7 +326,7 @@ namespace SEMES_Pixel_Designer.Utils
         private EntityObject entityObject = null;
         private PolygonEntityType entityType;
 
-        private bool selected = false, visible = false, deleted = false;
+        public bool selected = false, visible = false, deleted = false;
 
         private List<double[]> dxfCoords = new List<double[]>();
         private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
@@ -363,7 +386,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         // 2d polyline 생성자
         // 3d polyline이 있다면 파일 오픈 시 2d polyline으로 변경해 사용 중 (Mainwindow.OpenDxf 참고);
-        public PolygonEntity(netDxf.Entities.Polyline2D polyline)
+        public PolygonEntity(Polyline2D polyline)
         {
             init();
             entityObject = polyline;
@@ -478,7 +501,6 @@ namespace SEMES_Pixel_Designer.Utils
                 // 최소 크기 이상
                 (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
                 // 화면에 포함됨
-                // TODO : 지금 방법으로는 화면 확대시 선 사라짐. 수정해야함
                 // && ((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height))
                 && maxX>=0&&minX<=width&&maxY>=0&&minY<=height;
             if (valid == visible) return;
@@ -504,21 +526,26 @@ namespace SEMES_Pixel_Designer.Utils
         {
             ToggleSelected(false);
             polygon.Visibility = Visibility.Collapsed;
+            selectArea.Visibility = Visibility.Collapsed;
             Coordinates.UnbindCanvasAction(polygon);
             Coordinates.UnbindCanvasAction(selectArea);
             MainWindow.doc.Entities.Remove(entityObject);
+            foreach (PointEntity pointEntity in points) pointEntity.Delete();
             deleted = true;
         }
         public void Restore()
         {
             polygon.Visibility = Visibility.Visible;
+            selectArea.Visibility = Visibility.Visible;
             Coordinates.BindCanvasAction(polygon);
             Coordinates.BindCanvasAction(selectArea);
             MainWindow.doc.Entities.Add(entityObject);
+            foreach (PointEntity pointEntity in points) pointEntity.Restore();
             deleted = false;
         }
         public void Remove()
         {
+            foreach (PointEntity pointEntity in points) pointEntity.Remove();
             // TODO : 인스턴스 삭제 방법 찾기
         }
 
@@ -549,7 +576,7 @@ namespace SEMES_Pixel_Designer.Utils
             dxfCoords[idx][1] = dxfY;
         }
 
-        private void ToggleSelected(bool status)
+        public void ToggleSelected(bool status)
         {
             if (status == selected) return;
 
@@ -576,6 +603,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
@@ -625,6 +653,7 @@ namespace SEMES_Pixel_Designer.Utils
         {
             Coordinates.CanvasRef.MouseMove -= MouseMove;
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
+            Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             List<Action> forward = new List<Action>(), backward = new List<Action>();
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
