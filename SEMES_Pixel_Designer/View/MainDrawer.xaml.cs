@@ -331,7 +331,7 @@ namespace SEMES_Pixel_Designer
 
         public void Select_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-
+            if(Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
             drawingPolygon = new Polygon
             {
                 Fill = Brushes.Transparent,
@@ -438,8 +438,6 @@ namespace SEMES_Pixel_Designer
             MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
             MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
 
-            MouseLeftButtonDown += Select_MouseLeftButtonDown;
-            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
@@ -467,6 +465,8 @@ namespace SEMES_Pixel_Designer
             ));
 
             UpdateLayout();
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
         }
         #endregion
     }
