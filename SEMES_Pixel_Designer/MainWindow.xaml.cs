@@ -88,7 +88,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.DrawLine", DrawLine);
             Utils.Mediator.Register("MainWindow.DrawRectangle", DrawRectangle);
             Utils.Mediator.Register("MainWindow.DrawPolygon", DrawPolygon);
-            Utils.Mediator.Register("MainWindow.CloneEntites", CloneEntities);
+            Utils.Mediator.Register("MainWindow.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainWindow.MoveEntities", MoveEntities);
             Utils.Mediator.Register("MainWindow.ZoomIn", ZoomIn);
             Utils.Mediator.Register("MainWindow.ZoomOut", ZoomOut);
@@ -304,6 +304,7 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.CloneEntities", null);
 
         }
 

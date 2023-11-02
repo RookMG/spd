@@ -74,6 +74,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
             Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
             Utils.Mediator.Register("MainDrawer.Paste", Paste);
+            Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
                 DeleteEntities(PolygonEntity.selectedEntities); 
             });
@@ -185,6 +186,69 @@ namespace SEMES_Pixel_Designer
             pasteCount++;
         }
 
+        public void CloneEntities(object obj)
+        {
+            int R = 30, C = 30;
+            double intervalX = 100, intervalY = -100;
+
+            List<CopyData> clipboardBackup = new List<CopyData>();
+            foreach (CopyData copyData in clipboard) clipboardBackup.Add(copyData);
+            PolygonEntity.CopySelected();
+
+            List<PolygonEntity> cloned = new List<PolygonEntity>();
+            foreach (CopyData data in clipboard)
+            {
+                for(int r = 0; r < R; r++) { 
+                    for(int c = 0; c < C; c++)
+                    {
+                        if (r == 0 && c == 0) continue;
+
+                        EntityObject entity = data.entity.Clone() as EntityObject;
+                        entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
+                        MainWindow.doc.Entities.Add(entity);
+                        if (data.type == PolygonEntityType.LINE)
+                        {
+                            cloned.Add(new PolygonEntity(entity as netDxf.Entities.Line));
+                        }
+                        else if (data.type == PolygonEntityType.POLYLINE)
+                        {
+                            cloned.Add(new PolygonEntity(entity as Polyline2D));
+                        }
+                    }
+                }
+            }
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    foreach (PolygonEntity entity in cloned)
+                    {
+                        DrawingEntities.Add(entity);
+                    }
+                },
+                () => {
+                    foreach (PolygonEntity entity in cloned)
+                    {
+                        DrawingEntities.Remove(entity);
+                        entity.Delete();
+                    }
+                },
+                () =>
+                {
+                    foreach (PolygonEntity entity in cloned)
+                    {
+                        DrawingEntities.Add(entity);
+                        entity.Restore();
+                    }
+                },
+                () =>
+                {
+                    foreach (PolygonEntity entity in cloned) entity.Remove();
+                }
+            ));
+
+            clipboard = clipboardBackup;
+        }
+
         public void Zoom(object scaleFactor)
         {
             Zoom((double)scaleFactor, new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
@@ -278,9 +342,16 @@ namespace SEMES_Pixel_Designer
         private void DrawPolygon_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
 
+            MouseMove -= DrawPolygon_MouseMove;
+            MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
+            MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
+            MouseRightButtonDown += _MouseRightButtonDown;
+            MouseRightButtonUp += _MouseRightButtonUp;
+
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
             drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count-1);
+            if (drawingPolygon.Points.Count == 0) return;
             PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon, PolygonEntityType.POLYLINE);
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
@@ -303,11 +374,6 @@ namespace SEMES_Pixel_Designer
             ));
 
             UpdateLayout();
-            MouseMove -= DrawPolygon_MouseMove;
-            MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
-            MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
-            MouseRightButtonDown += _MouseRightButtonDown;
-            MouseRightButtonUp += _MouseRightButtonUp;
         }
 
         private void DeleteEntities(IEnumerable<PolygonEntity> entities)
