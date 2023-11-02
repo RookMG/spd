@@ -117,7 +117,6 @@ namespace SEMES_Pixel_Designer.Utils
             BindCanvasAction(polygon);
         }
 
-
         public void AddPoint(double x, double y)
         {
             var idx = polygon.Points.Count;
