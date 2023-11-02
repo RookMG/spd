@@ -28,7 +28,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static Action<UIElement, int> SetZIndexAction;
         public static Action<UIElement, double> SetLeftAction, SetTopAction;
 
-        public static readonly double MINIMUM_VISIBLE_SIZE = 3;
+        public static readonly double MINIMUM_VISIBLE_SIZE = 3, MIN_GRID_SIZE = 15;
 
         public static void UpdateRange(DrawingEntities entities)
         {
@@ -76,6 +76,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static void DrawGrid()
         {
             gridSpacing = Math.Pow(10, Math.Floor(Math.Log10(Math.Max(maxY - minY, maxX - minX))));
+            if(ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;
             double sX = Math.Floor(minX / gridSpacing) * gridSpacing, eX = (1 + Math.Floor(maxX / gridSpacing)) * gridSpacing,
                  sY = Math.Floor(minY / gridSpacing) * gridSpacing, eY = (1 + Math.Floor(maxY / gridSpacing)) * gridSpacing;
             foreach (System.Windows.Shapes.Line line in gridLines) UnbindCanvasAction(line);
@@ -262,6 +263,14 @@ namespace SEMES_Pixel_Designer.Utils
         }
     }
 
+    public enum PolygonEntityType
+    {
+        DOT = 0,
+        LINE = 1,
+        POLYLINE = 2,
+        UNDEFINED = 3
+    }
+
     public class PolygonEntity
     {
         public Polygon polygon, selectArea;
@@ -272,6 +281,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         // dxf 파일에 직접 접근할 때 사용
         private EntityObject entityObject = null;
+        private PolygonEntityType entityType;
 
         private bool selected = false, visible = false, deleted = false;
 
@@ -279,6 +289,14 @@ namespace SEMES_Pixel_Designer.Utils
         private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
 
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
+        public static List<CopyData> clipboard = new List<CopyData>();
+
+        public class CopyData
+        {
+            public EntityObject entity { get; set; }
+            public PolygonEntityType type { get; set; }
+            public Vector3 offset { get; set; }
+        }
 
 
         #region 생성자
@@ -313,6 +331,7 @@ namespace SEMES_Pixel_Designer.Utils
         {
             init();
             entityObject = line;
+            entityType = PolygonEntityType.LINE;
             setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
             setDxfCoordAction.Add((double x, double y) => { line.EndPoint = new netDxf.Vector3(x, y, 0); });
             dxfCoords.Add(new double[] { line.StartPoint.X, line.StartPoint.Y });
@@ -328,6 +347,7 @@ namespace SEMES_Pixel_Designer.Utils
         {
             init();
             entityObject = polyline;
+            entityType = PolygonEntityType.POLYLINE;
             setDxfCoordAction = new List<Action<double, double>>();
             foreach (var point in polyline.Vertexes)
             {
@@ -338,29 +358,68 @@ namespace SEMES_Pixel_Designer.Utils
             ReDraw();
         }
 
-        public PolygonEntity(Polygon polygon)
+        public PolygonEntity(Polygon polygon, PolygonEntityType type)
         {
-            List<Vector2> vertexes = new List<Vector2>();
-            foreach (var point in polygon.Points)
+            if(type == PolygonEntityType.POLYLINE) { 
+                List<Vector2> vertexes = new List<Vector2>();
+                foreach (var point in polygon.Points)
+                {
+                    vertexes.Add(new Vector2(Coordinates.ToDxfX(point.X), Coordinates.ToDxfY(point.Y)));
+                }
+                Polyline2D polyline = new Polyline2D(vertexes);
+                MainWindow.doc.Entities.Add(polyline);
+                entityObject = polyline;
+            }else if(type == PolygonEntityType.LINE)
             {
-                vertexes.Add(new Vector2(Coordinates.ToDxfX(point.X), Coordinates.ToDxfY(point.Y)));
+                netDxf.Entities.Line line = new netDxf.Entities.Line(
+                    new Vector2(Coordinates.ToDxfX(polygon.Points[0].X), Coordinates.ToDxfY(polygon.Points[0].Y)), 
+                    new Vector2(Coordinates.ToDxfX(polygon.Points[1].X), Coordinates.ToDxfY(polygon.Points[1].Y))
+                );
+                MainWindow.doc.Entities.Add(line);
+                entityObject = line;
             }
-            Polyline2D polyline = new Polyline2D(vertexes);
-            MainWindow.doc.Entities.Add(polyline);
-
 
             init();
-            entityObject = polyline;
+
+            entityType = type;
             setDxfCoordAction = new List<Action<double, double>>();
-            foreach (var point in polyline.Vertexes)
+            if (type == PolygonEntityType.POLYLINE)
             {
-                setDxfCoordAction.Add((double x, double y) => { point.Position = new netDxf.Vector2(x, y); });
-                dxfCoords.Add(new double[] { point.Position.X, point.Position.Y });
-                AddPoint(point.Position);
+                foreach (var point in ((Polyline2D)entityObject).Vertexes)
+                {
+                    setDxfCoordAction.Add((double x, double y) => { point.Position = new netDxf.Vector2(x, y); });
+                    dxfCoords.Add(new double[] { point.Position.X, point.Position.Y });
+                    AddPoint(point.Position);
+                }
+            }else if(type == PolygonEntityType.LINE)
+            {
+                netDxf.Entities.Line line = (netDxf.Entities.Line)entityObject;
+                setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
+                setDxfCoordAction.Add((double x, double y) => { line.EndPoint = new netDxf.Vector3(x, y, 0); });
+                dxfCoords.Add(new double[] { line.StartPoint.X, line.StartPoint.Y });
+                dxfCoords.Add(new double[] { line.EndPoint.X, line.EndPoint.Y });
+                AddPoint(line.StartPoint);
+                AddPoint(line.EndPoint);
             }
             ReDraw();
         }
+
         #endregion
+
+        public static void CopySelected()
+        {
+            Coordinates.CanvasRef.pasteCount = 1;
+            clipboard.Clear();
+            foreach (PolygonEntity entity in selectedEntities)
+            {
+                clipboard.Add(new CopyData{
+                    entity = entity.entityObject,
+                    type = entity.entityType,
+                    offset = new Vector3(Coordinates.minX, Coordinates.minY,0)
+                });
+            }
+        }
+
 
 
         public void AddPoint(double dxfX, double dxfY)
@@ -399,6 +458,7 @@ namespace SEMES_Pixel_Designer.Utils
                 // 최소 크기 이상
                 (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
                 // 화면에 포함됨
+                // TODO : 지금 방법으로는 화면 확대시 선 사라짐. 수정해야함
                 &&((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height));
             if (valid == visible) return;
             if (valid)

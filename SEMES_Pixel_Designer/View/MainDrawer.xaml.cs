@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 using Ellipse = System.Windows.Shapes.Ellipse;
 
 namespace SEMES_Pixel_Designer
@@ -44,12 +45,12 @@ namespace SEMES_Pixel_Designer
     {
 
 
-        public List<PolygonEntity> Lines = new List<PolygonEntity>();
-        public List<PolygonEntity> Polylines = new List<PolygonEntity>();
+        public List<PolygonEntity> DrawingEntities = new List<PolygonEntity>();
         public double[] offset = null;
         public Polygon drawingPolygon = null;
         public Ellipse drawingEllipse = null;
-
+        public readonly double PASTE_OFFSET = 5;
+        public int pasteCount = 0;
         public MainCanvas()
         {
             // 초기설정
@@ -72,6 +73,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
             Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
             Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
+            Utils.Mediator.Register("MainDrawer.Paste", Paste);
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
                 DeleteEntities(PolygonEntity.selectedEntities); 
             });
@@ -86,9 +88,9 @@ namespace SEMES_Pixel_Designer
 
         public void UpdateCanvas()
         {
+            pasteCount = 0;
             Coordinates.DrawGrid();
-            foreach (PolygonEntity line in Lines) line.ReDraw();
-            foreach (PolygonEntity polyline in Polylines) polyline.ReDraw();
+            foreach (PolygonEntity line in DrawingEntities) line.ReDraw();
             foreach (System.Windows.Shapes.Line gridLine in Coordinates.gridLines)
             {
                 gridLine.MouseWheel += _MouseWheel;
@@ -120,19 +122,67 @@ namespace SEMES_Pixel_Designer
             Coordinates.UpdateRange(MainWindow.doc.Entities);
             Coordinates.DrawGrid();
 
-            Lines.Clear();
-            Polylines.Clear();
+            DrawingEntities.Clear();
 
             foreach (var line in MainWindow.doc.Entities.Lines)
             {
-                Lines.Add(new PolygonEntity(line));
+                DrawingEntities.Add(new PolygonEntity(line));
             }
 
             foreach (var polyline in MainWindow.doc.Entities.Polylines2D)
             {
-                Polylines.Add(new PolygonEntity(polyline));
+                DrawingEntities.Add(new PolygonEntity(polyline));
             }
 
+        }
+
+        public void Paste(object obj)
+        {
+            double offset = pasteCount * PASTE_OFFSET / Coordinates.ratio;
+            List<PolygonEntity> pasted = new List<PolygonEntity>();
+            foreach (CopyData data in clipboard)
+            {
+                EntityObject entity = data.entity.Clone() as EntityObject;
+                entity.TransformBy(Matrix3.Identity, new Vector3(Coordinates.minX + offset, Coordinates.minY - offset, 0) - data.offset);
+                MainWindow.doc.Entities.Add(entity);
+                if (data.type == PolygonEntityType.LINE)
+                {
+                    pasted.Add(new PolygonEntity(entity as netDxf.Entities.Line));
+                }
+                else if (data.type == PolygonEntityType.POLYLINE)
+                {
+                    pasted.Add(new PolygonEntity(entity as Polyline2D));
+                }
+
+            }
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    foreach (PolygonEntity entity in pasted)
+                    {
+                        DrawingEntities.Add(entity);
+                    }
+                },
+                () => {
+                    foreach (PolygonEntity entity in pasted) { 
+                        DrawingEntities.Remove(entity);
+                        entity.Delete();
+                    }
+                },
+                () =>
+                {
+                    foreach (PolygonEntity entity in pasted)
+                    {
+                        DrawingEntities.Add(entity);
+                        entity.Restore();
+                    }
+                },
+                () =>
+                {
+                    foreach (PolygonEntity entity in pasted) entity.Remove();
+                }
+            ));
+            pasteCount++;
         }
 
         public void Zoom(object scaleFactor)
@@ -231,19 +281,19 @@ namespace SEMES_Pixel_Designer
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
             drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count-1);
-            PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon);
+            PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon, PolygonEntityType.POLYLINE);
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
                 () => {
-                    Polylines.Add(polygonEntity);
+                    DrawingEntities.Add(polygonEntity);
                 },
-                () => { 
-                    Polylines.Remove(polygonEntity);
+                () => {
+                    DrawingEntities.Remove(polygonEntity);
                     polygonEntity.Delete();
                 },
                 () =>
                 {
-                    Polylines.Add(polygonEntity);
+                    DrawingEntities.Add(polygonEntity);
                     polygonEntity.Restore();
                 },
                 () =>
