@@ -161,21 +161,23 @@ namespace SEMES_Pixel_Designer
                 doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
                 fileName = dlgOpenFile.FileName;
                 // Test(dlgOpenFile.FileName, "test_log.txt");
-            }
 
-            for(int i= doc.Entities.Polylines3D.Count()-1;i>=0;i--)
-            {
-                Polyline3D polyline3D = doc.Entities.Polylines3D.ElementAt(i);
-                List<Vector2> vertexes = new List<Vector2>();
-                foreach(var vertex in polyline3D.Vertexes)
+                for (int i = doc.Entities.Polylines3D.Count() - 1; i >= 0; i--)
                 {
-                    vertexes.Add(new Vector2(vertex.X, vertex.Y));
+                    Polyline3D polyline3D = doc.Entities.Polylines3D.ElementAt(i);
+                    List<Vector2> vertexes = new List<Vector2>();
+                    foreach (var vertex in polyline3D.Vertexes)
+                    {
+                        vertexes.Add(new Vector2(vertex.X, vertex.Y));
+                    }
+                    doc.Entities.Add(new Polyline2D(vertexes));
+                    doc.Entities.Remove(polyline3D);
                 }
-                doc.Entities.Add(new Polyline2D(vertexes));
-                doc.Entities.Remove(polyline3D);
+
+                DrawCanvas(null);
+
             }
 
-            DrawCanvas(null);
         }
 
         // 파일 저장
@@ -206,7 +208,7 @@ namespace SEMES_Pixel_Designer
         public void SaveBackupDxf(object obj)
         {
             string backupName = fileName == null ? "./tmpFile.dxf" : fileName;
-            backupName.Replace("dxf", "bak");
+            backupName = backupName.Substring(0, backupName.Length - 3) + "bak";
             doc.Save(backupName);
         }
 
@@ -244,7 +246,7 @@ namespace SEMES_Pixel_Designer
         public void Copy(object obj)
         {
 
-            //TODO : 구현
+            PolygonEntity.CopySelected();
 
         }
 
@@ -252,7 +254,8 @@ namespace SEMES_Pixel_Designer
         public void Cut(object obj)
         {
 
-            //TODO : 구현
+            PolygonEntity.CopySelected();
+            Mediator.NotifyColleagues("MainDrawer.DeleteEntities", obj);
 
         }
 
@@ -260,7 +263,7 @@ namespace SEMES_Pixel_Designer
         public void Paste(object obj)
         {
 
-            //TODO : 구현
+            Utils.Mediator.NotifyColleagues("MainDrawer.Paste", null);
 
         }
 
@@ -321,7 +324,7 @@ namespace SEMES_Pixel_Designer
         public void ZoomIn(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.Zoom",-0.1);
 
         }
 
@@ -329,7 +332,7 @@ namespace SEMES_Pixel_Designer
         public void ZoomOut(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.Zoom",0.1);
 
         }
 
