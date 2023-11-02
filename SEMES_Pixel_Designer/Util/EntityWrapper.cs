@@ -117,19 +117,6 @@ namespace SEMES_Pixel_Designer.Utils
             BindCanvasAction(polygon);
         }
 
-        public void ChangePolygonColor()
-        {
-            if(polygon.Stroke == Brushes.Black)
-            {
-                polygon.Stroke = Brushes.White;
-            }
-            else
-            {
-                polygon.Stroke = Brushes.Black;
-            }
-        }
-
-
         public void AddPoint(double x, double y)
         {
             var idx = polygon.Points.Count;

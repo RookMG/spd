@@ -28,24 +28,12 @@ namespace SEMES_Pixel_Designer
         static public SPDCanvas CanvasRef;
         private void ChangeBackgroundColor_Click(object sender, RoutedEventArgs e)
         {
-            if(mainCanvas.Background == Brushes.Black)
+            if (CanvasRef != null)
             {
-                mainCanvas.Background = Brushes.White;
-                foreach (var polygonEntity in mainCanvas.Children.OfType<PolygonEntity>())
-                {
-                    polygonEntity.ChangePolygonColor();
-                }
+                CanvasRef.ChangeCanvasColor();
             }
-            else
-            {
-                mainCanvas.Background = Brushes.Black;
-                foreach (var polygonEntity in mainCanvas.Children.OfType<PolygonEntity>())
-                {
-                    polygonEntity.ChangePolygonColor();
-                }
-            }
-        }
 
+        }
     }
 
     public class MainCanvas : Canvas
@@ -116,7 +104,7 @@ namespace SEMES_Pixel_Designer
         private bool _dragging;
         private UIElement _selectedElement;
         private Vector _draggingDelta;
-
+        private List<PolygonEntity> _polygonEntitys = new List<PolygonEntity>();
         private List<Line> _gridLines = new List<Line>();
         private Color _lineColor = Color.FromArgb(0xFF, 0x66, 0x66, 0x66);
         public float Zoomfactor { get; set; } = 1.1f;
@@ -194,18 +182,21 @@ namespace SEMES_Pixel_Designer
             PolygonEntity ptest = new PolygonEntity();
             ptest.AddPoint(200, 200);
             ptest.AddPoint(300, 200);
+            _polygonEntitys.Add(ptest);
 
             PolygonEntity ptest2 = new PolygonEntity();
             ptest2.AddPoint(100, 100);
             ptest2.AddPoint(300, 150);
             ptest2.AddPoint(200, 100);
             ptest2.AddPoint(200, 50);
+            _polygonEntitys.Add(ptest2);
 
             PolygonEntity ptest3 = new PolygonEntity();
             ptest3.AddPoint(10, 100);
             ptest3.AddPoint(30, 150);
             ptest3.AddPoint(70, 100);
             ptest3.AddPoint(20, 50);
+            _polygonEntitys.Add(ptest3);
 
         }
 
@@ -313,6 +304,34 @@ namespace SEMES_Pixel_Designer
                 Lines.Add(lineEntity);
             }
 
+        }
+
+        public void ChangeCanvasColor()
+        {
+            try
+            {
+                if (Background == Brushes.Black)
+                {
+                    Background = Brushes.White;
+                    foreach (PolygonEntity child in _polygonEntitys)
+                    {
+                        child.polygon.Stroke = Brushes.Black;
+                    }
+                }
+                else
+                {
+                    Background = Brushes.Black;
+                    foreach (PolygonEntity child in _polygonEntitys)
+                    {
+                        child.polygon.Stroke = Brushes.White;
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("예외 발생: " + ex.Message);
+            }
         }
 
 
