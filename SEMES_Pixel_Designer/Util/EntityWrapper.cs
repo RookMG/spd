@@ -236,16 +236,14 @@ namespace SEMES_Pixel_Designer.Utils
         {
             point.Visibility = Visibility.Collapsed;
             selectArea.Visibility = Visibility.Collapsed;
-            Coordinates.UnbindCanvasAction(point);
-            Coordinates.UnbindCanvasAction(selectArea);
+            UnbindCanvas();
             deleted = true;
         }
         public void Restore()
         {
             point.Visibility = Visibility.Visible;
             selectArea.Visibility = Visibility.Visible;
-            Coordinates.BindCanvasAction(point);
-            Coordinates.BindCanvasAction(selectArea);
+            BindCanvas();
             deleted = false;
         }
         public void Remove()
@@ -259,6 +257,7 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.SetTopAction(point, y - P_RADIUS);
             Coordinates.SetLeftAction(selectArea, x - SELECT_RADIUS);
             Coordinates.SetTopAction(selectArea, y - SELECT_RADIUS);
+            position = new System.Windows.Point(x, y);
         }
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
@@ -267,7 +266,7 @@ namespace SEMES_Pixel_Designer.Utils
             source = (UIElement)sender;
             Mouse.Capture(source);
             isDragging = true;
-            offset = new System.Windows.Point(position.X, position.Y);
+            offset = new System.Windows.Point(Coordinates.ToDxfX(position.X), Coordinates.ToDxfY(position.Y));
             selectArea.MouseMove += MouseMove;
         }
 
@@ -284,7 +283,7 @@ namespace SEMES_Pixel_Designer.Utils
             Mouse.Capture(null);
             isDragging = false;
 
-            System.Windows.Point from = new System.Windows.Point(Coordinates.ToDxfX(offset.X), Coordinates.ToDxfY(offset.Y)),
+            System.Windows.Point from = new System.Windows.Point(offset.X, offset.Y),
                 to = new System.Windows.Point(Coordinates.ToDxfX(e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(e.GetPosition(Coordinates.CanvasRef).Y));
 
             UpdatePosition(e.GetPosition(Coordinates.CanvasRef).X, e.GetPosition(Coordinates.CanvasRef).Y);
