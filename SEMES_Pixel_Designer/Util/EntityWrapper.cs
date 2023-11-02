@@ -245,7 +245,7 @@ namespace SEMES_Pixel_Designer.Utils
             source = (UIElement)sender;
             Mouse.Capture(source);
             isDragging = true;
-            offset = position;
+            offset = new System.Windows.Point(position.X, position.Y);
             selectArea.MouseMove += MouseMove;
         }
 
@@ -257,9 +257,29 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            selectArea.MouseMove -= MouseMove;
             Mouse.Capture(null);
             isDragging = false;
-            selectArea.MouseMove -= MouseMove;
+
+            System.Windows.Point from = new System.Windows.Point(Coordinates.ToDxfX(offset.X), Coordinates.ToDxfY(offset.Y)),
+                to = new System.Windows.Point(Coordinates.ToDxfX(e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(e.GetPosition(Coordinates.CanvasRef).Y));
+
+            UpdatePosition(e.GetPosition(Coordinates.CanvasRef).X, e.GetPosition(Coordinates.CanvasRef).Y);
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () =>
+                {
+                    UpdatePosition(Coordinates.ToScreenX(from.X), Coordinates.ToScreenY(from.Y));
+                },
+                () =>
+                {
+                    UpdatePosition(Coordinates.ToScreenX(to.X), Coordinates.ToScreenY(to.Y));
+                },
+                () =>
+                {
+                }
+            ));
+
         }
     }
 
@@ -459,7 +479,8 @@ namespace SEMES_Pixel_Designer.Utils
                 (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
                 // 화면에 포함됨
                 // TODO : 지금 방법으로는 화면 확대시 선 사라짐. 수정해야함
-                &&((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height));
+                // && ((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height))
+                && maxX>=0&&minX<=width&&maxY>=0&&minY<=height;
             if (valid == visible) return;
             if (valid)
             {
