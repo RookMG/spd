@@ -316,7 +316,8 @@ namespace SEMES_Pixel_Designer.Utils
 
     public class PolygonEntity
     {
-        public Polygon polygon, selectArea;
+        public Polygon polygon;
+        //public Polygon selectArea;
         private UIElement source = null;
 
         private PointCollection offsets = null;
@@ -351,22 +352,22 @@ namespace SEMES_Pixel_Designer.Utils
             // 생성시 공통적으로 호출되는 내용들
 
             polygon = new Polygon();
-            selectArea = new Polygon();
+            //selectArea = new Polygon();
 
 
-            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
+            polygon.MouseLeftButtonDown += MouseLeftButtonDown;
+            //selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             polygon.Fill = Brushes.Transparent;
             polygon.Stroke = Brushes.Black;
             polygon.StrokeThickness = 1;
 
-            selectArea.Stroke = Brushes.Transparent;
-            selectArea.StrokeThickness = 10;
+            //selectArea.Stroke = Brushes.Transparent;
+            //selectArea.StrokeThickness = 10;
             points = new List<PointEntity>();
             Coordinates.SetZIndexAction(polygon, 1);
-            Coordinates.SetZIndexAction(selectArea, 2);
+            //Coordinates.SetZIndexAction(selectArea, 2);
 
-            //Coordinates.BindCanvasAction(polygon);
-            //Coordinates.BindCanvasAction(selectArea);
+
         }
 
         // Line 생성자
@@ -472,7 +473,7 @@ namespace SEMES_Pixel_Designer.Utils
             double screenX = Coordinates.ToScreenX(dxfX);
             double screenY = Coordinates.ToScreenY(dxfY);
             polygon.Points.Add(new System.Windows.Point(screenX, screenY));
-            selectArea.Points.Add(new System.Windows.Point(screenX, screenY));
+            //selectArea.Points.Add(new System.Windows.Point(screenX, screenY));
             PointEntity p = new PointEntity(screenX, screenY, (nx, ny) => { UpdatePoint(nx, ny, idx, true); });
             p.selectArea.ToolTip = Coordinates.ToolTip(dxfX, dxfY);
             points.Add(p);
@@ -508,17 +509,17 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 visible = true;
                 polygon.Visibility = Visibility.Visible;
-                selectArea.Visibility = Visibility.Visible;
+                //selectArea.Visibility = Visibility.Visible;
                 Coordinates.BindCanvasAction(polygon);
-                Coordinates.BindCanvasAction(selectArea);
+                //Coordinates.BindCanvasAction(selectArea);
             }
             else
             {
                 visible = false;
                 polygon.Visibility = Visibility.Collapsed;
-                selectArea.Visibility = Visibility.Collapsed;
+                //selectArea.Visibility = Visibility.Collapsed;
                 Coordinates.UnbindCanvasAction(polygon);
-                Coordinates.UnbindCanvasAction(selectArea);
+                //Coordinates.UnbindCanvasAction(selectArea);
             }
         }
 
@@ -526,9 +527,9 @@ namespace SEMES_Pixel_Designer.Utils
         {
             ToggleSelected(false);
             polygon.Visibility = Visibility.Collapsed;
-            selectArea.Visibility = Visibility.Collapsed;
+            //selectArea.Visibility = Visibility.Collapsed;
             Coordinates.UnbindCanvasAction(polygon);
-            Coordinates.UnbindCanvasAction(selectArea);
+            //Coordinates.UnbindCanvasAction(selectArea);
             MainWindow.doc.Entities.Remove(entityObject);
             foreach (PointEntity pointEntity in points) pointEntity.Delete();
             deleted = true;
@@ -536,9 +537,9 @@ namespace SEMES_Pixel_Designer.Utils
         public void Restore()
         {
             polygon.Visibility = Visibility.Visible;
-            selectArea.Visibility = Visibility.Visible;
+            //selectArea.Visibility = Visibility.Visible;
             Coordinates.BindCanvasAction(polygon);
-            Coordinates.BindCanvasAction(selectArea);
+            //Coordinates.BindCanvasAction(selectArea);
             MainWindow.doc.Entities.Add(entityObject);
             foreach (PointEntity pointEntity in points) pointEntity.Restore();
             deleted = false;
@@ -562,7 +563,7 @@ namespace SEMES_Pixel_Designer.Utils
         private void UpdatePoint(double screenX, double screenY, int idx, bool updateDxf)
         {
             polygon.Points[idx] = new System.Windows.Point(screenX, screenY);
-            selectArea.Points[idx] = new System.Windows.Point(screenX, screenY);
+            //selectArea.Points[idx] = new System.Windows.Point(screenX, screenY);
             points[idx].MovePosition(screenX, screenY);
 
             double dxfX = Coordinates.ToDxfX(screenX);
