@@ -526,9 +526,13 @@ namespace SEMES_Pixel_Designer.Utils
         {
             ToggleSelected(false);
             polygon.Visibility = Visibility.Collapsed;
-            //selectArea.Visibility = Visibility.Collapsed;
             Coordinates.UnbindCanvasAction(polygon);
+
+            //selectArea.Visibility = Visibility.Collapsed;
             //Coordinates.UnbindCanvasAction(selectArea);
+
+            Coordinates.CanvasRef.DrawingEntities.Remove(this);
+
             MainWindow.doc.Entities.Remove(entityObject);
             foreach (PointEntity pointEntity in points) pointEntity.Delete();
             deleted = true;
@@ -536,9 +540,13 @@ namespace SEMES_Pixel_Designer.Utils
         public void Restore()
         {
             polygon.Visibility = Visibility.Visible;
-            //selectArea.Visibility = Visibility.Visible;
             Coordinates.BindCanvasAction(polygon);
+
+            //selectArea.Visibility = Visibility.Visible;
             //Coordinates.BindCanvasAction(selectArea);
+
+            Coordinates.CanvasRef.DrawingEntities.Add(this);
+
             MainWindow.doc.Entities.Add(entityObject);
             foreach (PointEntity pointEntity in points) pointEntity.Restore();
             deleted = false;
