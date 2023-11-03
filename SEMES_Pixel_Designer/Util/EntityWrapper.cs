@@ -243,7 +243,7 @@ namespace SEMES_Pixel_Designer.Utils
         {
             point.Visibility = Visibility.Visible;
             selectArea.Visibility = Visibility.Visible;
-            BindCanvas();
+            //BindCanvas();
             deleted = false;
         }
         public void Remove()
