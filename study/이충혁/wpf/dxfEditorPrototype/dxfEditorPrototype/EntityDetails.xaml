@@ -1,0 +1,56 @@
+﻿<Page x:Class="dxfEditorPrototype.EntityDetails"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:data="clr-namespace:dxfEditorPrototype"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="200"
+      Title="EntityDetails">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+
+
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
+
+        <!-- ch tree view test -->
+        <TreeView>
+  
+            <TreeViewItem>
+                
+                <TreeViewItem.Header>
+                    <DockPanel>
+                        <CheckBox/>
+                        <TextBlock Text="Entities"/>
+                    </DockPanel>
+                </TreeViewItem.Header>
+
+                <TreeView>
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="">
+                            
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+
+                <TreeViewItem Header="Aaberg"/>
+                <TreeViewItem Header="12345"/>
+            </TreeViewItem>
+            
+        </TreeView>
+        <!--<Image Grid.Row="2" Source="asset/sample/L2.png" Stretch="Fill"/>-->
+        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
+        <Image Grid.Row="4" Source="asset/sample/L3.png" Stretch="Fill"/>
+    </Grid>
+</Page>

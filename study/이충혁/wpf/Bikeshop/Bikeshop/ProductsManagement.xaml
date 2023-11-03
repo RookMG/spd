@@ -6,12 +6,34 @@
       xmlns:local="clr-namespace:Bikeshop"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      Background="{StaticResource background}"
       Title="ProductsManagement">
+    
 
     <Grid>
         <TextBlock HorizontalAlignment="Left" Margin="71,30,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="370,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="187" Margin="407,146,0,0" VerticalAlignment="Top" Width="174" Background="White"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="184,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="365" TextChanged="textBox_TextChanged"/>
+        <Border 
+            DataContext="{Binding SelectedItem, ElementName=dataGrid}"
+            BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="187" Margin="407,146,0,0" VerticalAlignment="Top" Width="174" Background="White">
+            <StackPanel Margin="10">
+                <TextBlock Text="Product details"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Margin="10" />
+                <TextBlock Text="Title" />
+                <TextBox Text="{Binding Title, Mode=TwoWay}" />
+                <TextBlock Text="Price" />
+                <TextBox Text="{Binding Price, Mode=TwoWay}" />
+                <TextBlock Text="Color" />
+                <TextBox Text="{Binding Color, Mode=TwoWay}" />
+                <Border Background="{Binding Color}"
+                        Height="10" />
+                <TextBlock Text="Reference" />
+                <TextBox Text="{Binding Reference, Mode=TwoWay}" />
+            </StackPanel>
+        </Border>
         <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="287" Margin="41,113,0,0" VerticalAlignment="Top" Width="283"/>
 
     </Grid>

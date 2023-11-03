@@ -24,5 +24,18 @@ namespace dxfEditorPrototype
         {
             InitializeComponent();
         }
+
+
+        private void NewDocument(object sender, RoutedEventArgs e)
+        {
+
+            Utils.Mediator.NotifyColleagues("MainWindow.NewDxf", null);
+        }
+
+        private void OpenDocument(object sender, RoutedEventArgs e)
+        {
+            Utils.Mediator.NotifyColleagues("MainWindow.OpenDxf", null);
+        }
     }
+
 }

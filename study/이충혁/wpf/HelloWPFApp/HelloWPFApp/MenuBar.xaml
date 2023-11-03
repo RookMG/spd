@@ -1,0 +1,50 @@
+﻿<Page x:Class="HelloWPFApp.MenuBar"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:HelloWPFApp"
+      mc:Ignorable="d" 
+      d:DesignHeight="20" d:DesignWidth="800"
+      Title="MenuBar">
+    <Menu>
+        <MenuItem Header="파일(_F)">
+            <MenuItem Header="새 파일(_N)" ></MenuItem>
+            <MenuItem Header="열기(_O)" ></MenuItem>
+            <MenuItem Header="저장(_S)"></MenuItem>
+            <MenuItem Header="다른 이름으로 저장"></MenuItem>
+            <Separator />
+            <MenuItem Header="끝내기(_X)"></MenuItem>
+        </MenuItem>
+
+        <MenuItem Header="편집(_E)">
+            <MenuItem Header="실행 취소(_U)" ></MenuItem>
+            <MenuItem Header="다시 실행(_R)"></MenuItem>
+            <MenuItem Header="삭제(_D)"></MenuItem>
+            <MenuItem Header="복사(_C)" ></MenuItem>
+            <MenuItem Header="잘라내기(_T)"></MenuItem>
+            <MenuItem Header="붙여넣기(_P)"></MenuItem>
+        </MenuItem>
+
+        <MenuItem Header="보기(_V)">
+            <MenuItem Header="확대(_+)" ></MenuItem>
+            <MenuItem Header="축소(_-)"></MenuItem>
+            <MenuItem Header="도면을 창 크기에 맞추기"></MenuItem>
+        </MenuItem>
+
+        <MenuItem Header="CAD 파일(_C)">
+            <MenuItem Header="컬러 도면 보기" ></MenuItem>
+            <MenuItem Header="흑백 도면 보기"></MenuItem>
+            <MenuItem Header="흰 배경색" ></MenuItem>
+            <MenuItem Header="검은 배경색"></MenuItem>
+            <Separator />
+            <MenuItem Header="선 굵기 보기"></MenuItem>
+            <Separator />
+            <MenuItem Header="레이어 보기"></MenuItem>
+        </MenuItem>
+
+        <MenuItem Header="설정(_O)">
+            <MenuItem Header="프로그램 정보" ></MenuItem>
+        </MenuItem>
+    </Menu>
+</Page>

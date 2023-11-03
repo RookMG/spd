@@ -154,4 +154,12 @@ WPF UI 라이브러리를 제공한다.
 
 - [.NET Framework와 .NET Core](https://digiconfactory.tistory.com/entry/%EB%8B%B7%EB%84%B7WPF-%EA%B0%9C%EC%9A%94)
 
+- [MVVM 패턴 소개](https://kaki104.tistory.com/830)
+
 - [MVVM 구조 간단한 예시](https://frozenpond.tistory.com/53)
+
+- .NET Framework 공식문서
+
+  - [끌어서 놓기](https://learn.microsoft.com/ko-kr/dotnet/desktop/wpf/advanced/drag-and-drop-overview?view=netframeworkdesktop-4.8)
+
+  - [그리기](https://learn.microsoft.com/ko-kr/dotnet/desktop/wpf/graphics-multimedia/shapes-and-basic-drawing-in-wpf-overview?view=netframeworkdesktop-4.8)
