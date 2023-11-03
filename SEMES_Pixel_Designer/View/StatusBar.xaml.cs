@@ -47,10 +47,7 @@ namespace SEMES_Pixel_Designer
         public void PrintFilepath(object obj)
         {
             // Utils.Mediator.NotifyColleagues("MainWindow.ShowEntitiesPosition", null);
-            var add_textblock = new TextBlock();
-            add_textblock.Width = 350;
-            add_textblock.Text = obj.ToString();
-            ((StackPanel)posi_x.Parent).Children.Add(add_textblock);
+            FilePath.Text = obj.ToString();
         }
 
             /*public void PrintEntityPosition(object obj)
