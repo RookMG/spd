@@ -1059,9 +1059,25 @@ namespace SEMES_Pixel_Designer
                 Byte[] msgByte = new Byte[recvBytes];
                 Array.Copy(ao.Buffer, msgByte, recvBytes);
 
-                // 받은 메세지를 출력
-                /*Console.WriteLine("메세지 받음: {0}", Encoding.Unicode.GetString(msgByte));*/
-                System.Windows.MessageBox.Show($"메세지 받음: {Encoding.Unicode.GetString(msgByte)}");
+                // 데이터 파싱
+                string now_data = Encoding.Unicode.GetString(msgByte);
+                string[] parts = now_data.Split(';');
+
+                foreach(string part in parts)
+                {
+                    System.Windows.MessageBox.Show(part);
+                }
+
+                if(parts[0] == "CMDREADY")
+                {
+                    if(parts[1] == "createNew=0")
+                    {
+                        if(parts[2] == "complete=1")
+                        {
+                            SendMessage("CMDREADY;ACK;Path=CAD\\cadFile.cad");
+                        }
+                    }
+                }
             }
 
             try
@@ -1142,6 +1158,29 @@ namespace SEMES_Pixel_Designer
                 // 예외가 발생하면 예외 정보 출력 후 함수를 종료한다.
                 System.Windows.MessageBox.Show($"자료 수신 대기 도중 오류 발생! 메세지: {ex.Message}");
                 return;
+            }
+        }
+        public void SendMessage(String message)
+        {
+            // 추가 정보를 넘기기 위한 변수 선언
+            // 크기를 설정하는게 의미가 없습니다.
+            // 왜냐하면 바로 밑의 코드에서 문자열을 유니코드 형으로 변환한 바이트 배열을 반환하기 때문에
+            // 최소한의 크기르 배열을 초기화합니다.
+            AsyncObject ao = new AsyncObject(1);
+
+            // 문자열을 바이트 배열으로 변환
+            ao.Buffer = Encoding.Unicode.GetBytes(message);
+
+            ao.WorkingSocket = m_ConnectedClient;
+
+            // 전송 시작!
+            try
+            {
+                m_ConnectedClient.BeginSend(ao.Buffer, 0, ao.Buffer.Length, SocketFlags.None, m_fnSendHandler, ao);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("전송 중 오류 발생!\n메세지: {0}", ex.Message);
             }
         }
         #endregion
