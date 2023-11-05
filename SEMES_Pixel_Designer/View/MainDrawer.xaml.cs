@@ -186,8 +186,15 @@ namespace SEMES_Pixel_Designer
 
         public void CloneEntities(object obj)
         {
-            int R = 30, C = 30;
-            double intervalX = 100, intervalY = -100;
+            Window.GetWindow(this).Close();
+            var param = (Tuple<object, object, object, object>)obj;
+            int R = (int)param.Item1;
+            int C = (int)param.Item2;
+            double intervalX = (double)param.Item3;
+            double intervalY = (double)param.Item4;
+
+            //int R = 30, C = 30;
+            //double intervalX = 100, intervalY = -100;
 
             List<CopyData> clipboardBackup = new List<CopyData>();
             foreach (CopyData copyData in clipboard) clipboardBackup.Add(copyData);

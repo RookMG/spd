@@ -304,7 +304,7 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
-            Mediator.NotifyColleagues("MainDrawer.CloneEntities", null);
+            Mediator.NotifyColleagues("MainDrawer.CloneEntities", obj);
 
         }
 
