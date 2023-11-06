@@ -7,8 +7,13 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainDrawer">
-
-    <Border BorderThickness="1" BorderBrush="LightGray" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <local:MainCanvas x:Name="mainCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-    </Border>
+    <Grid>
+        <!--<Button Content="Change Background Color" Width="50" Height="50" Panel.ZIndex="1" Click="ChangeBackgroundColor_Click"/>-->
+        <Border BorderThickness="1" BorderBrush="LightGray" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <local:MainCanvas x:Name="mainCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">-->
+            <!--<local:SPDCanvas x:Name="spdCanvas" MaxWidth="1000" MaxHeight="1000" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+            <!--</ScrollViewer>-->
+        </Border>
+    </Grid>
 </Page>

@@ -463,6 +463,10 @@ namespace SEMES_Pixel_Designer.Utils
             }
         }
 
+        public void ChangeColor(Brush brush)
+        {
+            polygon.Fill = brush;
+        }
 
 
         public void AddPoint(double dxfX, double dxfY)

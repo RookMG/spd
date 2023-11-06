@@ -108,6 +108,10 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ShowEntitiesPosition", ShowEntitiesPosition);
             Utils.Mediator.Register("MainWindow.Exit", Exit);
 
+            // TcpIp 연결 항시 대기
+            TcpIp tt = new TcpIp();
+            Utils.Mediator.NotifyColleagues("TcpIp.TcpConnection", null);
+
             #endregion
 
         }
@@ -160,6 +164,7 @@ namespace SEMES_Pixel_Designer
                 // System.Windows.MessageBox.Show(dlgOpenFile.FileName);
                 doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
                 fileName = dlgOpenFile.FileName;
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
                 // Test(dlgOpenFile.FileName, "test_log.txt");
 
                 for (int i = doc.Entities.Polylines3D.Count() - 1; i >= 0; i--)
@@ -199,7 +204,9 @@ namespace SEMES_Pixel_Designer
             {
                 // System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
                 doc.Save(dlgSaveAsFile.FileName);
+
                 fileName = dlgSaveAsFile.FileName;
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
             }
             Mediator.FileChangeCount = 0;
         }
@@ -370,6 +377,7 @@ namespace SEMES_Pixel_Designer
             //TODO : 구현
             // ColorBackground("white") : 흰 배경색
             // ColorBackground("black") : 검은 배경색
+            Mediator.NotifyColleagues("MainDrawer.ColorBackground", null);
 
         }
 
@@ -453,7 +461,14 @@ namespace SEMES_Pixel_Designer
         public void ShowEntitiesPosition(object obj)
         {
             //TODO : 구현
-            Utils.Mediator.NotifyColleagues("StatusBar.PrintEntityPosition", obj);
+            if(fileName == null)
+            {
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", null);
+            }
+            else
+            {
+                Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
+            }
         }
 
         #endregion
@@ -1010,6 +1025,7 @@ namespace SEMES_Pixel_Designer
             return dxf;
         }
         #endregion
+
 
     }
 }
