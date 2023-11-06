@@ -38,6 +38,13 @@ namespace SEMES_Pixel_Designer
                 SnapsToDevicePixels = false,
             };
         }
+        static public SPDCanvas CanvasRef;
+        private void ChangeBackgroundColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (CanvasRef != null)
+            {
+                CanvasRef.ChangeCanvasColor();
+            }
 
     }
 
@@ -308,6 +315,7 @@ namespace SEMES_Pixel_Designer
             Children.Add(drawingPolygon);
             Children.Add(drawingEllipse);
 
+    }
 
             MouseLeftButtonDown -= Select_MouseLeftButtonDown;
             MouseRightButtonDown -= MoveCanvas_MouseRightButtonDown;
@@ -384,6 +392,7 @@ namespace SEMES_Pixel_Designer
                 double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
                 if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY) entity.ToggleSelected((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) ?!entity.selected: true);
             }
+            Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
 
             Children.Remove(drawingPolygon);
 
@@ -470,4 +479,6 @@ namespace SEMES_Pixel_Designer
         }
         #endregion
     }
+
+
 }

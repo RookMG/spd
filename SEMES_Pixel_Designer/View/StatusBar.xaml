@@ -13,5 +13,6 @@
         <TextBlock x:Name="posi_x" TextWrapping="Wrap" Width="60" Text="{Binding x_position}"/>
         <TextBlock x:Name="posi_y" TextWrapping="Wrap" Width="60" Text="{Binding y_position}"/>
         <TextBlock TextWrapping="Wrap" Text=" File Path :   "/>
+        <TextBlock x:Name="FilePath" TextWrapping="Wrap" Width="350"/>
     </StackPanel>
 </Page>
