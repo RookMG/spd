@@ -26,7 +26,8 @@ namespace SEMES_Pixel_Designer
             InitializeComponent();
             
             Utils.Mediator.Register("StatusBar.ShowMousePosition", PrintMousePosition);
-            Utils.Mediator.Register("StatusBar.PrintEntityPosition", PrintEntityPosition);
+            Utils.Mediator.Register("StatusBar.PrintFilepath", PrintFilepath);
+            // Utils.Mediator.Register("StatusBar.PrintEntityPosition", PrintEntityPosition);
         }
         public void PrintMousePosition(object obj)
         {
@@ -43,17 +44,23 @@ namespace SEMES_Pixel_Designer
             posi_y.Text = "y : " + size[1].ToString();
         }
 
-        public void PrintEntityPosition(object obj)
+        public void PrintFilepath(object obj)
         {
-            // 각 점의 X와 Y 좌표를 저장할 리스트
-            var tmp = (PointCollection)obj;
-            foreach (var vertex in tmp)
-            {
-                var add_textblock = new TextBlock();
-                add_textblock.Width = 100;
-                add_textblock.Text = "x : " + (vertex.X).ToString() + "  y : " + (vertex.Y).ToString();
-                ((StackPanel)posi_x.Parent).Children.Add(add_textblock);
-            }
+            // Utils.Mediator.NotifyColleagues("MainWindow.ShowEntitiesPosition", null);
+            FilePath.Text = obj.ToString();
         }
+
+            /*public void PrintEntityPosition(object obj)
+            {
+                // 각 점의 X와 Y 좌표를 저장할 리스트
+                var tmp = (PointCollection)obj;
+                foreach (var vertex in tmp)
+                {
+                    var add_textblock = new TextBlock();
+                    add_textblock.Width = 100;
+                    add_textblock.Text = "x : " + (vertex.X).ToString() + "  y : " + (vertex.Y).ToString();
+                    ((StackPanel)posi_x.Parent).Children.Add(add_textblock);
+                }
+            }*/
     }
 }
