@@ -206,7 +206,9 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\icons8-connected-48.png" />
+    <Resource Include="Asset\icon\icons8-connected-48.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
