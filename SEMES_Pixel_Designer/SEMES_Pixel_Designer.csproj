@@ -81,8 +81,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CloneEntities.xaml.cs">
-      <DependentUpon>CloneEntities.xaml</DependentUpon>
+    <Compile Include="CloneEntity.xaml.cs">
+      <DependentUpon>CloneEntity.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\EntityDetails.xaml.cs">
       <DependentUpon>EntityDetails.xaml</DependentUpon>
@@ -102,7 +102,7 @@
     <Compile Include="Util\DelegateCommand.cs" />
     <Compile Include="Util\EntityWrapper.cs" />
     <Compile Include="Util\Mediator.cs" />
-    <Page Include="CloneEntities.xaml">
+    <Page Include="CloneEntity.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -302,9 +302,8 @@ namespace SEMES_Pixel_Designer
         // 선택 도형 N*M개 복제
         public void CloneEntities(object obj)
         {
-
             //TODO : 구현
-            Mediator.NotifyColleagues("MainDrawer.CloneEntities", obj);
+            Mediator.NotifyColleagues("MainDrawer.CloneEntities", null);
 
         }
 

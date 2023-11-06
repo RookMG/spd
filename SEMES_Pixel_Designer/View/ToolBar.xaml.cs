@@ -29,7 +29,7 @@ namespace SEMES_Pixel_Designer
 
         private void Clone_Button_Click(object sender, RoutedEventArgs e)
         {
-            SEMES_Pixel_Designer.CloneEntities setCloneWindow = new SEMES_Pixel_Designer.CloneEntities();
+            SEMES_Pixel_Designer.CloneEntity setCloneWindow = new SEMES_Pixel_Designer.CloneEntity();
             setCloneWindow.ShowDialog();
         }
     }

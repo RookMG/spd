@@ -186,12 +186,12 @@ namespace SEMES_Pixel_Designer
 
         public void CloneEntities(object obj)
         {
-            Window.GetWindow(this).Close();
-            var param = (Tuple<object, object, object, object>)obj;
-            int R = (int)param.Item1;
-            int C = (int)param.Item2;
-            double intervalX = (double)param.Item3;
-            double intervalY = (double)param.Item4;
+            //Window.GetWindow(this).Close();
+            var param = (Tuple<int, int, double, double>)obj;
+            int R = param.Item1;
+            int C = param.Item2;
+            double intervalX = param.Item4;
+            double intervalY = -param.Item3;
 
             //int R = 30, C = 30;
             //double intervalX = 100, intervalY = -100;
@@ -209,7 +209,7 @@ namespace SEMES_Pixel_Designer
                         if (r == 0 && c == 0) continue;
 
                         EntityObject entity = data.entity.Clone() as EntityObject;
-                        entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
+                        entity.TransformBy(Matrix3.Identity, new Vector3(c*intervalX, r*intervalY, 0));
                         MainWindow.doc.Entities.Add(entity);
                         if (data.type == PolygonEntityType.LINE)
                         {
@@ -250,7 +250,6 @@ namespace SEMES_Pixel_Designer
                     foreach (PolygonEntity entity in cloned) entity.Remove();
                 }
             ));
-
             clipboard = clipboardBackup;
         }
 
