@@ -158,6 +158,7 @@ namespace SEMES_Pixel_Designer
 
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
+            dlgOpenFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
             {
@@ -198,6 +199,8 @@ namespace SEMES_Pixel_Designer
         {
             SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
             dlgSaveAsFile.Title = "파일 저장";
+            dlgSaveAsFile.FileName = DateTime.Now.ToString("yyMMdd");
+            dlgSaveAsFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
             dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
 
             if (dlgSaveAsFile.ShowDialog().ToString() == "OK")

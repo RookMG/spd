@@ -111,12 +111,21 @@ namespace SEMES_Pixel_Designer
                 }
                 if (parts[0].Trim() == "GetCADFile")
                 {
+                    string default_Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
                     if (parts[1].StartsWith("Type="))
                     {
                         string getType = parts[1].Substring(5);
                         if(getType == "TEMPTYPE")
                         {
-                            SendMessage("GetCADFile;ACK;Path=E:\\CadFile\\TEMPTYPE\\231103_164555.dxf");
+                            default_Path += getType;
+                            if(MainWindow.fileName == null)
+                            {
+                                SendMessage("GetCADFile;NAK;");
+                            }
+                            else
+                            {
+                                SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
+                            }
                         }
                         else
                         {
