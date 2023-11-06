@@ -38,6 +38,9 @@
     <Reference Include="netDxf, Version=2022.11.2.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
       <HintPath>packages\netDxf.2022.11.2\lib\net45\netDxf.dll</HintPath>
     </Reference>
+    <Reference Include="netDxfLib">
+      <HintPath>..\..\..\..\Documents\netDxfLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -203,7 +206,9 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\icons8-connected-48.png" />
+    <Resource Include="Asset\icon\icons8-connected-48.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
