@@ -379,6 +379,7 @@ namespace SEMES_Pixel_Designer
             //TODO : 구현
             // ColorBackground("white") : 흰 배경색
             // ColorBackground("black") : 검은 배경색
+            Mediator.NotifyColleagues("MainDrawer.ColorBackground", null);
 
         }
 

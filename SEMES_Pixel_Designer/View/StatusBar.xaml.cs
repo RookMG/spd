@@ -24,30 +24,21 @@ namespace SEMES_Pixel_Designer
         public StatusBar()
         {
             InitializeComponent();
-            
+            PrintFilepath(null);
             Utils.Mediator.Register("StatusBar.ShowMousePosition", PrintMousePosition);
             Utils.Mediator.Register("StatusBar.PrintFilepath", PrintFilepath);
             // Utils.Mediator.Register("StatusBar.PrintEntityPosition", PrintEntityPosition);
         }
         public void PrintMousePosition(object obj)
         {
-            //TODO : 구현
-            double[] size = new double[2];
-            var sizeList = obj as IEnumerable;
-            int count = 0;
-            foreach (var item in sizeList)
-            {
-                size[count] = Convert.ToDouble(item);
-                count++;
-            }
-            posi_x.Text = "x : " + size[0].ToString();
-            posi_y.Text = "y : " + size[1].ToString();
+            Point p = (Point)obj;
+            positionText.Text = string.Format("Mouse Position : ( {0:F4}, {1:F4} )", p.X, p.Y);
         }
 
         public void PrintFilepath(object obj)
         {
-            // Utils.Mediator.NotifyColleagues("MainWindow.ShowEntitiesPosition", null);
-            FilePath.Text = obj.ToString();
+            string path = (string)obj;
+            filePathText.Text = "File Directory : "+(path==null?"새 파일":path);
         }
 
             /*public void PrintEntityPosition(object obj)

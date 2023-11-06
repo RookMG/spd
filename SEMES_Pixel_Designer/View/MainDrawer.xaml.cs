@@ -38,19 +38,12 @@ namespace SEMES_Pixel_Designer
                 SnapsToDevicePixels = false,
             };
         }
-        static public SPDCanvas CanvasRef;
-        private void ChangeBackgroundColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (CanvasRef != null)
-            {
-                CanvasRef.ChangeCanvasColor();
-            }
-
+            
     }
 
     public class MainCanvas : Canvas
     {
-
+        public bool blackBackground = false;
 
         public List<PolygonEntity> DrawingEntities = new List<PolygonEntity>();
         public double[] offset = null;
@@ -71,7 +64,7 @@ namespace SEMES_Pixel_Designer
             Coordinates.SetTopAction = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
-            Background = Brushes.White;
+            Background = blackBackground?Brushes.Black:Brushes.White;
 
             Children.Add(Coordinates.gridInfoText);
             SetZIndex(Coordinates.gridInfoText,-1);
@@ -79,12 +72,15 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
             Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
+            Utils.Mediator.Register("MainDrawer.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
             Utils.Mediator.Register("MainDrawer.Paste", Paste);
             Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
                 DeleteEntities(selectedEntities); 
             });
+
+            MouseMove += Info_MouseMove;
 
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseWheel += Zoom_MouseWheel;
@@ -140,6 +136,12 @@ namespace SEMES_Pixel_Designer
                 DrawingEntities.Add(new PolygonEntity(polyline));
             }
 
+        }
+
+        public void ColorBackground(object obj)
+        {
+            blackBackground = !blackBackground;
+            Background = blackBackground ? Brushes.Black : Brushes.White;
         }
 
         public void Paste(object obj)
@@ -315,7 +317,7 @@ namespace SEMES_Pixel_Designer
             Children.Add(drawingPolygon);
             Children.Add(drawingEllipse);
 
-    }
+    
 
             MouseLeftButtonDown -= Select_MouseLeftButtonDown;
             MouseRightButtonDown -= MoveCanvas_MouseRightButtonDown;
@@ -330,6 +332,12 @@ namespace SEMES_Pixel_Designer
 
 
         #region 마우스 이벤트
+
+        private void Info_MouseMove(object sender, MouseEventArgs e)
+        {
+            Mediator.NotifyColleagues("StatusBar.ShowMousePosition", new System.Windows.Point(Coordinates.ToDxfX(e.GetPosition(this).X), Coordinates.ToDxfY(e.GetPosition(this).Y)));
+        }
+
         private void Zoom_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             double scaleFactor = 0.1;
@@ -392,7 +400,6 @@ namespace SEMES_Pixel_Designer
                 double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
                 if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY) entity.ToggleSelected((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) ?!entity.selected: true);
             }
-            Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
 
             Children.Remove(drawingPolygon);
 
