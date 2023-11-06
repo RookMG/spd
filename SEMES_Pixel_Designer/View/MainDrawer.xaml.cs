@@ -150,7 +150,7 @@ namespace SEMES_Pixel_Designer
             List<PolygonEntity> pasted = new List<PolygonEntity>();
             foreach (CopyData data in clipboard)
             {
-                EntityObject entity = data.entity.Clone() as EntityObject;
+                EntityObject entity = data.GetEntityObject();
                 entity.TransformBy(Matrix3.Identity, new Vector3(Coordinates.minX + offset, Coordinates.minY - offset, 0) - data.offset);
                 MainWindow.doc.Entities.Add(entity);
                 if (data.type == PolygonEntityType.LINE)
@@ -210,7 +210,7 @@ namespace SEMES_Pixel_Designer
                     {
                         if (r == 0 && c == 0) continue;
 
-                        EntityObject entity = data.entity.Clone() as EntityObject;
+                        EntityObject entity = data.GetEntityObject(); ;
                         entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
                         MainWindow.doc.Entities.Add(entity);
                         if (data.type == PolygonEntityType.LINE)

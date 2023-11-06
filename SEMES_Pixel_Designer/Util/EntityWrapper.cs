@@ -336,9 +336,26 @@ namespace SEMES_Pixel_Designer.Utils
 
         public class CopyData
         {
-            public EntityObject entity { get; set; }
+            public Polygon polygon { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
+
+            public EntityObject GetEntityObject()
+            {
+                if(type == PolygonEntityType.LINE)
+                {
+                    netDxf.Entities.Line line = new netDxf.Entities.Line(new Vector2(polygon.Points[0].X, polygon.Points[0].Y), new Vector2(polygon.Points[1].X, polygon.Points[1].Y));
+                    return line;
+                }else if(type == PolygonEntityType.POLYLINE)
+                {
+                    Polyline2D polyline = new Polyline2D();
+                    foreach (System.Windows.Point p in polygon.Points) polyline.Vertexes.Add(new Polyline2DVertex(p.X, p.Y));
+                    return polyline;
+                }
+
+                return null;
+            }
+
         }
 
 
@@ -455,8 +472,10 @@ namespace SEMES_Pixel_Designer.Utils
             clipboard.Clear();
             foreach (PolygonEntity entity in selectedEntities)
             {
+                Polygon copyPolygon = new Polygon();
+                foreach (double[] p in entity.dxfCoords) copyPolygon.Points.Add(new System.Windows.Point(p[0], p[1]));
                 clipboard.Add(new CopyData{
-                    entity = entity.entityObject,
+                    polygon = copyPolygon,
                     type = entity.entityType,
                     offset = new Vector3(Coordinates.minX, Coordinates.minY,0)
                 });
