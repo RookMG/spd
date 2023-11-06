@@ -67,7 +67,7 @@
             <Button CommandParameter="MainWindow.DeleteEntities" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/Trash_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.CloneEntities" Style="{StaticResource ImgBtnStyle}">
+            <Button Click="Clone_Button_Click" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/EditLayoutTable_16x.png" />
             </Button>
             <!--<Button CommandParameter="MainWindow.TcpConnection" Style="{StaticResource ImgBtnStyle}">
