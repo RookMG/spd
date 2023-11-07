@@ -38,12 +38,12 @@ namespace SEMES_Pixel_Designer
                 SnapsToDevicePixels = false,
             };
         }
-            
+
     }
 
     public class MainCanvas : Canvas
     {
-        public bool blackBackground = false;
+        public bool darkMode = false;
 
         public List<PolygonEntity> DrawingEntities = new List<PolygonEntity>();
         public double[] offset = null;
@@ -64,10 +64,10 @@ namespace SEMES_Pixel_Designer
             Coordinates.SetTopAction = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
-            Background = blackBackground?Brushes.Black:Brushes.White;
+            Background = darkMode ? Brushes.Black : Brushes.White;
 
             Children.Add(Coordinates.gridInfoText);
-            SetZIndex(Coordinates.gridInfoText,-1);
+            SetZIndex(Coordinates.gridInfoText, -1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
@@ -76,8 +76,8 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
             Utils.Mediator.Register("MainDrawer.Paste", Paste);
             Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
-            Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj)=> { 
-                DeleteEntities(selectedEntities); 
+            Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj) => {
+                DeleteEntities(selectedEntities);
             });
 
             MouseMove += Info_MouseMove;
@@ -140,8 +140,34 @@ namespace SEMES_Pixel_Designer
 
         public void ColorBackground(object obj)
         {
-            blackBackground = !blackBackground;
-            Background = blackBackground ? Brushes.Black : Brushes.White;
+            //blackBackground = !blackBackground;
+            //Background = blackBackground ? Brushes.Black : Brushes.White;
+            if (darkMode)
+            {
+                Background = Brushes.White;
+                foreach (PolygonEntity child in DrawingEntities)
+                {
+                    child.polygon.Stroke = Brushes.Black;
+                    foreach (PointEntity eachpoint in child.points)
+                    {
+                        eachpoint.point.Fill = Brushes.Black;
+                    }
+                }
+                darkMode = false;
+            }
+            else
+            {
+                Background = Brushes.Black;
+                foreach (PolygonEntity child in DrawingEntities)
+                {
+                    child.polygon.Stroke = Brushes.White;
+                    foreach (PointEntity eachpoint in child.points)
+                    {
+                        eachpoint.point.Fill = Brushes.Blue;
+                    }
+                }
+                darkMode = true;
+            }
         }
 
         public void Paste(object obj)
@@ -172,7 +198,8 @@ namespace SEMES_Pixel_Designer
                     }
                 },
                 () => {
-                    foreach (PolygonEntity entity in pasted) { 
+                    foreach (PolygonEntity entity in pasted)
+                    {
                         DrawingEntities.Remove(entity);
                         entity.Delete();
                     }
@@ -205,13 +232,14 @@ namespace SEMES_Pixel_Designer
             List<PolygonEntity> cloned = new List<PolygonEntity>();
             foreach (CopyData data in clipboard)
             {
-                for(int r = 0; r < R; r++) { 
-                    for(int c = 0; c < C; c++)
+                for (int r = 0; r < R; r++)
+                {
+                    for (int c = 0; c < C; c++)
                     {
                         if (r == 0 && c == 0) continue;
 
                         EntityObject entity = data.entity.Clone() as EntityObject;
-                        entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
+                        entity.TransformBy(Matrix3.Identity, new Vector3(r * intervalX, c * intervalY, 0));
                         MainWindow.doc.Entities.Add(entity);
                         if (data.type == PolygonEntityType.LINE)
                         {
@@ -294,18 +322,31 @@ namespace SEMES_Pixel_Designer
         private void DrawPolygon(object obj)
         {
             ClearSelected();
-            drawingPolygon = new Polygon
+            if (darkMode)
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
-            };
+                drawingPolygon = new Polygon
+                {
+                    Fill = Brushes.Transparent,
+                    Stroke = Brushes.White,
+                };
+            }
+            else
+            {
+                drawingPolygon = new Polygon
+                {
+                    Fill = Brushes.Transparent,
+                    Stroke = Brushes.Black,
+                };
+            }
+
             drawingPolygon.StrokeDashArray.Add(5);
             drawingPolygon.StrokeDashArray.Add(5);
+
 
             drawingEllipse = new Ellipse
             {
                 Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Stroke = Brushes.Yellow,
                 Width = 5,
                 Height = 5,
             };
@@ -317,7 +358,7 @@ namespace SEMES_Pixel_Designer
             Children.Add(drawingPolygon);
             Children.Add(drawingEllipse);
 
-    
+
 
             MouseLeftButtonDown -= Select_MouseLeftButtonDown;
             MouseRightButtonDown -= MoveCanvas_MouseRightButtonDown;
@@ -347,13 +388,27 @@ namespace SEMES_Pixel_Designer
 
         public void Select_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-            if(Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
-            drawingPolygon = new Polygon
+            if (Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
+
+            if (darkMode)
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
-                StrokeThickness = 0.5
-            };
+                drawingPolygon = new Polygon
+                {
+                    Fill = Brushes.Transparent,
+                    Stroke = Brushes.White,
+                    StrokeThickness = 1
+                };
+            }
+            else
+            {
+                drawingPolygon = new Polygon
+                {
+                    Fill = Brushes.Transparent,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1
+                };
+            }
+
             drawingPolygon.StrokeDashArray.Add(5);
             drawingPolygon.StrokeDashArray.Add(5);
 
@@ -389,16 +444,16 @@ namespace SEMES_Pixel_Designer
             List<double> x = new List<double>(), y = new List<double>();
             foreach (PolygonEntity entity in DrawingEntities)
             {
-                
+
                 x.Clear();
                 y.Clear();
-                foreach(var point in entity.polygon.Points)
+                foreach (var point in entity.polygon.Points)
                 {
                     x.Add(point.X);
                     y.Add(point.Y);
                 }
                 double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
-                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY) entity.ToggleSelected((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) ?!entity.selected: true);
+                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY) entity.ToggleSelected((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) ? !entity.selected : true);
             }
 
             Children.Remove(drawingPolygon);
@@ -406,11 +461,11 @@ namespace SEMES_Pixel_Designer
             MouseMove -= Select_MouseMove;
             MouseLeftButtonUp -= Select_MouseLeftButtonUp;
         }
-        
+
 
         private void MoveCanvas_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
-            offset = new double[] { e.GetPosition(this).X, e.GetPosition(this).Y, Coordinates.minX , Coordinates.minY };
+            offset = new double[] { e.GetPosition(this).X, e.GetPosition(this).Y, Coordinates.minX, Coordinates.minY };
             MouseMove += MoveCanvas_MouseMove;
             MouseRightButtonUp += MoveCanvas_MouseRightButtonUp;
         }
@@ -418,7 +473,7 @@ namespace SEMES_Pixel_Designer
         private void MoveCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (offset == null) return;
-            double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth, 
+            double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth,
                 dy = (Coordinates.maxY - Coordinates.minY) * (e.GetPosition(this).Y - offset[1]) / ActualHeight;
             Coordinates.maxX = dx + Coordinates.maxX - Coordinates.minX + offset[2];
             Coordinates.minX = dx + offset[2];
@@ -446,7 +501,7 @@ namespace SEMES_Pixel_Designer
         {
             drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
         }
-        
+
         private void DrawPolygon_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
 
@@ -457,7 +512,7 @@ namespace SEMES_Pixel_Designer
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
-            drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count-1);
+            drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count - 1);
             if (drawingPolygon.Points.Count == 0) return;
             PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon, PolygonEntityType.POLYLINE);
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction

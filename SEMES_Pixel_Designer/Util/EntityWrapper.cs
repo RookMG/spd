@@ -76,14 +76,14 @@ namespace SEMES_Pixel_Designer.Utils
         public static void DrawGrid()
         {
             gridSpacing = Math.Pow(10, Math.Floor(Math.Log10(Math.Max(maxY - minY, maxX - minX))));
-            if(ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;
+            if (ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;
             double sX = Math.Floor(minX / gridSpacing) * gridSpacing, eX = (1 + Math.Floor(maxX / gridSpacing)) * gridSpacing,
                  sY = Math.Floor(minY / gridSpacing) * gridSpacing, eY = (1 + Math.Floor(maxY / gridSpacing)) * gridSpacing;
             foreach (System.Windows.Shapes.Line line in gridLines) UnbindCanvasAction(line);
             gridLines.Clear();
             for (double mx = sX; mx <= eX; mx += gridSpacing)
             {
-                for (int i=0;i<10;i++)
+                for (int i = 0; i < 10; i++)
                 {
                     double x = mx + i * gridSpacing / 10;
                     System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
@@ -93,7 +93,7 @@ namespace SEMES_Pixel_Designer.Utils
                         Y1 = ToScreenY(sY),
                         X2 = ToScreenX(x),
                         Y2 = ToScreenY(eY),
-                        StrokeThickness = i==0?3:1
+                        StrokeThickness = i == 0 ? 3 : 1
                     };
                     gridLines.Add(line);
                     BindCanvasAction(line);
@@ -112,7 +112,7 @@ namespace SEMES_Pixel_Designer.Utils
                         Y1 = ToScreenY(y),
                         X2 = ToScreenX(eX),
                         Y2 = ToScreenY(y),
-                        StrokeThickness = i==0?3:1
+                        StrokeThickness = i == 0 ? 3 : 1
                     };
                     gridLines.Add(line);
                     BindCanvasAction(line);
@@ -123,9 +123,9 @@ namespace SEMES_Pixel_Designer.Utils
             System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
             {
                 Stroke = solidBrush,
-                X1 = 10+ToScreenX(minX),
+                X1 = 10 + ToScreenX(minX),
                 Y1 = CanvasRef.ActualHeight - 10,
-                X2 = 10+ToScreenX(minX + gridSpacing*0.1),
+                X2 = 10 + ToScreenX(minX + gridSpacing * 0.1),
                 Y2 = CanvasRef.ActualHeight - 10,
                 StrokeThickness = 3
             };
@@ -133,9 +133,9 @@ namespace SEMES_Pixel_Designer.Utils
             gridLines.Add(infoLine);
             BindCanvasAction(infoLine);
             SetZIndexAction(infoLine, -1);
-            gridInfoText.Text = " : " + gridSpacing*0.1;
+            gridInfoText.Text = " : " + gridSpacing * 0.1;
             SetLeftAction(gridInfoText, 15 + ToScreenX(minX + gridSpacing * 0.1));
-            SetTopAction(gridInfoText, CanvasRef.ActualHeight - 10 - gridInfoText.FontSize );
+            SetTopAction(gridInfoText, CanvasRef.ActualHeight - 10 - gridInfoText.FontSize);
         }
 
         public static double ToScreenX(double dxfX)
@@ -160,7 +160,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         public static string ToolTip(double dxfX, double dxfY)
         {
-            return string.Format("x : {0}, y : {1}",dxfX,dxfY);
+            return string.Format("x : {0}, y : {1}", dxfX, dxfY);
         }
 
     }
@@ -320,7 +320,7 @@ namespace SEMES_Pixel_Designer.Utils
         private UIElement source = null;
 
         private PointCollection offsets = null;
-        private List<PointEntity> points = null;
+        public List<PointEntity> points = null;
 
         // dxf 파일에 직접 접근할 때 사용
         private EntityObject entityObject = null;
@@ -403,7 +403,8 @@ namespace SEMES_Pixel_Designer.Utils
 
         public PolygonEntity(Polygon polygon, PolygonEntityType type)
         {
-            if(type == PolygonEntityType.POLYLINE) { 
+            if (type == PolygonEntityType.POLYLINE)
+            {
                 List<Vector2> vertexes = new List<Vector2>();
                 foreach (var point in polygon.Points)
                 {
@@ -412,10 +413,11 @@ namespace SEMES_Pixel_Designer.Utils
                 Polyline2D polyline = new Polyline2D(vertexes);
                 MainWindow.doc.Entities.Add(polyline);
                 entityObject = polyline;
-            }else if(type == PolygonEntityType.LINE)
+            }
+            else if (type == PolygonEntityType.LINE)
             {
                 netDxf.Entities.Line line = new netDxf.Entities.Line(
-                    new Vector2(Coordinates.ToDxfX(polygon.Points[0].X), Coordinates.ToDxfY(polygon.Points[0].Y)), 
+                    new Vector2(Coordinates.ToDxfX(polygon.Points[0].X), Coordinates.ToDxfY(polygon.Points[0].Y)),
                     new Vector2(Coordinates.ToDxfX(polygon.Points[1].X), Coordinates.ToDxfY(polygon.Points[1].Y))
                 );
                 MainWindow.doc.Entities.Add(line);
@@ -434,7 +436,8 @@ namespace SEMES_Pixel_Designer.Utils
                     dxfCoords.Add(new double[] { point.Position.X, point.Position.Y });
                     AddPoint(point.Position);
                 }
-            }else if(type == PolygonEntityType.LINE)
+            }
+            else if (type == PolygonEntityType.LINE)
             {
                 netDxf.Entities.Line line = (netDxf.Entities.Line)entityObject;
                 setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
@@ -455,10 +458,11 @@ namespace SEMES_Pixel_Designer.Utils
             clipboard.Clear();
             foreach (PolygonEntity entity in selectedEntities)
             {
-                clipboard.Add(new CopyData{
+                clipboard.Add(new CopyData
+                {
                     entity = entity.entityObject,
                     type = entity.entityType,
-                    offset = new Vector3(Coordinates.minX, Coordinates.minY,0)
+                    offset = new Vector3(Coordinates.minX, Coordinates.minY, 0)
                 });
             }
         }
@@ -501,12 +505,12 @@ namespace SEMES_Pixel_Designer.Utils
                 y.Add(Coordinates.ToScreenY(dxfCoords[i][1]));
             }
             double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max(), width = Coordinates.CanvasRef.ActualWidth, height = Coordinates.CanvasRef.ActualHeight;
-            bool valid = 
+            bool valid =
                 // 최소 크기 이상
                 (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
                 // 화면에 포함됨
                 // && ((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height))
-                && maxX>=0&&minX<=width&&maxY>=0&&minY<=height;
+                && maxX >= 0 && minX <= width && maxY >= 0 && minY <= height;
             if (valid == visible) return;
             if (valid)
             {
@@ -569,7 +573,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void UpdatePoint(List<double[]> positions)
         {
-            for(int i=0;i<positions.Count;i++) UpdatePoint(Coordinates.ToScreenX(positions[i][0]), Coordinates.ToScreenY(positions[i][1]), i, true);
+            for (int i = 0; i < positions.Count; i++) UpdatePoint(Coordinates.ToScreenX(positions[i][0]), Coordinates.ToScreenY(positions[i][1]), i, true);
         }
 
         private void UpdatePoint(double screenX, double screenY, int idx, bool updateDxf)
@@ -638,7 +642,7 @@ namespace SEMES_Pixel_Designer.Utils
             source = (UIElement)sender;
             Mouse.Capture(source);
 
-            foreach(PolygonEntity selectedEntity in selectedEntities)
+            foreach (PolygonEntity selectedEntity in selectedEntities)
             {
                 selectedEntity.offsets = new PointCollection();
                 for (int i = 0; i < selectedEntity.polygon.Points.Count; i++)
