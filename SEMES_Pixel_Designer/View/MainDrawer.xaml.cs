@@ -64,7 +64,7 @@ namespace SEMES_Pixel_Designer
             Coordinates.SetTopAction = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
-            Background = blackBackground?Brushes.Black:Brushes.White;
+            Background = Coordinates.backgroundColorBrush;
 
             Children.Add(Coordinates.gridInfoText);
             SetZIndex(Coordinates.gridInfoText,-1);
@@ -143,7 +143,10 @@ namespace SEMES_Pixel_Designer
         public void ColorBackground(object obj)
         {
             blackBackground = !blackBackground;
-            Background = blackBackground ? Brushes.Black : Brushes.White;
+            Coordinates.backgroundColorBrush = blackBackground ? Brushes.Black : Brushes.White;
+            Coordinates.defaultColorBrush = blackBackground ? Brushes.White : Brushes.Black;
+            Background = Coordinates.backgroundColorBrush;
+            foreach (PolygonEntity entity in DrawingEntities) entity.UpdateColor();
         }
 
         public void Paste(object obj)
@@ -300,16 +303,16 @@ namespace SEMES_Pixel_Designer
             ClearSelected();
             drawingPolygon = new Polygon
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
             };
             drawingPolygon.StrokeDashArray.Add(5);
             drawingPolygon.StrokeDashArray.Add(5);
 
             drawingEllipse = new Ellipse
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
                 Width = 5,
                 Height = 5,
             };
@@ -336,16 +339,16 @@ namespace SEMES_Pixel_Designer
             ClearSelected();
             drawingPolygon = new Polygon
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
             };
             drawingPolygon.StrokeDashArray.Add(5);
             drawingPolygon.StrokeDashArray.Add(5);
 
             drawingEllipse = new Ellipse
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
                 Width = 5,
                 Height = 5,
             };
@@ -373,16 +376,16 @@ namespace SEMES_Pixel_Designer
             ClearSelected();
             drawingPolygon = new Polygon
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
             };
             drawingPolygon.StrokeDashArray.Add(5);
             drawingPolygon.StrokeDashArray.Add(5);
 
             drawingEllipse = new Ellipse
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
                 Width = 5,
                 Height = 5,
             };
@@ -427,8 +430,8 @@ namespace SEMES_Pixel_Designer
             if(Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
             drawingPolygon = new Polygon
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
                 StrokeThickness = 0.5
             };
             drawingPolygon.StrokeDashArray.Add(5);
