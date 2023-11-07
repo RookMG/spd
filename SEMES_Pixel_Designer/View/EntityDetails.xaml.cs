@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 
 namespace SEMES_Pixel_Designer
 {
@@ -25,8 +26,51 @@ namespace SEMES_Pixel_Designer
         {
             InitializeComponent();
 
-            // TODO : 초기화 함수들 작성
+            Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
+            Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
+            Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
+        }
 
+
+        public void ShowEntityTypes(object obj)
+        {
+            TreeViewItem entities = new TreeViewItem();
+            entities.Header = "Entities";
+                        
+            foreach(PolygonEntity val in Coordinates.CanvasRef.DrawingEntities)
+            {
+
+            }
+
+            foreach (var entity in MainWindow.doc.Entities.All)
+            {
+                DockPanel dockPanel = new DockPanel();
+                CheckBox checkBox = new CheckBox();
+                TextBlock textBlock = new TextBlock();
+
+                textBlock.Text = entity.GetType().Name;
+
+                dockPanel.Children.Add(checkBox);
+                dockPanel.Children.Add(textBlock);
+
+
+                entities.Items.Add(dockPanel);
+
+            }
+
+
+            entity_tree_view.Items.Clear();
+
+            entity_tree_view.Items.Add(entities);
+
+        }
+
+        public void ShowEntityProperties(object obj)
+        {
+        }
+
+        public void ShowEntityPropertyDetail(object obj)
+        {
         }
     }
 }
