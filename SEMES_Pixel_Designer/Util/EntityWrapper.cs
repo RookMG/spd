@@ -22,8 +22,11 @@ namespace SEMES_Pixel_Designer.Utils
         public static MainCanvas CanvasRef;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
         public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
-        public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x66, 0x66, 0x66, 0x66)),
-            solidBrush = new SolidColorBrush(Colors.Black);
+        public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x99, 0x99, 0x99)),
+            defaultColorBrush = Brushes.Black,
+            backgroundColorBrush = Brushes.White,
+            fillColorBrush = Brushes.Transparent,
+            selectedColorBrush = Brushes.Red;
 
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
@@ -124,7 +127,7 @@ namespace SEMES_Pixel_Designer.Utils
 
             System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
             {
-                Stroke = solidBrush,
+                Stroke = defaultColorBrush,
                 X1 = 10+ToScreenX(minX),
                 Y1 = CanvasRef.ActualHeight - 10,
                 X2 = 10+ToScreenX(minX + gridSpacing*0.1),
@@ -185,14 +188,13 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 Width = P_RADIUS * 2,
                 Height = P_RADIUS * 2,
-                Fill = Brushes.Black,
+                Fill = Coordinates.defaultColorBrush,
             };
             selectArea = new System.Windows.Shapes.Ellipse
             {
                 Width = SELECT_RADIUS * 2,
                 Height = SELECT_RADIUS * 2,
                 Fill = Brushes.Transparent,
-                // Stroke = Brushes.Black,
             };
             selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             selectArea.MouseLeftButtonUp += MouseLeftButtonUp;
@@ -358,9 +360,26 @@ namespace SEMES_Pixel_Designer.Utils
 
         public class CopyData
         {
-            public EntityObject entity { get; set; }
+            public Polygon polygon { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
+
+            public EntityObject GetEntityObject()
+            {
+                if(type == PolygonEntityType.LINE)
+                {
+                    netDxf.Entities.Line line = new netDxf.Entities.Line(new Vector2(polygon.Points[0].X, polygon.Points[0].Y), new Vector2(polygon.Points[1].X, polygon.Points[1].Y));
+                    return line;
+                }else if(type == PolygonEntityType.POLYLINE)
+                {
+                    Polyline2D polyline = new Polyline2D();
+                    foreach (System.Windows.Point p in polygon.Points) polyline.Vertexes.Add(new Polyline2DVertex(p.X, p.Y));
+                    return polyline;
+                }
+
+                return null;
+            }
+
         }
 
 
@@ -377,16 +396,12 @@ namespace SEMES_Pixel_Designer.Utils
 
 
             polygon.MouseLeftButtonDown += MouseLeftButtonDown;
-            //selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
-            polygon.Fill = Brushes.Transparent;
-            polygon.Stroke = Brushes.Black;
+            polygon.Stroke = Coordinates.defaultColorBrush;
+            polygon.Fill = Coordinates.fillColorBrush;
             polygon.StrokeThickness = 1;
 
-            //selectArea.Stroke = Brushes.Transparent;
-            //selectArea.StrokeThickness = 10;
             points = new List<PointEntity>();
             Coordinates.SetZIndexAction(polygon, 1);
-            //Coordinates.SetZIndexAction(selectArea, 2);
 
 
         }
@@ -477,8 +492,10 @@ namespace SEMES_Pixel_Designer.Utils
             clipboard.Clear();
             foreach (PolygonEntity entity in selectedEntities)
             {
+                Polygon copyPolygon = new Polygon();
+                foreach (double[] p in entity.dxfCoords) copyPolygon.Points.Add(new System.Windows.Point(p[0], p[1]));
                 clipboard.Add(new CopyData{
-                    entity = entity.entityObject,
+                    polygon = copyPolygon,
                     type = entity.entityType,
                     offset = new Vector3(Coordinates.minX, Coordinates.minY,0)
                 });
@@ -544,6 +561,7 @@ namespace SEMES_Pixel_Designer.Utils
             }
             else
             {
+                ToggleSelected(false);
                 visible = false;
                 polygon.Visibility = Visibility.Collapsed;
                 //selectArea.Visibility = Visibility.Collapsed;
@@ -628,13 +646,13 @@ namespace SEMES_Pixel_Designer.Utils
             if (status)
             {
                 selectedEntities.Add(this);
-                polygon.Stroke = Brushes.Red;
+                polygon.Stroke = Coordinates.selectedColorBrush;
                 foreach (PointEntity point in points) point.BindCanvas();
             }
             else
             {
                 selectedEntities.Remove(this);
-                polygon.Stroke = Brushes.Black;
+                polygon.Stroke = Coordinates.defaultColorBrush;
                 foreach (PointEntity point in points) point.UnbindCanvas();
             }
             selected = status;

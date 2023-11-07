@@ -288,7 +288,7 @@ namespace SEMES_Pixel_Designer
         public void DrawLine(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DrawLine", null);
 
         }
 
@@ -296,7 +296,7 @@ namespace SEMES_Pixel_Designer
         public void DrawRectangle(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DrawRectangle", null);
 
         }
 
