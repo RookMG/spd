@@ -37,8 +37,16 @@ namespace SEMES_Pixel_Designer.Utils
         //호출하기
         static public void NotifyColleagues(string token, object args)
         {
+
             // MessageBox.Show("Debug : " + token + " 함수 실행");
-            if (callback_dict.ContainsKey(token)) callback_dict[token](args);
+            try
+            {
+                if (callback_dict.ContainsKey(token)) callback_dict[token](args);
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
 
