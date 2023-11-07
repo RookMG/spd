@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.IO;
 
 namespace SEMES_Pixel_Designer
 {
@@ -100,7 +102,6 @@ namespace SEMES_Pixel_Designer
                 }
 
                 // 데이터 파싱
-
                 // **queue 처리 과정으로 변경 필요**
                 string now_data = Encoding.Unicode.GetString(msgByte);
                 string[] parts = now_data.Split(';');
@@ -112,22 +113,69 @@ namespace SEMES_Pixel_Designer
                 if (parts[0].Trim() == "GetCADFile")
                 {
                     string default_Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
+                    string[] pathParts = Directory.GetDirectories(default_Path);
+
+                    for (int i = 0; i < pathParts.Length; i++)
+                    {
+                        string[] pathtmp = pathParts[i].Split(Path.DirectorySeparatorChar);
+                        pathParts[i] = pathtmp[pathtmp.Length - 1];
+                    }
+
                     if (parts[1].StartsWith("Type="))
                     {
                         string getType = parts[1].Substring(5);
-                        if(getType == "TEMPTYPE")
+                        bool chk = false;
+                        for(int i = 0; i < pathParts.Length; i++)
                         {
-                            default_Path += getType;
-                            if(MainWindow.fileName == null)
+                            if (getType == pathParts[i])
                             {
-                                SendMessage("GetCADFile;NAK;");
-                            }
-                            else
-                            {
-                                SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
+                                default_Path += ("\\" + getType);
+
+                                string[] files = Directory.GetFiles(default_Path);
+
+                                if (files.Length > 0)
+                                {
+                                    var mostRecentFile = files
+                                        .Select(filePath => new
+                                        {
+                                            FilePath = filePath,
+                                            DateTimePart = Path.GetFileNameWithoutExtension(filePath)
+                                        })
+                                        .Select(fileInfo => new
+                                        {
+                                            fileInfo.FilePath,
+                                            DatePart = fileInfo.DateTimePart.Split('_').FirstOrDefault()
+                                        })
+                                        .OrderByDescending(fileInfo => DateTime.ParseExact(fileInfo.DatePart, "yyMMdd_HHmmss", null))
+                                        .First();
+                                    chk = true;
+                                    System.Windows.MessageBox.Show("가장 최근 파일: " + mostRecentFile.FilePath);
+                                }
+                                // SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
+                                /*if(MainWindow.fileName == null)
+                                {
+
+                                    Utils.Mediator.NotifyColleagues("MainWindow.TcpIp_to_MainWindow", null);
+
+                                    if (MainWindow.chk_file)
+                                    {
+                                        Utils.Mediator.NotifyColleagues("MainWindow.forCall_SaveDxf_on_MainWindow", null);
+                                        while (MainWindow.fileName == null) { }
+                                        SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
+                                    }
+                                    else
+                                    {
+                                        SendMessage("GetCADFile;NAK;");
+                                    }
+                                }
+                                else
+                                {
+                                    SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
+                                }*/
+                                break;
                             }
                         }
-                        else
+                        if(!chk)
                         {
                             SendMessage("GetCADFile;NAK;");
                         }
