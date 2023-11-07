@@ -533,16 +533,17 @@ namespace SEMES_Pixel_Designer.Utils
                 path.Visibility = Visibility.Visible;
                 //selectArea.Visibility = Visibility.Visible;
                 Coordinates.BindCanvasAction(path);
-                //Coordinates.BindCanvasAction(selectArea);
+                if (!selected) return;
+                foreach (PointEntity p in points) p.path.Visibility = Visibility.Visible;
             }
             else
             {
-                ToggleSelected(false);
                 visible = false;
                 path.Visibility = Visibility.Collapsed;
                 //selectArea.Visibility = Visibility.Collapsed;
                 Coordinates.UnbindCanvasAction(path);
-                //Coordinates.UnbindCanvasAction(selectArea);
+                if (!selected) return;
+                foreach (PointEntity p in points) p.path.Visibility = Visibility.Collapsed;
             }
         }
 
