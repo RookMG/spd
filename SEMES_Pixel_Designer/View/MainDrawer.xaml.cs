@@ -142,34 +142,33 @@ namespace SEMES_Pixel_Designer
 
         public void ColorBackground(object obj)
         {
-            //blackBackground = !blackBackground;
-            //Background = blackBackground ? Brushes.Black : Brushes.White;
             if (darkMode)
             {
-                Background = Brushes.White;
-                foreach (PolygonEntity child in DrawingEntities)
-                {
-                    child.polygon.Stroke = Brushes.Black;
-                    foreach (PointEntity eachpoint in child.points)
-                    {
-                        eachpoint.point.Fill = Brushes.Black;
-                    }
-                }
+                Coordinates.defaultColorBrush = Brushes.Black;
+                Coordinates.backgroundColorBrush = Brushes.White;
                 darkMode = false;
             }
             else
             {
-                Background = Brushes.Black;
-                foreach (PolygonEntity child in DrawingEntities)
-                {
-                    child.polygon.Stroke = Brushes.White;
-                    foreach (PointEntity eachpoint in child.points)
-                    {
-                        eachpoint.point.Fill = Brushes.Blue;
-                    }
-                }
+                Coordinates.defaultColorBrush = Brushes.White;
+                Coordinates.backgroundColorBrush = Brushes.Black;
+                Background = Coordinates.backgroundColorBrush;
                 darkMode = true;
             }
+
+            Background = Coordinates.backgroundColorBrush;
+            foreach (PolygonEntity child in DrawingEntities)
+            {
+                if(child.selected)
+                {
+                    child.polygon.Stroke = Coordinates.selectedColorBrush;
+                }
+                else
+                {
+                    child.polygon.Stroke = Coordinates.defaultColorBrush;
+                }
+            }
+            UpdateCanvas();
         }
 
         public void Paste(object obj)
@@ -473,6 +472,8 @@ namespace SEMES_Pixel_Designer
             drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
 
 
+
+
             Children.Add(drawingPolygon);
 
             MouseMove += Select_MouseMove;
@@ -508,7 +509,24 @@ namespace SEMES_Pixel_Designer
                     y.Add(point.Y);
                 }
                 double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
-                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY) entity.ToggleSelected((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) ? !entity.selected : true);
+                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY)
+                {
+                    if(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                    {
+                        if (entity.selected)
+                        {
+                            entity.ToggleSelected(false);
+                        }
+                        else
+                        {
+                            entity.ToggleSelected(true);
+                        }
+                    }
+                    else
+                    {
+                        entity.ToggleSelected(true);
+                    }
+                }
             }
 
             Children.Remove(drawingPolygon);

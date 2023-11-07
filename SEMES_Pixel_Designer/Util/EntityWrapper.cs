@@ -186,7 +186,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 Width = P_RADIUS * 2,
                 Height = P_RADIUS * 2,
-                Fill = Coordinates.defaultColorBrush,
+                Fill = Brushes.Blue,
             };
             selectArea = new System.Windows.Shapes.Ellipse
             {
