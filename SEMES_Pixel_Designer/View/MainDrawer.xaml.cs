@@ -64,13 +64,15 @@ namespace SEMES_Pixel_Designer
             Coordinates.SetTopAction = SetTop;
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
-            Background = blackBackground?Brushes.Black:Brushes.White;
+            Background = Coordinates.backgroundColorBrush;
 
             Children.Add(Coordinates.gridInfoText);
             SetZIndex(Coordinates.gridInfoText,-1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
+            Utils.Mediator.Register("MainDrawer.DrawLine", DrawLine);
+            Utils.Mediator.Register("MainDrawer.DrawRectangle", DrawRectangle);
             Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
             Utils.Mediator.Register("MainDrawer.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
@@ -141,7 +143,10 @@ namespace SEMES_Pixel_Designer
         public void ColorBackground(object obj)
         {
             blackBackground = !blackBackground;
-            Background = blackBackground ? Brushes.Black : Brushes.White;
+            Coordinates.backgroundColorBrush = blackBackground ? Brushes.Black : Brushes.White;
+            Coordinates.defaultColorBrush = blackBackground ? Brushes.White : Brushes.Black;
+            Background = Coordinates.backgroundColorBrush;
+            foreach (PolygonEntity entity in DrawingEntities) entity.UpdateColor();
         }
 
         public void Paste(object obj)
@@ -150,7 +155,7 @@ namespace SEMES_Pixel_Designer
             List<PolygonEntity> pasted = new List<PolygonEntity>();
             foreach (CopyData data in clipboard)
             {
-                EntityObject entity = data.entity.Clone() as EntityObject;
+                EntityObject entity = data.GetEntityObject();
                 entity.TransformBy(Matrix3.Identity, new Vector3(Coordinates.minX + offset, Coordinates.minY - offset, 0) - data.offset);
                 MainWindow.doc.Entities.Add(entity);
                 if (data.type == PolygonEntityType.LINE)
@@ -217,8 +222,8 @@ namespace SEMES_Pixel_Designer
                     {
                         if (r == 0 && c == 0) continue;
 
-                        EntityObject entity = data.entity.Clone() as EntityObject;
-                        entity.TransformBy(Matrix3.Identity, new Vector3(c*intervalX, r*intervalY, 0));
+                        EntityObject entity = data.GetEntityObject(); ;
+                        entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
                         MainWindow.doc.Entities.Add(entity);
                         if (data.type == PolygonEntityType.LINE)
                         {
@@ -297,21 +302,21 @@ namespace SEMES_Pixel_Designer
             ));
         }
 
-        private void DrawPolygon(object obj)
+        private void DrawLine(object obj)
         {
             ClearSelected();
             drawingPolygon = new Polygon
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
             };
             drawingPolygon.StrokeDashArray.Add(5);
             drawingPolygon.StrokeDashArray.Add(5);
 
             drawingEllipse = new Ellipse
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
                 Width = 5,
                 Height = 5,
             };
@@ -323,7 +328,80 @@ namespace SEMES_Pixel_Designer
             Children.Add(drawingPolygon);
             Children.Add(drawingEllipse);
 
-    
+
+
+            MouseLeftButtonDown -= Select_MouseLeftButtonDown;
+            MouseRightButtonDown -= MoveCanvas_MouseRightButtonDown;
+
+            MouseMove += DrawLine_MouseMove;
+            MouseLeftButtonUp += DrawLine_MouseLeftButtonUp;
+            MouseRightButtonUp += DrawLine_MouseRightButtonUp;
+
+        }
+        private void DrawRectangle(object obj)
+        {
+            ClearSelected();
+            drawingPolygon = new Polygon
+            {
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
+            };
+            drawingPolygon.StrokeDashArray.Add(5);
+            drawingPolygon.StrokeDashArray.Add(5);
+
+            drawingEllipse = new Ellipse
+            {
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
+                Width = 5,
+                Height = 5,
+            };
+
+            drawingPolygon.Points.Add(new System.Windows.Point());
+            SetLeft(drawingEllipse, -10);
+            SetTop(drawingEllipse, -10);
+
+            Children.Add(drawingPolygon);
+            Children.Add(drawingEllipse);
+
+
+
+            MouseLeftButtonDown -= Select_MouseLeftButtonDown;
+            MouseRightButtonDown -= MoveCanvas_MouseRightButtonDown;
+
+            MouseMove += DrawRectangle_MouseMove;
+            MouseLeftButtonUp += DrawRectangle_MouseLeftButtonUp;
+            MouseRightButtonUp += DrawRectangle_MouseRightButtonUp;
+
+        }
+
+        private void DrawPolygon(object obj)
+        {
+            ClearSelected();
+            drawingPolygon = new Polygon
+            {
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
+            };
+            drawingPolygon.StrokeDashArray.Add(5);
+            drawingPolygon.StrokeDashArray.Add(5);
+
+            drawingEllipse = new Ellipse
+            {
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
+                Width = 5,
+                Height = 5,
+            };
+
+            drawingPolygon.Points.Add(new System.Windows.Point());
+            SetLeft(drawingEllipse, -10);
+            SetTop(drawingEllipse, -10);
+
+            Children.Add(drawingPolygon);
+            Children.Add(drawingEllipse);
+
+
 
             MouseLeftButtonDown -= Select_MouseLeftButtonDown;
             MouseRightButtonDown -= MoveCanvas_MouseRightButtonDown;
@@ -356,8 +434,8 @@ namespace SEMES_Pixel_Designer
             if(Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
             drawingPolygon = new Polygon
             {
-                Fill = Brushes.Transparent,
-                Stroke = Brushes.Black,
+                Fill = Coordinates.fillColorBrush,
+                Stroke = Coordinates.defaultColorBrush,
                 StrokeThickness = 0.5
             };
             drawingPolygon.StrokeDashArray.Add(5);
@@ -442,6 +520,156 @@ namespace SEMES_Pixel_Designer
         }
 
 
+
+
+
+        private void DrawLine_MouseMove(object sender, MouseEventArgs e)
+        {
+            SetLeft(drawingEllipse, e.GetPosition(this).X - 2.5);
+            SetTop(drawingEllipse, e.GetPosition(this).Y - 2.5);
+            drawingPolygon.Points[drawingPolygon.Points.Count - 1] = new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y);
+        }
+        private void DrawLine_MouseLeftButtonUp(object sender, MouseEventArgs e)
+        {
+            drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+
+            if (drawingPolygon.Points.Count != 3) return;
+
+
+            
+            MouseMove -= DrawLine_MouseMove;
+            MouseLeftButtonUp -= DrawLine_MouseLeftButtonUp;
+            MouseRightButtonUp -= DrawLine_MouseRightButtonUp;
+
+
+            Children.Remove(drawingPolygon);
+            Children.Remove(drawingEllipse);
+
+            PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon, PolygonEntityType.LINE);
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    DrawingEntities.Add(polygonEntity);
+                },
+                () => {
+                    DrawingEntities.Remove(polygonEntity);
+                    polygonEntity.Delete();
+                },
+                () =>
+                {
+                    DrawingEntities.Add(polygonEntity);
+                    polygonEntity.Restore();
+                },
+                () =>
+                {
+                    polygonEntity.Remove();
+                }
+            ));
+
+            UpdateLayout();
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+        }
+
+        private void DrawLine_MouseRightButtonUp(object sender, MouseEventArgs e)
+        {
+
+            MouseMove -= DrawLine_MouseMove;
+            MouseLeftButtonUp -= DrawLine_MouseLeftButtonUp;
+            MouseRightButtonUp -= DrawLine_MouseRightButtonUp;
+
+
+            Children.Remove(drawingPolygon);
+            Children.Remove(drawingEllipse);
+            drawingPolygon.Points.Clear();
+
+            UpdateLayout();
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+        }
+
+
+
+        private void DrawRectangle_MouseMove(object sender, MouseEventArgs e)
+        {
+            SetLeft(drawingEllipse, e.GetPosition(this).X - 2.5);
+            SetTop(drawingEllipse, e.GetPosition(this).Y - 2.5);
+
+            if(drawingPolygon.Points.Count == 1)
+            {
+                drawingPolygon.Points[0] = new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y);
+            }
+            else
+            {
+                drawingPolygon.Points[1] = new System.Windows.Point(drawingPolygon.Points[0].X, e.GetPosition(this).Y);
+                drawingPolygon.Points[2] = new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y);
+                drawingPolygon.Points[3] = new System.Windows.Point(e.GetPosition(this).X, drawingPolygon.Points[0].Y);
+            }
+        }
+        private void DrawRectangle_MouseLeftButtonUp(object sender, MouseEventArgs e)
+        {
+            if(drawingPolygon.Points.Count == 1)
+            {
+                drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+                drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+                drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
+            }
+            else if(drawingPolygon.Points.Count == 4)
+            {
+                MouseMove -= DrawRectangle_MouseMove;
+                MouseLeftButtonUp -= DrawRectangle_MouseLeftButtonUp;
+                MouseRightButtonUp -= DrawRectangle_MouseRightButtonUp;
+
+
+
+                PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon, PolygonEntityType.POLYLINE);
+                Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                (
+                    () => {
+                        DrawingEntities.Add(polygonEntity);
+                    },
+                    () => {
+                        DrawingEntities.Remove(polygonEntity);
+                        polygonEntity.Delete();
+                    },
+                    () =>
+                    {
+                        DrawingEntities.Add(polygonEntity);
+                        polygonEntity.Restore();
+                    },
+                    () =>
+                    {
+                        polygonEntity.Remove();
+                    }
+                ));
+
+                Children.Remove(drawingPolygon);
+                Children.Remove(drawingEllipse);
+                UpdateLayout();
+                MouseLeftButtonDown += Select_MouseLeftButtonDown;
+                MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+            }
+        }
+
+        private void DrawRectangle_MouseRightButtonUp(object sender, MouseEventArgs e)
+        {
+
+            MouseMove -= DrawRectangle_MouseMove;
+            MouseLeftButtonUp -= DrawRectangle_MouseLeftButtonUp;
+            MouseRightButtonUp -= DrawRectangle_MouseRightButtonUp;
+
+
+            Children.Remove(drawingPolygon);
+            Children.Remove(drawingEllipse);
+            drawingPolygon.Points.Clear();
+
+
+            UpdateLayout();
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+        }
+
+
         private void DrawPolygon_MouseMove(object sender, MouseEventArgs e)
         {
             SetLeft(drawingEllipse, e.GetPosition(this).X - 2.5);
@@ -452,7 +680,7 @@ namespace SEMES_Pixel_Designer
         {
             drawingPolygon.Points.Add(new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y));
         }
-        
+
         private void DrawPolygon_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
 
@@ -463,8 +691,10 @@ namespace SEMES_Pixel_Designer
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
-            drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count-1);
-            if (drawingPolygon.Points.Count == 0) return;
+            drawingPolygon.Points.RemoveAt(drawingPolygon.Points.Count - 1);
+            if (drawingPolygon.Points.Count <= 1) return;
+
+
             PolygonEntity polygonEntity = new PolygonEntity(drawingPolygon, PolygonEntityType.POLYLINE);
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
@@ -490,6 +720,8 @@ namespace SEMES_Pixel_Designer
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
         }
+
+
         #endregion
     }
 
