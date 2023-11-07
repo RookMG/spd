@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Util\Notifier.cs" />
     <Compile Include="Util\TcpIp.cs" />
     <Compile Include="CloneEntity.xaml.cs">
       <DependentUpon>CloneEntity.xaml</DependentUpon>

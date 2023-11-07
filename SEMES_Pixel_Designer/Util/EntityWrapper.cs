@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using SEMES_Pixel_Designer.Util;
+using System.ComponentModel;
 
 namespace SEMES_Pixel_Designer.Utils
 {
@@ -315,8 +317,10 @@ namespace SEMES_Pixel_Designer.Utils
         UNDEFINED = 3
     }
 
-    public class PolygonEntity
+    public class PolygonEntity : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public Polygon polygon;
         //public Polygon selectArea;
         private UIElement source = null;
@@ -329,6 +333,24 @@ namespace SEMES_Pixel_Designer.Utils
         private PolygonEntityType entityType;
 
         public bool selected = false, visible = false, deleted = false;
+        
+        private bool visibleChecked = true;
+        public bool VisibleChecked
+        {
+            get { return selected; }
+            set
+            {
+                ToggleSelected(value);
+                //ReDraw();
+                //if(visibleChecked != value)
+                //{
+                //    visibleChecked = value;
+
+                //    ReDraw();
+                //    OnPropertyChanged("VisibleChecked");
+                //}
+            }
+        }
 
         private List<double[]> dxfCoords = new List<double[]>();
         private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
@@ -524,7 +546,11 @@ namespace SEMES_Pixel_Designer.Utils
                 // 화면에 포함됨
                 // && ((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height))
                 && maxX>=0&&minX<=width&&maxY>=0&&minY<=height;
+
+            if (valid == true && visibleChecked == false) valid = false;
             if (valid == visible) return;
+            
+
             if (valid)
             {
                 visible = true;
@@ -580,11 +606,9 @@ namespace SEMES_Pixel_Designer.Utils
             // TODO : 인스턴스 삭제 방법 찾기
         }
 
-        public void UpdateColor()
+        public PolygonEntityType GetPolygonType()
         {
-            polygon.Stroke = Coordinates.defaultColorBrush;
-            if (!selected) return;
-            foreach (PointEntity point in points) point.point.Fill = Coordinates.defaultColorBrush;
+            return entityType;
         }
 
         private void UpdatePoint(int idx)
@@ -719,6 +743,12 @@ namespace SEMES_Pixel_Designer.Utils
             Mouse.Capture(null);
             offsets = null;
 
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

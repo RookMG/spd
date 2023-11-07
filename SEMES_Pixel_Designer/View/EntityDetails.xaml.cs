@@ -37,27 +37,36 @@ namespace SEMES_Pixel_Designer
             TreeViewItem entities = new TreeViewItem();
             entities.Header = "Entities";
                         
-            foreach(PolygonEntity val in Coordinates.CanvasRef.DrawingEntities)
+            foreach(PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
             {
+                CheckBox checkBox = new CheckBox { IsChecked = true};
 
+
+                if (entity.GetPolygonType() == PolygonEntityType.DOT)
+                {
+                    checkBox.Content = "Dot";
+                }
+                else if (entity.GetPolygonType() == PolygonEntityType.LINE)
+                {
+                    checkBox.Content = "Line";
+                }
+                else if (entity.GetPolygonType() == PolygonEntityType.POLYLINE)
+                {
+                    checkBox.Content= "PolyLine";
+                }
+                else
+                    continue;
+
+                Binding binding = new Binding("VisibleChecked")
+                {
+                    Source = entity,
+                    Mode = BindingMode.TwoWay
+                };
+
+
+                checkBox.SetBinding(CheckBox.IsCheckedProperty, binding);
+                entities.Items.Add(checkBox);
             }
-
-            foreach (var entity in MainWindow.doc.Entities.All)
-            {
-                DockPanel dockPanel = new DockPanel();
-                CheckBox checkBox = new CheckBox();
-                TextBlock textBlock = new TextBlock();
-
-                textBlock.Text = entity.GetType().Name;
-
-                dockPanel.Children.Add(checkBox);
-                dockPanel.Children.Add(textBlock);
-
-
-                entities.Items.Add(dockPanel);
-
-            }
-
 
             entity_tree_view.Items.Clear();
 
