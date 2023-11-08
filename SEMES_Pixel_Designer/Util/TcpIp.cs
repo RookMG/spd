@@ -33,13 +33,49 @@ namespace SEMES_Pixel_Designer
         // 데이터 저장할 queue
         Queue<byte[]> messageQueue = new Queue<byte[]>();
 
+        // system.ini 데이터 추출
+        private static string iniFilePath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "system.ini"));
+        Dictionary<string, string> iniData = ReadIniFile(iniFilePath);
+
         public TcpIp()
         {
             Utils.Mediator.Register("TcpIp.TcpConnection", TcpConnection);
         }
 
+        // system.ini 데이터 파싱
+        static Dictionary<string, string> ReadIniFile(string filePath)
+        {
+            Dictionary<string, string> iniData = new Dictionary<string, string>();
+
+            try
+            {
+                string[] lines = File.ReadAllLines(filePath);
+                foreach (string line in lines)
+                {
+                    string trimmedLine = line.Trim();
+                    if (!string.IsNullOrWhiteSpace(trimmedLine) && !trimmedLine.StartsWith(";"))
+                    {
+                        string[] parts = trimmedLine.Split('=');
+                        if (parts.Length == 2)
+                        {
+                            string key = parts[0].Trim();
+                            string value = parts[1].Trim();
+                            iniData[key] = value;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show("INI 파일을 읽는 중 오류 발생: " + ex.Message);
+            }
+
+            return iniData;
+        }
+
+
         #region TCPIP 관련 함수들
-        
+
 
         // TCP 연결 대기
         public void TcpConnection(object obj)
@@ -52,7 +88,7 @@ namespace SEMES_Pixel_Designer
             m_ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 
             // 특정 포트에서 모든 주소로부터 들어오는 연결을 받기 위해 포트를 바인딩합니다.
-            m_ServerSocket.Bind(new IPEndPoint(IPAddress.Any, 1004));
+            m_ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(iniData["IP"]), int.Parse(iniData["port"])));
 
             // 연결 요청을 받기 시작합니다.
             m_ServerSocket.Listen(5);
@@ -107,14 +143,10 @@ namespace SEMES_Pixel_Designer
                 string now_data = Encoding.Unicode.GetString(msgByte);
                 string[] parts = now_data.Split(';');
 
-                foreach (string part in parts)
-                {
-                    System.Windows.MessageBox.Show(part);
-                }
                 if (parts[0].Trim() == "GetCADFile")
                 {
                     // default 경로 관리
-                    string default_Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
+                    string default_Path = iniData["default_path"]; // System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
                     string[] pathParts = Directory.GetDirectories(default_Path);
 
                     for (int i = 0; i < pathParts.Length; i++)
