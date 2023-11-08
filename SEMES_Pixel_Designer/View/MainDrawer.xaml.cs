@@ -94,7 +94,7 @@ namespace SEMES_Pixel_Designer
         {
             pasteCount = 0;
             Coordinates.DrawGrid();
-            foreach (PolygonEntity line in DrawingEntities) line.ReDraw();
+            foreach (PolygonEntity entity in DrawingEntities) entity.ReDraw();
             foreach (System.Windows.Shapes.Line gridLine in Coordinates.gridLines)
             {
                 gridLine.MouseLeftButtonDown += Select_MouseLeftButtonDown;
