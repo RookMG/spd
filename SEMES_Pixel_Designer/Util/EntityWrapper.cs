@@ -34,41 +34,50 @@ namespace SEMES_Pixel_Designer.Utils
         public static void UpdateRange(DrawingEntities entities)
         {
             gridSpacing = 0.5;
-            List<double> x = new List<double>(), y = new List<double>();
+            minX = minY = double.MaxValue;
+            maxX = maxY = double.MinValue;
             foreach (netDxf.Entities.Line line in entities.Lines)
             {
-                x.Add(line.StartPoint.X);
-                y.Add(line.StartPoint.Y);
-                x.Add(line.EndPoint.X);
-                y.Add(line.EndPoint.Y);
+                minX = Math.Min(minX, line.StartPoint.X);
+                maxX = Math.Max(maxX, line.StartPoint.X);
+                minY = Math.Min(minY, line.StartPoint.Y);
+                maxY = Math.Max(maxY, line.StartPoint.Y);
+                minX = Math.Min(minX, line.EndPoint.X);
+                maxX = Math.Max(maxX, line.EndPoint.X);
+                minY = Math.Min(minY, line.EndPoint.Y);
+                maxY = Math.Max(maxY, line.EndPoint.Y);
             }
             foreach (netDxf.Entities.Polyline2D polyline in entities.Polylines2D)
             {
                 foreach (netDxf.Entities.Polyline2DVertex point in polyline.Vertexes)
                 {
-                    x.Add(point.Position.X);
-                    y.Add(point.Position.Y);
+                    minX = Math.Min(minX, point.Position.X);
+                    maxX = Math.Max(maxX, point.Position.X);
+                    minY = Math.Min(minY, point.Position.Y);
+                    maxY = Math.Max(maxY, point.Position.Y);
                 }
             }
-            if (x.Count <= 0) return;
-            minX = x.Min();
-            minY = y.Min();
-            maxX = x.Max();
-            maxY = y.Max();
+            if (entities.Lines.Count()+entities.Polylines2D.Count() == 0)
+            {
+                minX = 0.0;
+                minY = 0.0;
+                maxX = 1000.0;
+                maxY = 1000.0;
+            }
             AdjustRatio();
         }
 
         public static void AdjustRatio()
         {
-            if ((maxY - minY) / (maxX - minX) > CanvasRef.ActualHeight / CanvasRef.ActualWidth)
+            if ((maxY - minY) * CanvasRef.ActualWidth > CanvasRef.ActualHeight * (maxX - minX))
             {
-                double dx = (maxY - minY) * CanvasRef.ActualWidth / (CanvasRef.ActualHeight) - maxX + minX;
+                double dx = (maxY - minY) * CanvasRef.ActualWidth / CanvasRef.ActualHeight - maxX + minX;
                 maxX += dx / 2;
                 minX -= dx / 2;
             }
             else
             {
-                double dy = (maxX - minX) * CanvasRef.ActualHeight / (CanvasRef.ActualWidth) - maxY + minY;
+                double dy = (maxX - minX) * CanvasRef.ActualHeight / CanvasRef.ActualWidth - maxY + minY;
                 maxY += dy / 2;
                 minY -= dy / 2;
             }
