@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.IO;
+using System.Globalization;
 
 namespace SEMES_Pixel_Designer
 {
@@ -100,7 +103,6 @@ namespace SEMES_Pixel_Designer
                 }
 
                 // 데이터 파싱
-
                 // **queue 처리 과정으로 변경 필요**
                 string now_data = Encoding.Unicode.GetString(msgByte);
                 string[] parts = now_data.Split(';');
@@ -111,14 +113,58 @@ namespace SEMES_Pixel_Designer
                 }
                 if (parts[0].Trim() == "GetCADFile")
                 {
+                    // default 경로 관리
+                    string default_Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
+                    string[] pathParts = Directory.GetDirectories(default_Path);
+
+                    for (int i = 0; i < pathParts.Length; i++)
+                    {
+                        string[] pathtmp = pathParts[i].Split(Path.DirectorySeparatorChar);
+                        pathParts[i] = pathtmp[pathtmp.Length - 1];
+                    }
+
                     if (parts[1].StartsWith("Type="))
                     {
                         string getType = parts[1].Substring(5);
-                        if(getType == "TEMPTYPE")
+                        bool chk = false;
+                        for(int i = 0; i < pathParts.Length; i++)
                         {
-                            SendMessage("GetCADFile;ACK;Path=E:\\CadFile\\TEMPTYPE\\231103_164555.dxf");
+                            if (getType == pathParts[i])
+                            {
+                                default_Path += ("\\" + getType);
+
+                                // 파일 목록 가져오기
+                                string[] files = Directory.GetFiles(default_Path);
+
+                                if (files.Length > 0)
+                                {
+                                    // 최신 날짜 파싱
+                                    var mostRecentFile = files
+                                        .Select(filePath => new
+                                        {
+                                            FilePath = filePath,
+                                            DatePart = Path.GetFileNameWithoutExtension(filePath)
+                                        })
+                                        .Where(fileInfo => fileInfo.DatePart != null) // null 값 제외
+                                        .OrderByDescending(fileInfo =>
+                                        {
+                                            DateTime parsedDate;
+                                            if (DateTime.TryParseExact(fileInfo.DatePart, "yyMMdd_HHmmss", null, DateTimeStyles.None, out parsedDate))
+                                            {
+                                                return parsedDate;
+                                            }
+                                            return DateTime.MinValue; // 올바르지 않은 경우 MinValue를 반환
+                                        })
+                                        .First();
+
+                                    chk = true;
+                                    // System.Windows.MessageBox.Show("가장 최근 파일: " + mostRecentFile.FilePath);
+                                    SendMessage("GetCADFile;ACK;Path=" + mostRecentFile.FilePath);
+                                }
+                                break;
+                            }
                         }
-                        else
+                        if(!chk)
                         {
                             SendMessage("GetCADFile;NAK;");
                         }
