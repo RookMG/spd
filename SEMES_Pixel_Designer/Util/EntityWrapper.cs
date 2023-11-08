@@ -316,6 +316,7 @@ namespace SEMES_Pixel_Designer.Utils
         public PointCollection dxfCoords = null;
         private PointCollection offsets = null;
         private List<PointEntity> points = null;
+        public double minX, minY, maxX, maxY;
 
         // dxf 파일에 직접 접근할 때 사용
         private EntityObject entityObject = null;
@@ -484,24 +485,20 @@ namespace SEMES_Pixel_Designer.Utils
         {
             AddPoint(point.X, point.Y);
         }
-
+        
         public void ReDraw()
         {
             if (dxfCoords == null || deleted) return;
-            List<double> x = new List<double>(), y = new List<double>();
-            for (int i = 0; i < dxfCoords.Count; i++)
-            {
-                UpdatePoint(i);
-                x.Add(Coordinates.ToScreenX(dxfCoords[i].X));
-                y.Add(Coordinates.ToScreenY(dxfCoords[i].Y));
-            }
-            double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max(), width = Coordinates.CanvasRef.ActualWidth, height = Coordinates.CanvasRef.ActualHeight;
-            bool valid = 
+
+            minX = maxX = dxfCoords[0].X;
+            minY = maxY = dxfCoords[0].Y;
+            for (int i = 0; i < dxfCoords.Count; i++) UpdatePoint(i);
+
+            bool valid =
                 // 최소 크기 이상
-                (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
-                // 화면에 포함됨
-                // && ((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height))
-                && maxX>=0&&minX<=width&&maxY>=0&&minY<=height;
+                (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE / Coordinates.ratio)
+            // 화면에 포함됨
+             && maxX >= Coordinates.minX && minX <= Coordinates.maxX && maxY >= Coordinates.minY && minY <= Coordinates.maxY;
             if (valid)
             {
                 using (StreamGeometryContext ctx = geometry.Open())
@@ -513,25 +510,11 @@ namespace SEMES_Pixel_Designer.Utils
                 geometry.FillRule = FillRule.EvenOdd;
                 path.Data = geometry;
             }
-
             if (valid == visible) return;
             if (valid)
             {
-                //StreamGeometry geometry = new StreamGeometry();
-                //using (StreamGeometryContext ctx = geometry.Open())
-                //{
-                //    ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[0].X), Coordinates.ToScreenY(dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
-                //    for (int i = 1; i < dxfCoords.Count; i++)
-                //        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[i].X), Coordinates.ToScreenY(dxfCoords[i].Y)), true /* is stroked */, false /* is smooth join */);
-                //}
-                //geometry.FillRule = FillRule.EvenOdd;
-                //geometry.Freeze();
-                //path.Data = geometry;
-
-
                 visible = true;
                 path.Visibility = Visibility.Visible;
-                //selectArea.Visibility = Visibility.Visible;
                 Coordinates.BindCanvasAction(path);
                 if (!selected) return;
                 foreach (PointEntity p in points) p.path.Visibility = Visibility.Visible;
@@ -540,7 +523,6 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 visible = false;
                 path.Visibility = Visibility.Collapsed;
-                //selectArea.Visibility = Visibility.Collapsed;
                 Coordinates.UnbindCanvasAction(path);
                 if (!selected) return;
                 foreach (PointEntity p in points) p.path.Visibility = Visibility.Collapsed;
@@ -615,6 +597,10 @@ namespace SEMES_Pixel_Designer.Utils
 
             double dxfX = Coordinates.ToDxfX(screenX);
             double dxfY = Coordinates.ToDxfY(screenY);
+            minX = Math.Min(minX, dxfX);
+            minY = Math.Min(minY, dxfY);
+            maxX = Math.Max(maxX, dxfX);
+            maxY = Math.Max(maxY, dxfY);
 
             points[idx].path.ToolTip = Coordinates.ToolTip(dxfX, dxfY);
 
