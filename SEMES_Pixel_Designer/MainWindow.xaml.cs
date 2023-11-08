@@ -146,6 +146,8 @@ namespace SEMES_Pixel_Designer
             DrawCanvas(null);
             fileName = null;
             Mediator.FileChangeCount = 0;
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         // 파일 저장 확인

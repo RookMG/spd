@@ -20,9 +20,31 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <TreeView x:Name="entity_tree_view"/>
+        <TreeView x:Name="EntityTreeView"/>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <TextBlock Grid.Row="2" Text="선택 엔티티 속성" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+        <StackPanel Grid.Row="2">
+            <ComboBox x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+
+
+                <Border Grid.Column="0">
+                    <StackPanel Orientation="Horizontal" x:Name="PropertyStackPanel"/>
+                </Border>
+
+                <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
+
+                <Border Grid.Column="2">
+                    <StackPanel Orientation="Horizontal" x:Name="PropertyValueStackPanel"/>
+                </Border>
+            </Grid>
+        </StackPanel>
+
+
         <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
         <TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
     </Grid>

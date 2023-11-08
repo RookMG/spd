@@ -300,6 +300,8 @@ namespace SEMES_Pixel_Designer
                     foreach (PolygonEntity entity in target) entity.Remove();
                 }
             ));
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         private void DrawLine(object obj)
@@ -336,7 +338,6 @@ namespace SEMES_Pixel_Designer
             MouseMove += DrawLine_MouseMove;
             MouseLeftButtonUp += DrawLine_MouseLeftButtonUp;
             MouseRightButtonUp += DrawLine_MouseRightButtonUp;
-
         }
         private void DrawRectangle(object obj)
         {
@@ -476,10 +477,10 @@ namespace SEMES_Pixel_Designer
                 
                 x.Clear();
                 y.Clear();
-                foreach(var point in entity.polygon.Points)
+                foreach(var point in entity.dxfCoords)
                 {
-                    x.Add(point.X);
-                    y.Add(point.Y);
+                    x.Add(Coordinates.ToScreenX(point.X));
+                    y.Add(Coordinates.ToScreenY(point.Y));
                 }
                 double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
                 if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY) entity.ToggleSelected((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) ?!entity.selected: true);
@@ -569,6 +570,8 @@ namespace SEMES_Pixel_Designer
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         private void DrawLine_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -649,6 +652,8 @@ namespace SEMES_Pixel_Designer
                 MouseLeftButtonDown += Select_MouseLeftButtonDown;
                 MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         private void DrawRectangle_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -719,6 +724,8 @@ namespace SEMES_Pixel_Designer
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
 

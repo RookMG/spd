@@ -22,42 +22,37 @@ namespace SEMES_Pixel_Designer
     /// </summary>
     public partial class EntityDetails : Page
     {
+        Dictionary<string, PolygonEntity> entityDictionary;
+
         public EntityDetails()
         {
             InitializeComponent();
 
+            entityDictionary = new Dictionary<string, PolygonEntity>();
+
+
             Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
-            Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
+            Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
             Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
+
         }
 
 
         public void ShowEntityTypes(object obj)
         {
             TreeViewItem entities = new TreeViewItem();
-            entities.Header = "Entities";
+            
                         
             foreach(PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
             {
-                CheckBox checkBox = new CheckBox { IsChecked = true};
+                CheckBox checkBox = new CheckBox {};
 
+                checkBox.Content = PolygonTypeToString(entity);
 
-                if (entity.GetPolygonType() == PolygonEntityType.DOT)
-                {
-                    checkBox.Content = "Dot";
-                }
-                else if (entity.GetPolygonType() == PolygonEntityType.LINE)
-                {
-                    checkBox.Content = "Line";
-                }
-                else if (entity.GetPolygonType() == PolygonEntityType.POLYLINE)
-                {
-                    checkBox.Content= "PolyLine";
-                }
-                else
+                if (checkBox.Content == null)
                     continue;
 
-                Binding binding = new Binding("VisibleChecked")
+                Binding binding = new Binding("Selected")
                 {
                     Source = entity,
                     Mode = BindingMode.TwoWay
@@ -68,18 +63,73 @@ namespace SEMES_Pixel_Designer
                 entities.Items.Add(checkBox);
             }
 
-            entity_tree_view.Items.Clear();
+            EntityTreeView.Items.Clear();
 
-            entity_tree_view.Items.Add(entities);
+            if(entities.Items.Count != 0)
+                entities.Header = "Entities";
+
+            EntityTreeView.Items.Add(entities);
 
         }
 
-        public void ShowEntityProperties(object obj)
+        public void ShowEntityComboBox(object obj)
         {
+            EntityDetailComboBox.Items.Clear();
+
+            foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+            {
+                if (entity.Selected == false) continue;
+
+
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = PolygonTypeToString(entity);
+
+                entityDictionary.Add(PolygonTypeToString(entity), entity);
+
+                EntityDetailComboBox.Items.Add(item);
+            }
+
         }
+
+        private void ShowEntityProperties(object obj, SelectionChangedEventArgs e)
+        {
+            PropertyStackPanel.Children.Clear();
+
+            if (EntityDetailComboBox.SelectedItem != null)
+            {
+                string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
+
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = "Name";
+                
+                //PropertyStackPanel.Children.Add();
+                //textBlock.Text = "Color";
+                PropertyStackPanel.Children.Add(textBlock);
+                //entityDictionary[selectedItem];
+            }
+        }
+
 
         public void ShowEntityPropertyDetail(object obj)
         {
+        }
+
+        private string PolygonTypeToString(PolygonEntity entity)
+        {
+            if (entity.GetPolygonType() == PolygonEntityType.DOT)
+            {
+                return "Dot";
+            }
+            else if (entity.GetPolygonType() == PolygonEntityType.LINE)
+            {
+                return "Line";
+            }
+            else if (entity.GetPolygonType() == PolygonEntityType.POLYLINE)
+            {
+                return "PolyLine";
+            }
+            else
+                return null;
         }
     }
 }
