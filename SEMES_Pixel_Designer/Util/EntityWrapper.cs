@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using SEMES_Pixel_Designer.Util;
 using System.ComponentModel;
 
 namespace SEMES_Pixel_Designer.Utils
@@ -79,14 +78,14 @@ namespace SEMES_Pixel_Designer.Utils
         public static void DrawGrid()
         {
             gridSpacing = Math.Pow(10, Math.Floor(Math.Log10(Math.Max(maxY - minY, maxX - minX))));
-            if(ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;
+            if (ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;
             double sX = Math.Floor(minX / gridSpacing) * gridSpacing, eX = (1 + Math.Floor(maxX / gridSpacing)) * gridSpacing,
                  sY = Math.Floor(minY / gridSpacing) * gridSpacing, eY = (1 + Math.Floor(maxY / gridSpacing)) * gridSpacing;
             foreach (System.Windows.Shapes.Line line in gridLines) UnbindCanvasAction(line);
             gridLines.Clear();
             for (double mx = sX; mx <= eX; mx += gridSpacing)
             {
-                for (int i=0;i<10;i++)
+                for (int i = 0; i < 10; i++)
                 {
                     double x = mx + i * gridSpacing / 10;
                     System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
@@ -96,7 +95,7 @@ namespace SEMES_Pixel_Designer.Utils
                         Y1 = ToScreenY(sY),
                         X2 = ToScreenX(x),
                         Y2 = ToScreenY(eY),
-                        StrokeThickness = i==0?3:1
+                        StrokeThickness = i == 0 ? 3 : 1
                     };
                     gridLines.Add(line);
                     BindCanvasAction(line);
@@ -115,7 +114,7 @@ namespace SEMES_Pixel_Designer.Utils
                         Y1 = ToScreenY(y),
                         X2 = ToScreenX(eX),
                         Y2 = ToScreenY(y),
-                        StrokeThickness = i==0?3:1
+                        StrokeThickness = i == 0 ? 3 : 1
                     };
                     gridLines.Add(line);
                     BindCanvasAction(line);
@@ -126,9 +125,9 @@ namespace SEMES_Pixel_Designer.Utils
             System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
             {
                 Stroke = defaultColorBrush,
-                X1 = 10+ToScreenX(minX),
+                X1 = 10 + ToScreenX(minX),
                 Y1 = CanvasRef.ActualHeight - 10,
-                X2 = 10+ToScreenX(minX + gridSpacing*0.1),
+                X2 = 10 + ToScreenX(minX + gridSpacing * 0.1),
                 Y2 = CanvasRef.ActualHeight - 10,
                 StrokeThickness = 3
             };
@@ -136,9 +135,9 @@ namespace SEMES_Pixel_Designer.Utils
             gridLines.Add(infoLine);
             BindCanvasAction(infoLine);
             SetZIndexAction(infoLine, -1);
-            gridInfoText.Text = " : " + gridSpacing*0.1;
+            gridInfoText.Text = " : " + gridSpacing * 0.1;
             SetLeftAction(gridInfoText, 15 + ToScreenX(minX + gridSpacing * 0.1));
-            SetTopAction(gridInfoText, CanvasRef.ActualHeight - 10 - gridInfoText.FontSize );
+            SetTopAction(gridInfoText, CanvasRef.ActualHeight - 10 - gridInfoText.FontSize);
         }
 
         public static double ToScreenX(double dxfX)
@@ -163,7 +162,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         public static string ToolTip(double dxfX, double dxfY)
         {
-            return string.Format("x : {0}, y : {1}",dxfX,dxfY);
+            return string.Format("x : {0}, y : {1}", dxfX, dxfY);
         }
 
     }
@@ -192,9 +191,9 @@ namespace SEMES_Pixel_Designer.Utils
 
             using (StreamGeometryContext ctx = geometry.Open())
             {
-                ctx.BeginFigure(new System.Windows.Point(- P_RADIUS, 0), true /* is filled */, true /* is closed */);
-                ctx.LineTo(new System.Windows.Point(0, - P_RADIUS), true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(new System.Windows.Point(P_RADIUS , 0), true /* is stroked */, false /* is smooth join */);
+                ctx.BeginFigure(new System.Windows.Point(-P_RADIUS, 0), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(0, -P_RADIUS), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(P_RADIUS, 0), true /* is stroked */, false /* is smooth join */);
                 ctx.LineTo(new System.Windows.Point(0, P_RADIUS), true /* is stroked */, false /* is smooth join */);
             }
             geometry.FillRule = FillRule.EvenOdd;
@@ -324,22 +323,17 @@ namespace SEMES_Pixel_Designer.Utils
         private PolygonEntityType entityType;
 
         public bool selected = false, visible = false, deleted = false;
-        
-        private bool visibleChecked = true;
-        public bool VisibleChecked
+
+        public bool Selected
         {
             get { return selected; }
             set
-            {
-                ToggleSelected(value);
-                //ReDraw();
-                //if(visibleChecked != value)
-                //{
-                //    visibleChecked = value;
-
-                //    ReDraw();
-                //    OnPropertyChanged("VisibleChecked");
-                //}
+            {          
+                if (selected != value)
+                {
+                    ToggleSelected(value);
+                    OnPropertyChanged("Selected");
+                }
             }
         }
 
@@ -347,6 +341,8 @@ namespace SEMES_Pixel_Designer.Utils
 
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
         public static List<CopyData> clipboard = new List<CopyData>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public class CopyData
         {
@@ -356,11 +352,12 @@ namespace SEMES_Pixel_Designer.Utils
 
             public EntityObject GetEntityObject()
             {
-                if(type == PolygonEntityType.LINE)
+                if (type == PolygonEntityType.LINE)
                 {
                     netDxf.Entities.Line line = new netDxf.Entities.Line(new Vector2(dxfCoords[0].X, dxfCoords[0].Y), new Vector2(dxfCoords[1].X, dxfCoords[1].Y));
                     return line;
-                }else if(type == PolygonEntityType.POLYLINE)
+                }
+                else if (type == PolygonEntityType.POLYLINE)
                 {
                     Polyline2D polyline = new Polyline2D();
                     foreach (System.Windows.Point p in dxfCoords) polyline.Vertexes.Add(new Polyline2DVertex(p.X, p.Y));
@@ -427,7 +424,8 @@ namespace SEMES_Pixel_Designer.Utils
 
         public PolygonEntity(Polygon polygon, PolygonEntityType type)
         {
-            if(type == PolygonEntityType.POLYLINE) { 
+            if (type == PolygonEntityType.POLYLINE)
+            {
                 List<Vector2> vertexes = new List<Vector2>();
                 foreach (var point in polygon.Points)
                 {
@@ -436,10 +434,11 @@ namespace SEMES_Pixel_Designer.Utils
                 Polyline2D polyline = new Polyline2D(vertexes);
                 MainWindow.doc.Entities.Add(polyline);
                 entityObject = polyline;
-            }else if(type == PolygonEntityType.LINE)
+            }
+            else if (type == PolygonEntityType.LINE)
             {
                 netDxf.Entities.Line line = new netDxf.Entities.Line(
-                    new Vector2(Coordinates.ToDxfX(polygon.Points[0].X), Coordinates.ToDxfY(polygon.Points[0].Y)), 
+                    new Vector2(Coordinates.ToDxfX(polygon.Points[0].X), Coordinates.ToDxfY(polygon.Points[0].Y)),
                     new Vector2(Coordinates.ToDxfX(polygon.Points[1].X), Coordinates.ToDxfY(polygon.Points[1].Y))
                 );
                 MainWindow.doc.Entities.Add(line);
@@ -457,7 +456,8 @@ namespace SEMES_Pixel_Designer.Utils
                     setDxfCoordAction.Add((double x, double y) => { point.Position = new netDxf.Vector2(x, y); });
                     AddPoint(point.Position);
                 }
-            }else if(type == PolygonEntityType.LINE)
+            }
+            else if (type == PolygonEntityType.LINE)
             {
                 netDxf.Entities.Line line = (netDxf.Entities.Line)entityObject;
                 setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
@@ -470,16 +470,22 @@ namespace SEMES_Pixel_Designer.Utils
 
         #endregion
 
+        public PolygonEntityType GetPolygonType()
+        {
+            return entityType;
+        }
+
         public static void CopySelected()
         {
             Coordinates.CanvasRef.pasteCount = 1;
             clipboard.Clear();
             foreach (PolygonEntity entity in selectedEntities)
             {
-                clipboard.Add(new CopyData{
+                clipboard.Add(new CopyData
+                {
                     dxfCoords = entity.dxfCoords.Clone(),
                     type = entity.entityType,
-                    offset = new Vector3(Coordinates.minX, Coordinates.minY,0)
+                    offset = new Vector3(Coordinates.minX, Coordinates.minY, 0)
                 });
             }
         }
@@ -489,7 +495,7 @@ namespace SEMES_Pixel_Designer.Utils
         {
             // TODO : DXF 파일에서의 점 추가
             var idx = dxfCoords.Count;
-            dxfCoords.Add(new System.Windows.Point(dxfX,dxfY));
+            dxfCoords.Add(new System.Windows.Point(dxfX, dxfY));
             double screenX = Coordinates.ToScreenX(dxfX);
             double screenY = Coordinates.ToScreenY(dxfY);
             PointEntity p = new PointEntity(screenX, screenY, (nx, ny) => { UpdatePoint(nx, ny, idx, true); ReDraw(); });
@@ -516,12 +522,12 @@ namespace SEMES_Pixel_Designer.Utils
                 y.Add(Coordinates.ToScreenY(dxfCoords[i].Y));
             }
             double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max(), width = Coordinates.CanvasRef.ActualWidth, height = Coordinates.CanvasRef.ActualHeight;
-            bool valid = 
+            bool valid =
                 // 최소 크기 이상
                 (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
                 // 화면에 포함됨
                 // && ((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height))
-                && maxX>=0&&minX<=width&&maxY>=0&&minY<=height;
+                && maxX >= 0 && minX <= width && maxY >= 0 && minY <= height;
             if (valid)
             {
                 using (StreamGeometryContext ctx = geometry.Open())
@@ -535,8 +541,6 @@ namespace SEMES_Pixel_Designer.Utils
             }
 
             if (valid == visible) return;
-            
-
             if (valid)
             {
                 //StreamGeometry geometry = new StreamGeometry();
@@ -605,7 +609,7 @@ namespace SEMES_Pixel_Designer.Utils
             // TODO : 인스턴스 삭제 방법 찾기
         }
 
-        public PolygonEntityType GetPolygonType()
+        public void UpdateColor()
         {
             path.Stroke = Coordinates.defaultColorBrush;
             if (!selected) return;
@@ -665,7 +669,11 @@ namespace SEMES_Pixel_Designer.Utils
                 path.Stroke = Coordinates.defaultColorBrush;
                 foreach (PointEntity point in points) point.UnbindCanvas();
             }
+
             selected = status;
+
+            OnPropertyChanged("Selected");
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
         }
 
         static public void ClearSelected()
@@ -756,6 +764,18 @@ namespace SEMES_Pixel_Designer.Utils
 
         }
 
+
+        public void UpdateName()
+        {
+            //TODO : 구현
+        }
+
+        public void Update()
+        {
+            //TODO : 구현
+        }
+
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -763,5 +783,7 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
     }
+
+
 
 }
