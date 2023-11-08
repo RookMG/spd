@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Globalization;
 
 namespace SEMES_Pixel_Designer
 {
@@ -112,6 +113,7 @@ namespace SEMES_Pixel_Designer
                 }
                 if (parts[0].Trim() == "GetCADFile")
                 {
+                    // default 경로 관리
                     string default_Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
                     string[] pathParts = Directory.GetDirectories(default_Path);
 
@@ -131,47 +133,34 @@ namespace SEMES_Pixel_Designer
                             {
                                 default_Path += ("\\" + getType);
 
+                                // 파일 목록 가져오기
                                 string[] files = Directory.GetFiles(default_Path);
 
                                 if (files.Length > 0)
                                 {
+                                    // 최신 날짜 파싱
                                     var mostRecentFile = files
                                         .Select(filePath => new
                                         {
                                             FilePath = filePath,
-                                            DateTimePart = Path.GetFileNameWithoutExtension(filePath)
+                                            DatePart = Path.GetFileNameWithoutExtension(filePath)
                                         })
-                                        .Select(fileInfo => new
+                                        .Where(fileInfo => fileInfo.DatePart != null) // null 값 제외
+                                        .OrderByDescending(fileInfo =>
                                         {
-                                            fileInfo.FilePath,
-                                            DatePart = fileInfo.DateTimePart.Split('_').FirstOrDefault()
+                                            DateTime parsedDate;
+                                            if (DateTime.TryParseExact(fileInfo.DatePart, "yyMMdd_HHmmss", null, DateTimeStyles.None, out parsedDate))
+                                            {
+                                                return parsedDate;
+                                            }
+                                            return DateTime.MinValue; // 올바르지 않은 경우 MinValue를 반환
                                         })
-                                        .OrderByDescending(fileInfo => DateTime.ParseExact(fileInfo.DatePart, "yyMMdd_HHmmss", null))
                                         .First();
+
                                     chk = true;
-                                    System.Windows.MessageBox.Show("가장 최근 파일: " + mostRecentFile.FilePath);
+                                    // System.Windows.MessageBox.Show("가장 최근 파일: " + mostRecentFile.FilePath);
+                                    SendMessage("GetCADFile;ACK;Path=" + mostRecentFile.FilePath);
                                 }
-                                // SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
-                                /*if(MainWindow.fileName == null)
-                                {
-
-                                    Utils.Mediator.NotifyColleagues("MainWindow.TcpIp_to_MainWindow", null);
-
-                                    if (MainWindow.chk_file)
-                                    {
-                                        Utils.Mediator.NotifyColleagues("MainWindow.forCall_SaveDxf_on_MainWindow", null);
-                                        while (MainWindow.fileName == null) { }
-                                        SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
-                                    }
-                                    else
-                                    {
-                                        SendMessage("GetCADFile;NAK;");
-                                    }
-                                }
-                                else
-                                {
-                                    SendMessage("GetCADFile;ACK;Path=" + MainWindow.fileName);
-                                }*/
                                 break;
                             }
                         }
