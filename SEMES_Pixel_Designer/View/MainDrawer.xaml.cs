@@ -105,8 +105,9 @@ namespace SEMES_Pixel_Designer
 
         public void ResizeWindow(object sender, SizeChangedEventArgs e)
         {
-            Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
-            Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
+            //Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
+            //Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
+            Coordinates.AdjustRatio();
             UpdateCanvas();
         }
 
@@ -274,6 +275,10 @@ namespace SEMES_Pixel_Designer
 
         public void Zoom(double scaleFactor, System.Windows.Point center)
         {
+            if (scaleFactor>0
+                &&(Coordinates.maxX - Coordinates.minX >= 2 * Coordinates.CANVAS_MARGIN / Coordinates.ratio + Coordinates.patternWidth* Math.Min(Coordinates.MAX_PATTERN_VIEW, Coordinates.patternCols) ||
+                Coordinates.maxY - Coordinates.minY >= 2 * Coordinates.CANVAS_MARGIN / Coordinates.ratio + Coordinates.patternHeight* Math.Min(Coordinates.MAX_PATTERN_VIEW, Coordinates.patternRows)))
+                return;
             double xFactor = (Coordinates.maxX - Coordinates.minX) * scaleFactor,
                 yFactor = (Coordinates.maxY - Coordinates.minY) * scaleFactor;
             Coordinates.maxX += xFactor * (ActualWidth - center.X) / ActualWidth;
@@ -307,7 +312,7 @@ namespace SEMES_Pixel_Designer
             ClearSelected();
             drawingPolygon = new Polygon
             {
-                Fill = Coordinates.fillColorBrush,
+                Fill = Coordinates.transparentBrush,
                 Stroke = Coordinates.defaultColorBrush,
             };
             drawingPolygon.StrokeDashArray.Add(5);
@@ -315,7 +320,7 @@ namespace SEMES_Pixel_Designer
 
             drawingEllipse = new Ellipse
             {
-                Fill = Coordinates.fillColorBrush,
+                Fill = Coordinates.transparentBrush,
                 Stroke = Coordinates.defaultColorBrush,
                 Width = 5,
                 Height = 5,
@@ -343,7 +348,7 @@ namespace SEMES_Pixel_Designer
             ClearSelected();
             drawingPolygon = new Polygon
             {
-                Fill = Coordinates.fillColorBrush,
+                Fill = Coordinates.transparentBrush,
                 Stroke = Coordinates.defaultColorBrush,
             };
             drawingPolygon.StrokeDashArray.Add(5);
@@ -351,7 +356,7 @@ namespace SEMES_Pixel_Designer
 
             drawingEllipse = new Ellipse
             {
-                Fill = Coordinates.fillColorBrush,
+                Fill = Coordinates.transparentBrush,
                 Stroke = Coordinates.defaultColorBrush,
                 Width = 5,
                 Height = 5,
@@ -380,7 +385,7 @@ namespace SEMES_Pixel_Designer
             ClearSelected();
             drawingPolygon = new Polygon
             {
-                Fill = Coordinates.fillColorBrush,
+                Fill = Coordinates.transparentBrush,
                 Stroke = Coordinates.defaultColorBrush,
             };
             drawingPolygon.StrokeDashArray.Add(5);
@@ -388,7 +393,7 @@ namespace SEMES_Pixel_Designer
 
             drawingEllipse = new Ellipse
             {
-                Fill = Coordinates.fillColorBrush,
+                Fill = Coordinates.transparentBrush,
                 Stroke = Coordinates.defaultColorBrush,
                 Width = 5,
                 Height = 5,
@@ -434,7 +439,7 @@ namespace SEMES_Pixel_Designer
             if(Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
             drawingPolygon = new Polygon
             {
-                Fill = Coordinates.fillColorBrush,
+                Fill = Coordinates.transparentBrush,
                 Stroke = Coordinates.defaultColorBrush,
                 StrokeThickness = 0.5
             };
@@ -502,14 +507,22 @@ namespace SEMES_Pixel_Designer
         private void MoveCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (offset == null) return;
-            double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth, 
+            double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth,
                 dy = (Coordinates.maxY - Coordinates.minY) * (e.GetPosition(this).Y - offset[1]) / ActualHeight;
-            Coordinates.maxX = dx + Coordinates.maxX - Coordinates.minX + offset[2];
-            Coordinates.minX = dx + offset[2];
 
-            Coordinates.maxY = dy + Coordinates.maxY - Coordinates.minY + offset[3];
-            Coordinates.minY = dy + offset[3];
+            if ((dx > 0 || Coordinates.CANVAS_MARGIN / Coordinates.ratio + dx + offset[2] > Coordinates.glassLeft)
+                && (dx < 0 || dx + Coordinates.maxX - Coordinates.minX + offset[2] < Coordinates.CANVAS_MARGIN / Coordinates.ratio + Coordinates.GetGlassRight()))
+            {
+                Coordinates.maxX = dx + Coordinates.maxX - Coordinates.minX + offset[2];
+                Coordinates.minX = dx + offset[2];
+            }
 
+            if ((dy > 0 || Coordinates.CANVAS_MARGIN / Coordinates.ratio + dy + offset[3] > Coordinates.glassBottom )
+                && ( dy < 0 || dy + Coordinates.maxY - Coordinates.minY + offset[3] < Coordinates.CANVAS_MARGIN / Coordinates.ratio + Coordinates.GetGlassTop()))
+            {
+                Coordinates.maxY = dy + Coordinates.maxY - Coordinates.minY + offset[3];
+                Coordinates.minY = dy + offset[3];
+            }
             UpdateCanvas();
         }
 
