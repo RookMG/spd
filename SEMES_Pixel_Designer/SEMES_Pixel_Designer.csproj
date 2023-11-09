@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
+    <Folder Include="obj\Debug\" />
     <Folder Include="ViewModel\" />
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +224,12 @@
     <Resource Include="Asset\icon\icons8-connected-48.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="Asset\icon\SplashScreen_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\SPD_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
