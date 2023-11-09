@@ -453,29 +453,8 @@ namespace SEMES_Pixel_Designer
         private void Zoom_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             double scaleFactor = 0.1;
+            Zoom(e.Delta < 0 ? scaleFactor * 1.1 : -scaleFactor, e.GetPosition(this));
 
-            if (e.Delta > 0)
-            {
-                if(zoomCount < 10)
-                {
-                    scaleFactor = scaleFactor * 1.1; // 확대
-                    zoomCount++;
-                }
-            }
-            else
-            {
-                if (zoomCount < 10)
-                {
-                    scaleFactor = -scaleFactor; // 축소
-                    zoomCount--;
-                }
-                    
-            }
-                
-
-            Zoom(scaleFactor, e.GetPosition(this));
-
-            //Zoom(e.Delta < 0 ? scaleFactor * 1.1 : -scaleFactor, e.GetPosition(this));
         }
 
 
