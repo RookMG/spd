@@ -15,7 +15,7 @@ namespace SEMES_Pixel_Designer.Utils
     public static class Coordinates
     {
         public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5,
-            glassBottom = 0, glassLeft = 0, patternWidth = 1000, patternHeight = 100, patternRows = 5, patternCols = 5, patternMarginX = 0, patternMarginY = 0;
+            glassBottom = 0, glassLeft = 0, patternWidth = 1000, patternHeight = 100, patternRows = 50, patternCols = 50, patternMarginX = 0, patternMarginY = 0;
 
         public static MainCanvas CanvasRef;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
@@ -26,6 +26,9 @@ namespace SEMES_Pixel_Designer.Utils
             transparentBrush = Brushes.Transparent,
             selectedColorBrush = Brushes.Red;
 
+        public static Path canvasOutlinePath;
+        public static StreamGeometry geometry;
+
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
@@ -35,7 +38,7 @@ namespace SEMES_Pixel_Designer.Utils
             //MINIMUM_VISIBLE_SIZE = 5, 
             MIN_GRID_SIZE = 15, 
             MAX_PATTERN_VIEW = 6,
-            CANVAS_MARGIN = 200;
+             CANVAS_MARGIN = 200;
 
         public static void UpdateRange(DrawingEntities entities)
         {
@@ -96,7 +99,17 @@ namespace SEMES_Pixel_Designer.Utils
         }
         public static void DrawGrid()
         {
-
+            using (StreamGeometryContext ctx = geometry.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(ToScreenX(glassLeft), ToScreenY(glassBottom)), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(ToScreenX(glassLeft), ToScreenY(GetGlassTop())), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(ToScreenX(GetGlassRight()), ToScreenY(GetGlassTop())), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(ToScreenX(GetGlassRight()), ToScreenY(glassBottom)), true /* is stroked */, false /* is smooth join */);
+                ctx.BeginFigure(new System.Windows.Point(-1,-1), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(-1, CanvasRef.ActualHeight + 1), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(CanvasRef.ActualWidth + 1, CanvasRef.ActualHeight + 1), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(CanvasRef.ActualWidth + 1, -1), true /* is stroked */, false /* is smooth join */);
+            }
 
             gridSpacing = Math.Pow(10, Math.Floor(Math.Log10(Math.Max(maxY - minY, maxX - minX))));
             if (ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;

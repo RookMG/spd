@@ -57,6 +57,7 @@ namespace SEMES_Pixel_Designer
             Coordinates.CanvasRef = this;
             SizeChanged += new SizeChangedEventHandler(ResizeWindow);
 
+
             Coordinates.BindCanvasAction = Children.Add;
             Coordinates.UnbindCanvasAction = Children.Remove;
             Coordinates.SetZIndexAction = SetZIndex;
@@ -65,7 +66,10 @@ namespace SEMES_Pixel_Designer
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
             Background = Coordinates.backgroundColorBrush;
-
+            Coordinates.canvasOutlinePath = new Path();
+            Coordinates.canvasOutlinePath.Data = Coordinates.geometry = new StreamGeometry();
+            Coordinates.canvasOutlinePath.Fill = Brushes.Gray;
+            Coordinates.geometry.FillRule = FillRule.Nonzero;
             Children.Add(Coordinates.gridInfoText);
             SetZIndex(Coordinates.gridInfoText,-1);
 
@@ -121,6 +125,7 @@ namespace SEMES_Pixel_Designer
         {
             Children.Clear();
             Children.Add(Coordinates.gridInfoText);
+            Children.Add(Coordinates.canvasOutlinePath);
             SetZIndex(Coordinates.gridInfoText, -1);
             UpdateLayout();
 
