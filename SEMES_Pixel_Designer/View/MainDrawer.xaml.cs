@@ -50,7 +50,7 @@ namespace SEMES_Pixel_Designer
         public double[] offset = null;
         public Polygon drawingPolygon = null;
         public Ellipse drawingEllipse = null;
-        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = 10;
+        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = -1;
         public int pasteCount = 0;
         public MainCanvas()
         {
@@ -478,7 +478,7 @@ namespace SEMES_Pixel_Designer
                    maxSelX = Math.Max(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
                    minSelY = Math.Min(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y),
                    maxSelY = Math.Max(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y);
-            if (maxSelX + maxSelY - minSelX - minSelY > MIN_SELECT_LENGTH && !Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            if (maxSelX + maxSelY - minSelX - minSelY >= MIN_SELECT_LENGTH && !Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
             {
                 ClearSelected();
             }
