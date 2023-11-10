@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.IO;
+using System.Globalization;
 
 namespace SEMES_Pixel_Designer
 {
@@ -29,14 +32,52 @@ namespace SEMES_Pixel_Designer
 
         // 데이터 저장할 queue
         Queue<byte[]> messageQueue = new Queue<byte[]>();
+        private AsyncCallback m_data_queue_process;
+        private CancellationTokenSource cancellationTokenSource;
+
+        // system.ini 데이터 추출
+        private static string iniFilePath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "system.ini"));
+        Dictionary<string, string> iniData = ReadIniFile(iniFilePath);
 
         public TcpIp()
         {
             Utils.Mediator.Register("TcpIp.TcpConnection", TcpConnection);
         }
 
+        // system.ini 데이터 파싱
+        static Dictionary<string, string> ReadIniFile(string filePath)
+        {
+            Dictionary<string, string> iniData = new Dictionary<string, string>();
+
+            try
+            {
+                string[] lines = File.ReadAllLines(filePath);
+                foreach (string line in lines)
+                {
+                    string trimmedLine = line.Trim();
+                    if (!string.IsNullOrWhiteSpace(trimmedLine) && !trimmedLine.StartsWith(";"))
+                    {
+                        string[] parts = trimmedLine.Split('=');
+                        if (parts.Length == 2)
+                        {
+                            string key = parts[0].Trim();
+                            string value = parts[1].Trim();
+                            iniData[key] = value;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show("INI 파일을 읽는 중 오류 발생: " + ex.Message);
+            }
+
+            return iniData;
+        }
+
+
         #region TCPIP 관련 함수들
-        
+
 
         // TCP 연결 대기
         public void TcpConnection(object obj)
@@ -49,7 +90,7 @@ namespace SEMES_Pixel_Designer
             m_ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 
             // 특정 포트에서 모든 주소로부터 들어오는 연결을 받기 위해 포트를 바인딩합니다.
-            m_ServerSocket.Bind(new IPEndPoint(IPAddress.Any, 1004));
+            m_ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(iniData["IP"]), int.Parse(iniData["port"])));
 
             // 연결 요청을 받기 시작합니다.
             m_ServerSocket.Listen(5);
@@ -58,6 +99,10 @@ namespace SEMES_Pixel_Designer
             m_fnReceiveHandler = new AsyncCallback(handleDataReceive);
             m_fnSendHandler = new AsyncCallback(handleDataSend);
             m_fnAcceptHandler = new AsyncCallback(handleClientConnectionRequest);
+            m_data_queue_process = new AsyncCallback(data_queue_process);
+
+            // queue 처리 비동기 작업 시작
+            IAsyncResult result = m_data_queue_process.BeginInvoke(null, null, null);
 
             // BeginAccept 메서드를 이용해 들어오는 연결 요청을 비동기적으로 처리합니다.
             // 연결 요청을 처리하는 함수는 handleClientConnectionRequest 입니다.
@@ -65,8 +110,99 @@ namespace SEMES_Pixel_Designer
 
         }
 
+        private void data_queue_process(IAsyncResult ar)
+        {
+            // queue 데이터 모두 처리
+            while (true)
+            {
+                if(messageQueue.Count > 0)
+                {
+                    Byte[] tmp_msgByte;
+                    lock (messageQueue)
+                    {
+                        tmp_msgByte = messageQueue.Dequeue();
+                    }
+
+                    // 데이터 파싱
+                    string now_data = Encoding.Unicode.GetString(tmp_msgByte);
+                    string[] parts = now_data.Split(';');
+
+                    if (parts[0].Trim() == "GetCADFile")
+                    {
+                        // default 경로 관리
+                        string default_Path = iniData["default_path"]; // System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
+                        string[] pathParts = Directory.GetDirectories(default_Path);
+
+                        for (int i = 0; i < pathParts.Length; i++)
+                        {
+                            string[] pathtmp = pathParts[i].Split(Path.DirectorySeparatorChar);
+                            pathParts[i] = pathtmp[pathtmp.Length - 1];
+                        }
+
+                        if (parts[1].StartsWith("Type="))
+                        {
+                            string getType = parts[1].Substring(5);
+                            bool chk = false;
+                            for (int i = 0; i < pathParts.Length; i++)
+                            {
+                                if (getType == pathParts[i])
+                                {
+                                    default_Path += ("\\" + getType);
+
+                                    // 파일 목록 가져오기
+                                    string[] files = Directory.GetFiles(default_Path);
+
+                                    if (files.Length > 0)
+                                    {
+                                        // 최신 날짜 파싱
+                                        var mostRecentFile = files
+                                            .Select(filePath => new
+                                            {
+                                                FilePath = filePath,
+                                                DatePart = Path.GetFileNameWithoutExtension(filePath)
+                                            })
+                                            .Where(fileInfo => fileInfo.DatePart != null) // null 값 제외
+                                            .OrderByDescending(fileInfo =>
+                                            {
+                                                DateTime parsedDate;
+                                                if (DateTime.TryParseExact(fileInfo.DatePart, "yyMMdd_HHmmss", null, DateTimeStyles.None, out parsedDate))
+                                                {
+                                                    return parsedDate;
+                                                }
+                                                return DateTime.MinValue; // 올바르지 않은 경우 MinValue를 반환
+                                        })
+                                            .First();
+
+                                        chk = true;
+                                        // System.Windows.MessageBox.Show("가장 최근 파일: " + mostRecentFile.FilePath);
+                                        SendMessage("GetCADFile;ACK;Path=" + mostRecentFile.FilePath);
+                                    }
+                                    break;
+                                }
+                            }
+                            if (!chk)
+                            {
+                                SendMessage("GetCADFile;NAK;");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private void handleDataReceive(IAsyncResult ar)
         {
+            // 클라이언트 연결 체크
+            cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+            
+            if(m_ConnectedClient.Poll(1000, SelectMode.SelectRead) && m_ConnectedClient.Available == 0)
+            {
+                m_ConnectedClient.Close();
+                m_ServerSocket.Close();
+                TcpConnection(null);
+                return;
+            }
 
             // 넘겨진 추가 정보를 가져옵니다.
             // AsyncState 속성의 자료형은 Object 형식이기 때문에 형 변환이 필요합니다~!
@@ -97,32 +233,6 @@ namespace SEMES_Pixel_Designer
                 lock (messageQueue)
                 {
                     messageQueue.Enqueue(msgByte);
-                }
-
-                // 데이터 파싱
-
-                // **queue 처리 과정으로 변경 필요**
-                string now_data = Encoding.Unicode.GetString(msgByte);
-                string[] parts = now_data.Split(';');
-
-                foreach (string part in parts)
-                {
-                    System.Windows.MessageBox.Show(part);
-                }
-                if (parts[0].Trim() == "GetCADFile")
-                {
-                    if (parts[1].StartsWith("Type="))
-                    {
-                        string getType = parts[1].Substring(5);
-                        if(getType == "TEMPTYPE")
-                        {
-                            SendMessage("GetCADFile;ACK;Path=E:\\CadFile\\TEMPTYPE\\231103_164555.dxf");
-                        }
-                        else
-                        {
-                            SendMessage("GetCADFile;NAK;");
-                        }
-                    }
                 }
             }
 
