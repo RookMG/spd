@@ -189,6 +189,8 @@ namespace SEMES_Pixel_Designer
 
                 DrawCanvas(null);
 
+                Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+
             }
 
         }
