@@ -7,9 +7,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="20" d:DesignWidth="800"
       Title="StatusBar">
-
-    <StackPanel Orientation="Horizontal" Height="20" >
-        <TextBlock x:Name="positionText" TextWrapping="Wrap" Width="250" VerticalAlignment="Center" Margin="10,0,10,0" />
-        <TextBlock x:Name="filePathText" TextWrapping="Wrap" Width="500" VerticalAlignment="Center" Margin="10,0,10,0" />
-    </StackPanel>
+    <StatusBar Height="20">
+        <TextBlock x:Name="positionText" TextWrapping="Wrap" Width="250" VerticalAlignment="Center" Margin="0,0,10,0" />
+        <Separator/>
+        <TextBlock x:Name="filePathText" TextWrapping="Wrap" Width="450" VerticalAlignment="Center" Margin="0,0,10,0" />
+    </StatusBar>
 </Page>
