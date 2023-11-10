@@ -22,12 +22,15 @@
 
 		<TreeView x:Name="EntityTreeView"/>
 		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-		<StackPanel Grid.Row="2" VerticalAlignment="Top">
-			<ComboBox x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
+
+		<Grid Grid.Row="2">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="1*" />
+				<RowDefinition Height="5*" />
+			</Grid.RowDefinitions>
+			<ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
 			</ComboBox>
-
-
-			<ScrollViewer VerticalScrollBarVisibility="Auto">
+			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 
 				<StackPanel Orientation="Vertical">
 					<Expander Header="Common">
@@ -92,14 +95,14 @@
 
 							<Border Grid.Column="2">
 
-									<ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-										<ListView.View>
-											<GridView>
-												<GridViewColumn Header="X" DisplayMemberBinding="{Binding X}" />
-												<GridViewColumn Header="Y" DisplayMemberBinding="{Binding Y}" />
-											</GridView>
-										</ListView.View>
-									</ListView>
+								<ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<ListView.View>
+										<GridView>
+											<GridViewColumn Header="X" DisplayMemberBinding="{Binding X}" />
+											<GridViewColumn Header="Y" DisplayMemberBinding="{Binding Y}" />
+										</GridView>
+									</ListView.View>
+								</ListView>
 								<!--<StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
 								</StackPanel>-->
 							</Border>
@@ -107,7 +110,9 @@
 					</Expander>
 				</StackPanel>
 			</ScrollViewer>
-		</StackPanel>
+
+			
+		</Grid>
 
 
 		<GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>

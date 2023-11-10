@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.ComponentModel;
 
 namespace SEMES_Pixel_Designer.Utils
 {
@@ -402,10 +401,8 @@ namespace SEMES_Pixel_Designer.Utils
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
         public static List<CopyData> clipboard = new List<CopyData>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public class CopyData
-        { 
+        {
             public PointCollection dxfCoords { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
@@ -511,16 +508,6 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
         #endregion
-
-        public PolygonEntityType GetPolygonType()
-        {
-            return entityType;
-        }
-
-        public EntityObject GetEntityObject()
-        {
-            return entityObject;
-        }
 
         public static void CopySelected()
         {
@@ -741,8 +728,6 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     point.BindCanvas();
                 }
-
-                
             }
             else
             {
@@ -750,7 +735,6 @@ namespace SEMES_Pixel_Designer.Utils
                 path.Stroke = Coordinates.defaultColorBrush;
                 foreach (PointEntity point in points) point.UnbindCanvas();
             }
-
             selected = status;
 
             OnPropertyChanged("Selected");

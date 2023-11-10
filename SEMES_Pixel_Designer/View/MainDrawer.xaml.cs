@@ -380,6 +380,7 @@ namespace SEMES_Pixel_Designer
             MouseMove += DrawLine_MouseMove;
             MouseLeftButtonUp += DrawLine_MouseLeftButtonUp;
             MouseRightButtonUp += DrawLine_MouseRightButtonUp;
+
         }
         private void DrawRectangle(object obj)
         {
