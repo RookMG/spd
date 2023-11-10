@@ -32,6 +32,8 @@ using Point = netDxf.Entities.Point;
 using Trace = netDxf.Entities.Trace;
 using SEMES_Pixel_Designer.Utils;
 using System.ComponentModel;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace SEMES_Pixel_Designer
 {
@@ -111,6 +113,8 @@ namespace SEMES_Pixel_Designer
             // TcpIp 연결 항시 대기
             TcpIp tt = new TcpIp();
             Utils.Mediator.NotifyColleagues("TcpIp.TcpConnection", null);
+            /*Utils.Mediator.Register("MainWindow.TcpIp_to_MainWindow", TcpIp_to_MainWindow);
+            Utils.Mediator.Register("MainWindow.forCall_SaveDxf_on_MainWindow", forCall_SaveDxf_on_MainWindow);*/
 
             #endregion
 
@@ -123,6 +127,9 @@ namespace SEMES_Pixel_Designer
         // foreach (var line in MainWindow.doc.Entities.Lines) {...}
         public static DxfDocument doc = new DxfDocument();
         public static string fileName = null;
+
+        public static bool chk_file = false;
+        public static int file_num = 1;
 
 
         // 기능 명세서 참고
@@ -158,6 +165,7 @@ namespace SEMES_Pixel_Designer
 
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
+            dlgOpenFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
             {
@@ -198,7 +206,12 @@ namespace SEMES_Pixel_Designer
         {
             SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
             dlgSaveAsFile.Title = "파일 저장";
+            dlgSaveAsFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
             dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
+
+            // 파일 번호 관리
+            dlgSaveAsFile.FileName = DateTime.Now.ToString("yyMMdd_HHmmss");
+
 
             if (dlgSaveAsFile.ShowDialog().ToString() == "OK")
             {
@@ -1026,6 +1039,20 @@ namespace SEMES_Pixel_Designer
         }
         #endregion
 
+        /*public void TcpIp_to_MainWindow(object obj)
+        {
+            if (Mediator.FileChangeCount == 0) chk_file = true;
+            MessageBoxResult result = System.Windows.MessageBox.Show("저장되지 않은 편집 내용이 있습니다. 저장하시겠습니까?", "새 파일", MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.Cancel) chk_file = false;
+            if (result == MessageBoxResult.Yes) chk_file = true;
+        }
 
+        public void forCall_SaveDxf_on_MainWindow(object obj)
+        {
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+            {
+                SaveAsDxf(null);
+            }));
+        }*/
     }
 }
