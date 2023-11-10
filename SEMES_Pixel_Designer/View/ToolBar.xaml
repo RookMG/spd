@@ -8,9 +8,9 @@
       d:DesignHeight="54" d:DesignWidth="800"
       Title="ToolBar">
 
-    <StackPanel>
-        <StackPanel Orientation="Horizontal" Height="23" Margin="2">
-            <StackPanel.Resources>
+    <ToolBarTray Background="White">
+        <ToolBar Band="1" BandIndex="1">
+            <ToolBar.Resources>
                 <Style TargetType="{x:Type Button}" x:Key="ImgBtnStyle">
                     <Setter Property="Width" Value="23"/>
                     <Setter Property="Height" Value="23"/>
@@ -19,9 +19,7 @@
                     <Setter Property="Background" Value="WhiteSmoke"/>
                     <Setter Property="Command" Value="{Binding DelCommand}"/>
                 </Style>
-            </StackPanel.Resources>
-
-
+            </ToolBar.Resources>
             <Button CommandParameter="MainWindow.NewDxf" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/AddDocument_16x.png" />
             </Button>
@@ -31,9 +29,7 @@
             <Button CommandParameter="MainWindow.SaveDxf" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/Save_16x.png" />
             </Button>
-
-            <Rectangle  VerticalAlignment="Stretch"  HorizontalAlignment="Center" Margin="5,0,5,0" Fill="LightGray" Width="1"/>
-
+            <Separator/>
             <Button CommandParameter="MainWindow.Undo" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/StepBackwards_16x.png" />
             </Button>
@@ -49,9 +45,7 @@
             <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/FitToScreen_16x.png" />
             </Button>
-
-            <Rectangle  VerticalAlignment="Stretch"  HorizontalAlignment="Center" Margin="5,0,5,0" Fill="LightGray" Width="1"/>
-
+            <Separator/>
             <Button CommandParameter="MainWindow.DrawDot" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/Dot_16x.png" />
             </Button>
@@ -67,17 +61,18 @@
             <Button CommandParameter="MainWindow.DeleteEntities" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/Trash_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.CloneEntities" Style="{StaticResource ImgBtnStyle}">
+            <Button Click="Clone_Button_Click" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/EditLayoutTable_16x.png" />
             </Button>
+        </ToolBar>
 
-        </StackPanel>
-        <Separator />
-        <StackPanel Orientation="Horizontal" Height="20" Margin="2">
-            <TextBlock Text="Layouts" VerticalAlignment="Center" Margin="10,0,80,0" />
-            <ComboBox Width="150">
-                <ComboBoxItem Content="Model" IsSelected="True"/>
-            </ComboBox>
-        </StackPanel>
-    </StackPanel>
+        <ToolBar Band="1" BandIndex="2">
+            <StackPanel Orientation="Horizontal" Height="20" Margin="2">
+                <TextBlock Text="Layouts" VerticalAlignment="Center" Margin="10,0,80,0" />
+                <ComboBox Width="150">
+                    <ComboBoxItem Content="Model" IsSelected="True"/>
+                </ComboBox>
+            </StackPanel>
+        </ToolBar>
+    </ToolBarTray>
 </Page>
