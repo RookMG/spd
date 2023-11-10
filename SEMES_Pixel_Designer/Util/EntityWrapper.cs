@@ -27,11 +27,12 @@ namespace SEMES_Pixel_Designer.Utils
             defaultColorBrush = Brushes.Black,
             backgroundColorBrush = Brushes.White,
             transparentBrush = Brushes.Transparent,
-            selectedColorBrush = Brushes.Red;
-
+            selectedColorBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0x69, 0xB4)),
+            highlightBrush = new SolidColorBrush(Color.FromArgb(0x70, 0xFF, 0xFF, 0x00));
+        public static Dictionary<Color, SolidColorBrush> BrushDict = new Dictionary<Color, SolidColorBrush>();
         public static Path canvasOutlinePath;
         public static StreamGeometry geometry;
-
+        public static bool mouseCaptured = false;
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
@@ -173,8 +174,11 @@ namespace SEMES_Pixel_Designer.Utils
 
             gridLines.Add(infoLine);
             BindCanvasAction(infoLine);
-            SetZIndexAction(infoLine, -1);
+            SetZIndexAction(infoLine, 10);
+            SetZIndexAction(gridInfoText,10);
             gridInfoText.Text = " : " + gridSpacing * 0.1;
+            gridInfoText.Foreground = defaultColorBrush;
+            gridInfoText.Background = backgroundColorBrush;
             SetLeftAction(gridInfoText, 15 + ToScreenX(minX + gridSpacing * 0.1));
             SetTopAction(gridInfoText, CanvasRef.ActualHeight - 10 - gridInfoText.FontSize);
         }
@@ -222,6 +226,14 @@ namespace SEMES_Pixel_Designer.Utils
             return string.Format("x : {0}, y : {1}", dxfX, dxfY);
         }
 
+        public static SolidColorBrush GetSolidColorBrush(Color color)
+        {
+            if (!BrushDict.ContainsKey(color))
+            {
+                BrushDict.Add(color, new SolidColorBrush(color));
+            }
+            return BrushDict[color];
+        }
     }
 
 
@@ -567,6 +579,7 @@ namespace SEMES_Pixel_Designer.Utils
             path.Data = geometry;
             selectArea.Data = geometry;
             ReDraw();
+            ReColor();
         }
 
         public void ReDraw()
@@ -633,6 +646,23 @@ namespace SEMES_Pixel_Designer.Utils
             //    if (!selected) return;
             //    foreach (PointEntity p in points) p.path.Visibility = Visibility.Collapsed;
             //}
+        }
+
+        public void ReColor()
+        {
+            if (selected)
+            {
+                path.Stroke = Coordinates.selectedColorBrush;
+            }
+            else if(entityObject.Color.R % 0xFF == 0 && entityObject.Color.G == entityObject.Color.R && entityObject.Color.B == entityObject.Color.R)
+            {
+                path.Stroke = Coordinates.defaultColorBrush;
+            }
+            else
+            {
+                path.Stroke = Coordinates.GetSolidColorBrush(Color.FromRgb(entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
+                path.Fill = Coordinates.GetSolidColorBrush(Color.FromArgb(0x33,entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
+            }
         }
 
         public void Delete()
@@ -719,11 +749,10 @@ namespace SEMES_Pixel_Designer.Utils
         {
             if (status == selected) return;
 
-            // TODO : 구현
             if (status)
             {
                 selectedEntities.Add(this);
-                path.Stroke = Coordinates.selectedColorBrush;
+
                 foreach (PointEntity point in points)
                 {
                     point.BindCanvas();
@@ -732,11 +761,10 @@ namespace SEMES_Pixel_Designer.Utils
             else
             {
                 selectedEntities.Remove(this);
-                path.Stroke = Coordinates.defaultColorBrush;
                 foreach (PointEntity point in points) point.UnbindCanvas();
             }
             selected = status;
-
+            ReColor();
             OnPropertyChanged("Selected");
             Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
         }
@@ -748,27 +776,29 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            Coordinates.mouseCaptured = true;
+            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 ToggleSelected(true);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (!selected)
             {
                 ClearSelected();
                 ToggleSelected(true);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
 
-            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
 
-            //source = (UIElement)sender;
-            //Mouse.Capture(source);
 
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
@@ -785,6 +815,11 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.LeftButton == MouseButtonState.Released)
+            {
+                MouseLeftButtonUp(sender, e);
+                return;
+            }
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
                 if (selectedEntity.mouseOffsets == null) continue;
@@ -796,8 +831,9 @@ namespace SEMES_Pixel_Designer.Utils
             }
         }
 
-        private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
+            Coordinates.mouseCaptured = false;
             Coordinates.CanvasRef.MouseMove -= MouseMove;
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
@@ -825,7 +861,6 @@ namespace SEMES_Pixel_Designer.Utils
                 }
             ));
 
-            //Mouse.Capture(null);
             mouseOffsets = null;
 
         }

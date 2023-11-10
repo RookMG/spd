@@ -36,7 +36,7 @@ namespace SEMES_Pixel_Designer.View
             Coordinates.MinimapRef = this;
             CanvasPosition = new Polygon
             {
-                Fill = Coordinates.transparentBrush,
+                Fill = Coordinates.highlightBrush,
                 Stroke = Coordinates.defaultColorBrush,
             };
             CanvasPosition.Points.Add(new Point(0, 0));
@@ -57,7 +57,6 @@ namespace SEMES_Pixel_Designer.View
 
         public void UpdatePosition()
         {
-            // TODO : 구현
             double sx = (Coordinates.minX - Coordinates.glassLeft) * ActualWidth / (Coordinates.GetGlassRight() - Coordinates.glassLeft),
                 sy = (Coordinates.GetGlassTop() - Coordinates.minY) * ActualHeight / (Coordinates.GetGlassTop() - Coordinates.glassBottom),
                 ex = (Coordinates.maxX - Coordinates.glassLeft) * ActualWidth / (Coordinates.GetGlassRight() - Coordinates.glassLeft),
@@ -70,7 +69,6 @@ namespace SEMES_Pixel_Designer.View
 
         public void AdjustRatio()
         {
-            // TODO : 구현
             if((Coordinates.GetGlassTop() - Coordinates.glassBottom) / (Coordinates.GetGlassRight() - Coordinates.glassLeft) > Window.GetWindow(this).ActualHeight / Window.GetWindow(this).ActualWidth)
             {
                 Height = Window.GetWindow(this).ActualHeight - 40;
