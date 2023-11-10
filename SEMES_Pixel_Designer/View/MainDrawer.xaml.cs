@@ -111,7 +111,7 @@ namespace SEMES_Pixel_Designer
                 gridLine.MouseWheel += Zoom_MouseWheel;
                 gridLine.MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
-            Coordinates.MinimapRef.UpdatePosition();
+            Coordinates.MinimapRef.AdjustRatio();
         }
 
         public void ResizeWindow(object sender, SizeChangedEventArgs e)
@@ -119,6 +119,7 @@ namespace SEMES_Pixel_Designer
             //Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
             //Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
             Coordinates.AdjustRatio();
+            Coordinates.MinimapRef.AdjustRatio();
             UpdateCanvas();
         }
 
@@ -150,7 +151,7 @@ namespace SEMES_Pixel_Designer
             {
                 DrawingEntities.Add(new PolygonEntity(polyline));
             }
-
+            UpdateCanvas();
         }
 
         public void ColorBackground(object obj)

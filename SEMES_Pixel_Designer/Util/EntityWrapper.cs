@@ -17,7 +17,7 @@ namespace SEMES_Pixel_Designer.Utils
     public static class Coordinates
     {
         public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5,
-            glassBottom = 0, glassLeft = 0, patternWidth = 1000, patternHeight = 1000, patternRows = 50, patternCols = 50, patternMarginX = 0, patternMarginY = 0;
+            glassBottom = 0, glassLeft = 0, patternWidth = 1000, patternHeight = 1000, patternRows = 20, patternCols = 20, patternMarginX = 0, patternMarginY = 0;
 
         public static MainCanvas CanvasRef;
         public static MinimapCanvas MinimapRef;
@@ -210,11 +210,11 @@ namespace SEMES_Pixel_Designer.Utils
 
         public static double getPatternOffsetX(int column)
         {
-            return glassLeft + column * (patternWidth + patternMarginX);
+            return column * (patternWidth + patternMarginX);
         }
         public static double getPatternOffsetY(int row)
         {
-            return glassBottom + row * (patternHeight + patternMarginY);
+            return row * (patternHeight + patternMarginY);
         }
 
         public static string ToolTip(double dxfX, double dxfY)
@@ -563,6 +563,9 @@ namespace SEMES_Pixel_Designer.Utils
                 AddPoint(line.StartPoint);
                 AddPoint(line.EndPoint);
             }
+            geometry.FillRule = FillRule.EvenOdd;
+            path.Data = geometry;
+            selectArea.Data = geometry;
             ReDraw();
         }
 
@@ -577,12 +580,12 @@ namespace SEMES_Pixel_Designer.Utils
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 int rStart = 0, cStart = 0;
-                while (Coordinates.getPatternOffsetX(cStart + 1) < Coordinates.minX) cStart++;
-                while (Coordinates.getPatternOffsetY(rStart + 1) < Coordinates.minY) rStart++;
-                for(int r = rStart;r <= Coordinates.MAX_PATTERN_VIEW + rStart && r < Coordinates.patternRows; r++)
+                while (Coordinates.getPatternOffsetX(cStart + 1) < Coordinates.minX - Coordinates.glassLeft) cStart++;
+                while (Coordinates.getPatternOffsetY(rStart + 1) < Coordinates.minY - Coordinates.glassBottom) rStart++;
+                for(int r = rStart; Coordinates.getPatternOffsetY(r) <= Coordinates.maxY && r < Coordinates.patternRows; r++)
                 {
                     double yStart = Coordinates.getPatternOffsetY(r);
-                    for (int c = cStart; c<=Coordinates.MAX_PATTERN_VIEW + cStart && c <Coordinates.patternCols; c++)
+                    for (int c = cStart; Coordinates.getPatternOffsetX(c) <= Coordinates.maxX && c <Coordinates.patternCols; c++)
                     {
                         double xStart = Coordinates.getPatternOffsetX(c);
                         ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[0].X), Coordinates.ToScreenY(yStart + dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
@@ -592,24 +595,6 @@ namespace SEMES_Pixel_Designer.Utils
                     }
                 }
 
-
-                //double xOffset = Coordinates.glassLeft, yOffset = Coordinates.glassBottom;
-                //while (xOffset + Coordinates.patternWidth + Coordinates.patternMarginX < Coordinates.minX) xOffset += Coordinates.patternWidth + Coordinates.patternMarginX;
-                //while (yOffset + Coordinates.patternHeight + Coordinates.patternMarginY < Coordinates.minY) yOffset += Coordinates.patternHeight + Coordinates.patternMarginY;
-                //for(int r = 0; r <= Coordinates.MAX_PATTERN_VIEW; r++)
-                //{
-                //    double yStart = yOffset + r * (Coordinates.patternHeight + Coordinates.patternMarginY);
-                //    if (yStart >= Coordinates.GetGlassTop() - 0.0001) continue;
-                //    for (int c=0; c<= Coordinates.MAX_PATTERN_VIEW; c++)
-                //    {
-                //        double xStart = xOffset + c * (Coordinates.patternWidth + Coordinates.patternMarginX);
-                //        if (xStart >= Coordinates.GetGlassRight() - 0.0001) continue;
-                //        ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[0].X), Coordinates.ToScreenY(yStart + dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
-                //        for (int i = 1; i < dxfCoords.Count; i++)
-                //            ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[i].X), Coordinates.ToScreenY(yStart + dxfCoords[i].Y)), true /* is stroked */, false /* is smooth join */);
-
-                //    }
-                //}
             }
             geometry.FillRule = FillRule.EvenOdd;
             path.Data = geometry;
