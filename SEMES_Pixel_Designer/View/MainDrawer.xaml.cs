@@ -1,6 +1,7 @@
 ﻿using netDxf;
 using netDxf.Entities;
 using SEMES_Pixel_Designer.Utils;
+using SEMES_Pixel_Designer.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,6 +93,8 @@ namespace SEMES_Pixel_Designer
             MouseWheel += Zoom_MouseWheel;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
+            Minimap minimap = new Minimap();
+            minimap.Show();
         }
 
         public void UpdateCanvas()
@@ -105,6 +108,7 @@ namespace SEMES_Pixel_Designer
                 gridLine.MouseWheel += Zoom_MouseWheel;
                 gridLine.MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
+            Coordinates.MinimapRef.UpdatePosition();
         }
 
         public void ResizeWindow(object sender, SizeChangedEventArgs e)
@@ -281,8 +285,8 @@ namespace SEMES_Pixel_Designer
         public void Zoom(double scaleFactor, System.Windows.Point center)
         {
             if (scaleFactor>0
-                &&(Coordinates.maxX - Coordinates.minX >= 2 * Coordinates.CANVAS_MARGIN / Coordinates.ratio + Coordinates.patternWidth* Math.Min(Coordinates.MAX_PATTERN_VIEW, Coordinates.patternCols) ||
-                Coordinates.maxY - Coordinates.minY >= 2 * Coordinates.CANVAS_MARGIN / Coordinates.ratio + Coordinates.patternHeight* Math.Min(Coordinates.MAX_PATTERN_VIEW, Coordinates.patternRows)))
+                &&(Coordinates.maxX - Coordinates.minX >= Coordinates.patternWidth* Math.Min(Coordinates.MAX_PATTERN_VIEW, Coordinates.patternCols) ||
+                Coordinates.maxY - Coordinates.minY >= Coordinates.patternHeight* Math.Min(Coordinates.MAX_PATTERN_VIEW, Coordinates.patternRows)))
                 return;
             double xFactor = (Coordinates.maxX - Coordinates.minX) * scaleFactor,
                 yFactor = (Coordinates.maxY - Coordinates.minY) * scaleFactor;

@@ -1,6 +1,7 @@
 ﻿using netDxf;
 using netDxf.Collections;
 using netDxf.Entities;
+using SEMES_Pixel_Designer.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace SEMES_Pixel_Designer.Utils
             glassBottom = 0, glassLeft = 0, patternWidth = 1000, patternHeight = 100, patternRows = 50, patternCols = 50, patternMarginX = 0, patternMarginY = 0;
 
         public static MainCanvas CanvasRef;
+        public static MinimapCanvas MinimapRef;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
         public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
         public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x99, 0x99, 0x99)),
@@ -96,6 +98,8 @@ namespace SEMES_Pixel_Designer.Utils
                 maxX += dx;
             }
             ratio = CanvasRef.ActualWidth / (maxX - minX);
+            if (MinimapRef == null) return;
+            MinimapRef.AdjustRatio();
         }
         public static void DrawGrid()
         {
