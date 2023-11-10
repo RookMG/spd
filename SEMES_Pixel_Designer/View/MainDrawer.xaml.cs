@@ -170,17 +170,7 @@ namespace SEMES_Pixel_Designer
             }
 
             Background = Coordinates.backgroundColorBrush;
-            foreach (PolygonEntity child in DrawingEntities)
-            {
-                if(child.selected)
-                {
-                    child.polygon.Stroke = Coordinates.selectedColorBrush;
-                }
-                else
-                {
-                    child.polygon.Stroke = Coordinates.defaultColorBrush;
-                }
-            }
+            foreach (PolygonEntity entity in DrawingEntities) entity.UpdateColor();
             UpdateCanvas();
         }
 
