@@ -1,4 +1,4 @@
-﻿<Window x:Class="SEMES_Pixel_Designer.MainWindow"
+<Window x:Class="SEMES_Pixel_Designer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,23 +8,17 @@
         Title="SEMES Pixel Designer" Height="450" Width="1000">
 
     <DockPanel Background="WhiteSmoke">
-        <DockPanel Width="800">
-            <StackPanel DockPanel.Dock="Top">
+        <StackPanel DockPanel.Dock="Top">
                 <Frame Source="/View/MenuBar.xaml"/>
                 <Separator />
                 <Frame Source="/View/ToolBar.xaml"/>
             </StackPanel>
             <Frame Source="/View/EntityDetails.xaml" Width="200" />
-            <Grid>
-                <DockPanel>
-                    <Frame DockPanel.Dock="Bottom" Source="/View/StatusBar.xaml"/>
-                    <Frame Source="/View/MainDrawer.xaml"/>
-                </DockPanel>
-            </Grid>
-        </DockPanel>
-        <DockPanel Width="200">
-            <Frame Source="/View/TcpTerm.xaml"/>
-        </DockPanel>
-
+        <Grid>
+            <DockPanel>
+                <Frame DockPanel.Dock="Bottom" Source="/View/StatusBar.xaml"/>
+                <Frame Source="/View/MainDrawer.xaml"/>
+            </DockPanel>
+        </Grid>
     </DockPanel>
 </Window>
