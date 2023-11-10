@@ -36,7 +36,7 @@ namespace SEMES_Pixel_Designer
         private CancellationTokenSource cancellationTokenSource;
 
         // system.ini 데이터 추출
-        private static string iniFilePath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "system.ini"));
+        private static string iniFilePath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "system.ini"));
         Dictionary<string, string> iniData = ReadIniFile(iniFilePath);
 
         public TcpIp()
@@ -69,7 +69,7 @@ namespace SEMES_Pixel_Designer
             }
             catch(Exception ex)
             {
-                System.Windows.MessageBox.Show("INI 파일을 읽는 중 오류 발생: " + ex.Message);
+                System.Windows.MessageBox.Show("system.ini 파일을 실행 파일 경로에 추가해주세요");
             }
 
             return iniData;
@@ -82,32 +82,74 @@ namespace SEMES_Pixel_Designer
         // TCP 연결 대기
         public void TcpConnection(object obj)
         {
-
             //TODO : 구현
             //저장하지 않은 내용 확인 필수!!
 
             // TCP 통신을 위한 소켓을 생성합니다.
             m_ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-
+            
             // 특정 포트에서 모든 주소로부터 들어오는 연결을 받기 위해 포트를 바인딩합니다.
-            m_ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(iniData["IP"]), int.Parse(iniData["port"])));
+            if (iniData.Count != 0)
+            {
+                if(iniData["IP"] == null || iniData["port"] == null)
+                {
+                    AsyncCallback m_wait_ip_port_set = new AsyncCallback(wait_ip_port_set);
+                    IAsyncResult result = m_wait_ip_port_set.BeginInvoke(null, null, null);
+                }
+                else
+                {
+                    m_ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(iniData["IP"]), int.Parse(iniData["port"])));
 
-            // 연결 요청을 받기 시작합니다.
-            m_ServerSocket.Listen(5);
+                    // 연결 요청을 받기 시작합니다.
+                    m_ServerSocket.Listen(5);
 
-            // 비동기 작업에 사용될 대리자를 초기화합니다.
-            m_fnReceiveHandler = new AsyncCallback(handleDataReceive);
-            m_fnSendHandler = new AsyncCallback(handleDataSend);
-            m_fnAcceptHandler = new AsyncCallback(handleClientConnectionRequest);
-            m_data_queue_process = new AsyncCallback(data_queue_process);
+                    // 비동기 작업에 사용될 대리자를 초기화합니다.
+                    m_fnReceiveHandler = new AsyncCallback(handleDataReceive);
+                    m_fnSendHandler = new AsyncCallback(handleDataSend);
+                    m_fnAcceptHandler = new AsyncCallback(handleClientConnectionRequest);
+                    m_data_queue_process = new AsyncCallback(data_queue_process);
 
-            // queue 처리 비동기 작업 시작
-            IAsyncResult result = m_data_queue_process.BeginInvoke(null, null, null);
+                    // queue 처리 비동기 작업 시작
+                    IAsyncResult result = m_data_queue_process.BeginInvoke(null, null, null);
 
-            // BeginAccept 메서드를 이용해 들어오는 연결 요청을 비동기적으로 처리합니다.
-            // 연결 요청을 처리하는 함수는 handleClientConnectionRequest 입니다.
-            m_ServerSocket.BeginAccept(m_fnAcceptHandler, null);
+                    // BeginAccept 메서드를 이용해 들어오는 연결 요청을 비동기적으로 처리합니다.
+                    // 연결 요청을 처리하는 함수는 handleClientConnectionRequest 입니다.
+                    m_ServerSocket.BeginAccept(m_fnAcceptHandler, null);
+                }                
+            }
+            else
+            {
+                AsyncCallback m_ini_file_check = new AsyncCallback(ini_file_check);
+                IAsyncResult result = m_ini_file_check.BeginInvoke(null, null, null);
+            }
+        }
 
+        // ip, port 셋팅 될 때 까지 wait
+        private void wait_ip_port_set(IAsyncResult ar)
+        {
+            while (true)
+            {
+                iniData = ReadIniFile(iniFilePath);
+                if (iniData["IP"] != null || iniData["port"] != null)
+                {
+                    break;
+                }
+            }
+            TcpConnection(null);
+        }
+
+        // system.ini가 경로에 없을 때
+        private void ini_file_check(IAsyncResult ar)
+        {
+            while (true)
+            {
+                if (File.Exists(iniFilePath))
+                {
+                    break;
+                }
+            }
+            iniData = ReadIniFile(iniFilePath);
+            TcpConnection(null);
         }
 
         private void data_queue_process(IAsyncResult ar)
@@ -117,6 +159,12 @@ namespace SEMES_Pixel_Designer
             {
                 if(messageQueue.Count > 0)
                 {
+                    if (iniData["default_path"] == null)
+                    {
+                        System.Windows.MessageBox.Show("system.ini에 default_path를 추가해주세요");
+                        return;
+                    }
+
                     Byte[] tmp_msgByte;
                     lock (messageQueue)
                     {
