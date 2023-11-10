@@ -32,12 +32,12 @@ namespace SEMES_Pixel_Designer
             mainCanvas.ClipToBounds = true;
 
             // 성능 체크 해봐야함. 화면이 제대로 업데이트 되지 않는 문제가 있음
-            mainCanvas.CacheMode = new BitmapCache
-            {
-                EnableClearType = false,
-                RenderAtScale = 1,
-                SnapsToDevicePixels = false,
-            };
+            //mainCanvas.CacheMode = new BitmapCache
+            //{
+            //    EnableClearType = false,
+            //    RenderAtScale = 1,
+            //    SnapsToDevicePixels = false,
+            //};
         }
 
     }
@@ -175,14 +175,7 @@ namespace SEMES_Pixel_Designer
             Background = Coordinates.backgroundColorBrush;
             foreach (PolygonEntity child in DrawingEntities)
             {
-                if (child.selected)
-                {
-                    child.path.Stroke = Coordinates.selectedColorBrush;
-                }
-                else
-                {
-                    child.path.Stroke = Coordinates.defaultColorBrush;
-                }
+                child.ReColor();
             }
             UpdateCanvas();
         }
