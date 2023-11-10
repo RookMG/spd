@@ -170,7 +170,17 @@ namespace SEMES_Pixel_Designer
             }
 
             Background = Coordinates.backgroundColorBrush;
-            foreach (PolygonEntity entity in DrawingEntities) entity.UpdateColor();
+            foreach (PolygonEntity child in DrawingEntities)
+            {
+                if (child.selected)
+                {
+                    child.path.Stroke = Coordinates.selectedColorBrush;
+                }
+                else
+                {
+                    child.path.Stroke = Coordinates.defaultColorBrush;
+                }
+            }
             UpdateCanvas();
         }
 
@@ -331,6 +341,8 @@ namespace SEMES_Pixel_Designer
                     foreach (PolygonEntity entity in target) entity.Remove();
                 }
             ));
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         private void DrawLine(object obj)
@@ -629,6 +641,8 @@ namespace SEMES_Pixel_Designer
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         private void DrawLine_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -709,6 +723,8 @@ namespace SEMES_Pixel_Designer
                 MouseLeftButtonDown += Select_MouseLeftButtonDown;
                 MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         private void DrawRectangle_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -779,6 +795,8 @@ namespace SEMES_Pixel_Designer
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
 

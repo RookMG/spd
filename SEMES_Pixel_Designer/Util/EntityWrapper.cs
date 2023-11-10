@@ -4,6 +4,7 @@ using netDxf.Entities;
 using SEMES_Pixel_Designer.View;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -364,8 +365,10 @@ namespace SEMES_Pixel_Designer.Utils
         UNDEFINED = 3
     }
 
-    public class PolygonEntity
+    public class PolygonEntity : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public Path path, selectArea;
         StreamGeometry geometry;
         //public Polygon selectArea;
@@ -380,6 +383,18 @@ namespace SEMES_Pixel_Designer.Utils
         private PolygonEntityType entityType;
 
         public bool selected = false, visible = false, deleted = false;
+        public bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                if (selected != value)
+                {
+                    ToggleSelected(value);
+                    OnPropertyChanged("Selected");
+                }
+            }
+        }
 
         private List<Action<double, double>> setDxfCoordAction;
 
@@ -736,6 +751,9 @@ namespace SEMES_Pixel_Designer.Utils
                 foreach (PointEntity point in points) point.UnbindCanvas();
             }
             selected = status;
+
+            OnPropertyChanged("Selected");
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
         }
 
         static public void ClearSelected()
@@ -825,6 +843,22 @@ namespace SEMES_Pixel_Designer.Utils
             //Mouse.Capture(null);
             mouseOffsets = null;
 
+        }
+
+        public PolygonEntityType GetPolygonType()
+        {
+            return entityType;
+        }
+
+        public EntityObject GetEntityObject()
+        {
+            return entityObject;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }
