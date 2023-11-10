@@ -5,10 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SEMES_Pixel_Designer.View"
         mc:Ignorable="d"
-        Title="Minimap" Height="450" Width="800">
-    <Grid>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="DimGray">
-            <local:MinimapCanvas x:Name="minimapCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White"/>
-        </ScrollViewer>
-    </Grid>
+        Title="Minimap" Background="DimGray" WindowStyle="SingleBorderWindow">
+    <local:MinimapCanvas x:Name="minimapCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White"/>
 </Window>
