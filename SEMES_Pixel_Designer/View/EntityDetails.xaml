@@ -20,86 +20,97 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <TreeView x:Name="EntityTreeView"/>
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <StackPanel Grid.Row="2" VerticalAlignment="Top">
-            <ComboBox x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
-            </ComboBox>
+		<TreeView x:Name="EntityTreeView"/>
+		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
+		<StackPanel Grid.Row="2" VerticalAlignment="Top">
+			<ComboBox x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
+			</ComboBox>
 
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
 
-                <StackPanel Orientation="Vertical">
-                    <Expander Header="Common">
+				<StackPanel Orientation="Vertical">
+					<Expander Header="Common">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="2*" />
-                            </Grid.ColumnDefinitions>
-
-
-                            <Border Grid.Column="0">
-                                <StackPanel Orientation="Vertical" x:Name="CommonStackPanel">
-                                    <TextBlock Text="Color"/>
-                                    <TextBlock Text="Color_type"/>
-                                    <TextBlock Text="Handle"/>
-                                    <TextBlock Text="Layer"/>
-                                    <TextBlock Text="Line_type"/>
-                                    <TextBlock Text="Line_weight"/>
-                                    <TextBlock Text="Line_Type_scale"/>
-                                    <TextBlock Text="Name"/>
-                                </StackPanel>
-                            </Border>
-
-                            <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
-
-                            <Border Grid.Column="2">
-                                <StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel">
-                                    <TextBlock x:Name="Color"/>
-                                    <TextBlock x:Name="Color_type"/>
-                                    <TextBlock x:Name="Handle"/>
-                                    <TextBlock x:Name="Layer"/>
-                                    <TextBlock x:Name="Line_type"/>
-                                    <TextBlock x:Name="Line_weight"/>
-                                    <TextBlock x:Name="Line_Type_scale"/>
-                                    <TextBlock x:Name="Name"/>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </Expander>
-                    <Expander Header="Geometry">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="2*" />
-                            </Grid.ColumnDefinitions>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="2*" />
+							</Grid.ColumnDefinitions>
 
 
-                            <Border Grid.Column="0">
-                                <StackPanel Orientation="Vertical" x:Name="GeometryStackPanel">
-                                    <TextBlock Text="Start_point"/>
-                                    <TextBlock Text="End_point"/>
-                                </StackPanel>
-                            </Border>
+							<Border Grid.Column="0">
+								<StackPanel Orientation="Vertical" x:Name="CommonStackPanel">
+									<TextBlock Text="Color"/>
+									<TextBlock Text="Color_type"/>
+									<TextBlock Text="Handle"/>
+									<TextBlock Text="Layer"/>
+									<TextBlock Text="Line_type"/>
+									<TextBlock Text="Line_weight"/>
+									<TextBlock Text="Line_Type_scale"/>
+									<TextBlock Text="Name"/>
+								</StackPanel>
+							</Border>
 
-                            <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
+							<GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
 
-                            <Border Grid.Column="2">
-                                <StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
-  
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </Expander>
-                </StackPanel>
-            </ScrollViewer>
-        </StackPanel>
+							<Border Grid.Column="2">
+								<StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel">
+									<TextBlock x:Name="Color"/>
+									<TextBlock x:Name="Color_type"/>
+									<TextBlock x:Name="Handle"/>
+									<TextBlock x:Name="Layer"/>
+									<TextBlock x:Name="Line_type"/>
+									<TextBlock x:Name="Line_weight"/>
+									<TextBlock x:Name="Line_Type_scale"/>
+									<TextBlock x:Name="Name"/>
+								</StackPanel>
+							</Border>
+						</Grid>
+					</Expander>
+					<Expander Header="Geometry">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="2*" />
+							</Grid.ColumnDefinitions>
 
 
-        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+							<Border Grid.Column="0">
+								<ListView x:Name="VertexesIndexListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<ListView.View>
+										<GridView>
+											<GridViewColumn Header="Vertexes" DisplayMemberBinding="{Binding}" />
+										</GridView>
+									</ListView.View>
+								</ListView>
+							</Border>
+
+							<GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
+
+							<Border Grid.Column="2">
+
+									<ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+										<ListView.View>
+											<GridView>
+												<GridViewColumn Header="X" DisplayMemberBinding="{Binding X}" />
+												<GridViewColumn Header="Y" DisplayMemberBinding="{Binding Y}" />
+											</GridView>
+										</ListView.View>
+									</ListView>
+								<!--<StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
+								</StackPanel>-->
+							</Border>
+						</Grid>
+					</Expander>
+				</StackPanel>
+			</ScrollViewer>
+		</StackPanel>
+
+
+		<GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
+		<TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
     </Grid>
 </Page>

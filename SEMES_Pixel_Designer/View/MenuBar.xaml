@@ -41,8 +41,7 @@
         <MenuItem Header="CAD 파일(_C)">
             <MenuItem Header="컬러 도면 보기"  Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorScreen" InputGestureText="" />
             <MenuItem Header="흑백 도면 보기" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorScreen" InputGestureText="" />
-            <MenuItem Header="흰 배경색"  Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorBackground" InputGestureText="" />
-            <MenuItem Header="검은 배경색" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorBackground" InputGestureText="" />
+            <MenuItem Header="배경 색 변경" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorBackground" InputGestureText="" />
             <Separator />
             <MenuItem Header="선 굵기 보기" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ToggleLineWidth" InputGestureText="" />
             <Separator />
