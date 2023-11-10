@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SEMES_Pixel_Designer"
         mc:Ignorable="d"
-        Title="SEMES Pixel Designer" Height="450" Width="1000">
+        Title="SEMES Pixel Designer" Height="450" Width="800">
 
     <DockPanel Background="WhiteSmoke">
         <StackPanel DockPanel.Dock="Top">
