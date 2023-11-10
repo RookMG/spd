@@ -1,0 +1,15 @@
+﻿<Page x:Class="SEMES_Pixel_Designer.View.TcpTerm"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SEMES_Pixel_Designer.View"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="200"
+      Title="TcpTerm">
+
+    <Grid>
+        <TextBox x:Name="textBox" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Stretch" Background="Black" Foreground="White"/>
+
+    </Grid>
+</Page>
