@@ -785,6 +785,11 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.LeftButton == MouseButtonState.Released)
+            {
+                MouseLeftButtonUp(sender, e);
+                return;
+            }
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
                 if (selectedEntity.mouseOffsets == null) continue;
@@ -796,7 +801,7 @@ namespace SEMES_Pixel_Designer.Utils
             }
         }
 
-        private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
             Coordinates.CanvasRef.MouseMove -= MouseMove;
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
@@ -825,7 +830,6 @@ namespace SEMES_Pixel_Designer.Utils
                 }
             ));
 
-            //Mouse.Capture(null);
             mouseOffsets = null;
 
         }

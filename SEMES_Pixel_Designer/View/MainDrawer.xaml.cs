@@ -75,6 +75,7 @@ namespace SEMES_Pixel_Designer
             Coordinates.canvasOutlinePath.Fill = Brushes.Gray;
             Coordinates.geometry.FillRule = FillRule.Nonzero;
             Children.Add(Coordinates.gridInfoText);
+            Children.Add(Coordinates.canvasOutlinePath);
             SetZIndex(Coordinates.gridInfoText, -1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
@@ -502,6 +503,11 @@ namespace SEMES_Pixel_Designer
         }
         private void Select_MouseMove(object sender, MouseEventArgs e)
         {
+            if(e.LeftButton == MouseButtonState.Released)
+            {
+                Select_MouseLeftButtonUp(sender, e);
+                return;
+            }
             drawingPolygon.Points[1] = new System.Windows.Point(drawingPolygon.Points[0].X, e.GetPosition(this).Y);
             drawingPolygon.Points[2] = new System.Windows.Point(e.GetPosition(this).X, e.GetPosition(this).Y);
             drawingPolygon.Points[3] = new System.Windows.Point(e.GetPosition(this).X, drawingPolygon.Points[0].Y);
@@ -566,6 +572,12 @@ namespace SEMES_Pixel_Designer
 
         private void MoveCanvas_MouseMove(object sender, MouseEventArgs e)
         {
+
+            if (e.RightButton == MouseButtonState.Released)
+            {
+                MoveCanvas_MouseRightButtonUp(sender, e);
+                return;
+            }
             if (offset == null) return;
             double dx = (Coordinates.maxX - Coordinates.minX) * (offset[0] - e.GetPosition(this).X) / ActualWidth,
                 dy = (Coordinates.maxY - Coordinates.minY) * (e.GetPosition(this).Y - offset[1]) / ActualHeight;
