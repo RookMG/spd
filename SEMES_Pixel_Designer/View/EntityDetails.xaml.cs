@@ -13,6 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using netDxf;
+using netDxf.Collections;
+using netDxf.Entities;
 using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 
 namespace SEMES_Pixel_Designer
@@ -23,6 +26,8 @@ namespace SEMES_Pixel_Designer
     public partial class EntityDetails : Page
     {
         Dictionary<string, PolygonEntity> entityDictionary;
+
+        private EntityObject propertyEntityObject = null;
 
         public EntityDetails()
         {
@@ -41,9 +46,9 @@ namespace SEMES_Pixel_Designer
         public void ShowEntityTypes(object obj)
         {
             TreeViewItem entities = new TreeViewItem();
-            
-                        
-            foreach(PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+
+
+            foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
             {
                 CheckBox checkBox = new CheckBox {};
 
@@ -81,10 +86,15 @@ namespace SEMES_Pixel_Designer
                 if (entity.Selected == false) continue;
 
 
-                ComboBoxItem item = new ComboBoxItem();
-                item.Content = PolygonTypeToString(entity);
+                ComboBoxItem item = new ComboBoxItem(
+                        
+                    );
+                item.Content = entity.GetEntityObject().Handle;
 
-                entityDictionary.Add(PolygonTypeToString(entity), entity);
+
+                propertyEntityObject = entity.GetEntityObject();
+                //entityDictionary.Add(entity., entity);
+                //entity.debug_ch();
 
                 EntityDetailComboBox.Items.Add(item);
             }
@@ -93,19 +103,52 @@ namespace SEMES_Pixel_Designer
 
         private void ShowEntityProperties(object obj, SelectionChangedEventArgs e)
         {
-            PropertyStackPanel.Children.Clear();
+            //PropertyStackPanel.Children.Clear();
 
             if (EntityDetailComboBox.SelectedItem != null)
             {
                 string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
 
+
+                foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+                {
+                    if (entity.GetEntityObject().Handle != selectedItem) continue;
+
+                    propertyEntityObject = entity.GetEntityObject();
+
+                }
+
+                //Color.Text;
+
+                //Color_type 
+
+                Handle.Text = propertyEntityObject.Handle;
+
+                Layer.Text = propertyEntityObject.Layer.Name;
+
+                Line_type.Text = propertyEntityObject.Linetype.Name;
+
+                Line_weight.Text = propertyEntityObject.Lineweight.ToString();
+
+                Line_Type_scale.Text = propertyEntityObject.LinetypeScale.ToString();
+
+                Name.Text = propertyEntityObject.CodeName;
+
+
+                /*
                 TextBlock textBlock = new TextBlock();
                 textBlock.Text = "Name";
-                
+                textBlock.Background = Brushes.White;
+                textBlock.Margin = new Thickness(1);
+
+                TextBlock textBlock2  = new TextBlock();
+                textBlock2.Text = "Color";
+                textBlock2.Background = Brushes.White;
                 //PropertyStackPanel.Children.Add();
                 //textBlock.Text = "Color";
-                PropertyStackPanel.Children.Add(textBlock);
-                //entityDictionary[selectedItem];
+                //PropertyStackPanel.Children.Add(textBlock);
+                //PropertyStackPanel.Children.Add(textBlock2);
+                //entityDictionary[selectedItem];*/
             }
         }
 

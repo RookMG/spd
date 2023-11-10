@@ -324,6 +324,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         public bool selected = false, visible = false, deleted = false;
 
+        
         public bool Selected
         {
             get { return selected; }
@@ -345,7 +346,7 @@ namespace SEMES_Pixel_Designer.Utils
         public event PropertyChangedEventHandler PropertyChanged;
 
         public class CopyData
-        {
+        { 
             public PointCollection dxfCoords { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
@@ -389,8 +390,6 @@ namespace SEMES_Pixel_Designer.Utils
 
             points = new List<PointEntity>();
             Coordinates.SetZIndexAction(path, 1);
-
-
         }
 
         // Line 생성자
@@ -473,6 +472,11 @@ namespace SEMES_Pixel_Designer.Utils
         public PolygonEntityType GetPolygonType()
         {
             return entityType;
+        }
+
+        public EntityObject GetEntityObject()
+        {
+            return entityObject;
         }
 
         public static void CopySelected()
@@ -662,6 +666,8 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     point.BindCanvas();
                 }
+
+                
             }
             else
             {
@@ -765,8 +771,22 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
 
-        public void UpdateName()
+        public void debug_ch()
         {
+
+            string temp = "";
+
+            if (dxfCoords == null || deleted) return;
+            for (int i = 0; i < dxfCoords.Count; i++)
+            {
+                temp += dxfCoords[i].X.ToString() + ", ";
+                temp += dxfCoords[i].Y.ToString() + "\n";
+            }
+
+            //MessageBox.Show(entityObject., "알림", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            
+
             //TODO : 구현
         }
 
