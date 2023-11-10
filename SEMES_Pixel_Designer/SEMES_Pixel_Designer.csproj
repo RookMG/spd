@@ -38,9 +38,6 @@
     <Reference Include="netDxf, Version=2022.11.2.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
       <HintPath>packages\netDxf.2022.11.2\lib\net45\netDxf.dll</HintPath>
     </Reference>
-    <Reference Include="netDxfLib">
-      <HintPath>..\..\..\..\Documents\netDxfLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />

@@ -22,24 +22,27 @@
 
         <TreeView x:Name="EntityTreeView"/>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <StackPanel Grid.Row="2" VerticalAlignment="Top">
-            <ComboBox x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
+        <Grid Grid.Row="2">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="5*" />
+            </Grid.RowDefinitions>
+            
+            <ComboBox  Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
             </ComboBox>
 
-
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-
-                <StackPanel Orientation="Vertical">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel  Orientation="Vertical">
+                    
                     <Expander Header="Common">
-
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
-
-
+                            
                             <Border Grid.Column="0">
                                 <StackPanel Orientation="Vertical" x:Name="CommonStackPanel">
                                     <TextBlock Text="Color"/>
@@ -69,6 +72,7 @@
                             </Border>
                         </Grid>
                     </Expander>
+                    
                     <Expander Header="Geometry">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -89,15 +93,15 @@
 
                             <Border Grid.Column="2">
                                 <StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
-  
+
                                 </StackPanel>
                             </Border>
                         </Grid>
                     </Expander>
+                    
                 </StackPanel>
             </ScrollViewer>
-        </StackPanel>
-
+        </Grid>
 
         <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
         <TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
