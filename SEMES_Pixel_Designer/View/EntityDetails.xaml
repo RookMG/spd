@@ -79,18 +79,29 @@
 
 
 							<Border Grid.Column="0">
-								<StackPanel Orientation="Vertical" x:Name="GeometryStackPanel">
-									<TextBlock Text="Start_point"/>
-									<TextBlock Text="End_point"/>
-								</StackPanel>
+								<ListView x:Name="VertexesIndexListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<ListView.View>
+										<GridView>
+											<GridViewColumn Header="Vertexes" DisplayMemberBinding="{Binding}" />
+										</GridView>
+									</ListView.View>
+								</ListView>
 							</Border>
 
 							<GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
 
 							<Border Grid.Column="2">
-								<StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
 
-								</StackPanel>
+									<ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+										<ListView.View>
+											<GridView>
+												<GridViewColumn Header="X" DisplayMemberBinding="{Binding X}" />
+												<GridViewColumn Header="Y" DisplayMemberBinding="{Binding Y}" />
+											</GridView>
+										</ListView.View>
+									</ListView>
+								<!--<StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
+								</StackPanel>-->
 							</Border>
 						</Grid>
 					</Expander>

@@ -110,18 +110,20 @@ namespace SEMES_Pixel_Designer
             {
                 string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
 
-
+                PolygonEntity propertyEntity = null;
                 foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
                 {
                     if (entity.GetEntityObject().Handle != selectedItem) continue;
 
+                    propertyEntity = entity;
                     propertyEntityObject = entity.GetEntityObject();
 
                 }
 
-                //Color.Text;
+                Color.Text = "R:" + propertyEntityObject.Color.R.ToString() + " G:" + propertyEntityObject.Color.G.ToString() + " B:"
+                    + propertyEntityObject.Color.B.ToString();
 
-                //Color_type 
+                Color_type.Text = propertyEntityObject.Color.ToString();
 
                 Handle.Text = propertyEntityObject.Handle;
 
@@ -135,6 +137,14 @@ namespace SEMES_Pixel_Designer
 
                 Name.Text = propertyEntityObject.CodeName;
 
+                List<string> indexdxfCoords = new List<string>();
+                for (int i = 0; i < propertyEntity.dxfCoords.Count; i++)
+                {
+                    indexdxfCoords.Add(i.ToString());
+                }
+
+                VertexesIndexListView.ItemsSource = indexdxfCoords;
+                VertexesListView.ItemsSource = propertyEntity.dxfCoords;
 
                 /*
                 TextBlock textBlock = new TextBlock();
