@@ -31,9 +31,7 @@ using Image = netDxf.Entities.Image;
 using Point = netDxf.Entities.Point;
 using Trace = netDxf.Entities.Trace;
 using SEMES_Pixel_Designer.Utils;
-
-using System.Net;
-using System.Net.Sockets;
+using System.ComponentModel;
 
 namespace SEMES_Pixel_Designer
 {
@@ -45,6 +43,8 @@ namespace SEMES_Pixel_Designer
         public MainWindow()
         {
             InitializeComponent();
+            Closing += ExitHandler;
+
 
             #region 다른 페이지에서 사용할 수 있게 함수 등록
 
@@ -88,7 +88,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.DrawLine", DrawLine);
             Utils.Mediator.Register("MainWindow.DrawRectangle", DrawRectangle);
             Utils.Mediator.Register("MainWindow.DrawPolygon", DrawPolygon);
-            Utils.Mediator.Register("MainWindow.CloneEntites", CloneEntities);
+            Utils.Mediator.Register("MainWindow.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainWindow.MoveEntities", MoveEntities);
             Utils.Mediator.Register("MainWindow.ZoomIn", ZoomIn);
             Utils.Mediator.Register("MainWindow.ZoomOut", ZoomOut);
@@ -108,7 +108,9 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ShowEntitiesPosition", ShowEntitiesPosition);
             Utils.Mediator.Register("MainWindow.Exit", Exit);
 
-            Utils.Mediator.Register("MainWindow.TcpConnection", TcpConnection);
+            // TcpIp 연결 항시 대기
+            TcpIp tt = new TcpIp();
+            Utils.Mediator.NotifyColleagues("TcpIp.TcpConnection", null);
 
             #endregion
 
@@ -131,28 +133,56 @@ namespace SEMES_Pixel_Designer
         // 새 파일 만들기
         public void NewDxf(object obj)
         {
-            // TODO : 편집 중인 파일이 있다면 저장할지 확인
+            if (!ConfirmSave("새 파일")) return;
 
             doc = new DxfDocument();
             DrawCanvas(null);
             fileName = null;
+            Mediator.FileChangeCount = 0;
+        }
+
+        // 파일 저장 확인
+        public bool ConfirmSave(string title)
+        {
+            if(Mediator.FileChangeCount == 0) return true;
+            MessageBoxResult result = System.Windows.MessageBox.Show("저장되지 않은 편집 내용이 있습니다. 저장하시겠습니까?", title, MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.Cancel) return false;
+            if (result == MessageBoxResult.Yes) SaveDxf(null);
+            return true;
         }
 
         // 파일 불러오기
         public void OpenDxf(object obj)
         {
+            if (!ConfirmSave("파일 불러오기")) return;
+
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
             {
-                System.Windows.MessageBox.Show(dlgOpenFile.FileName);
+                // System.Windows.MessageBox.Show(dlgOpenFile.FileName);
                 doc = DxfDocument.Load(dlgOpenFile.FileName, new List<string> { @".\Support" });
                 fileName = dlgOpenFile.FileName;
                 Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
                 // Test(dlgOpenFile.FileName, "test_log.txt");
+
+                for (int i = doc.Entities.Polylines3D.Count() - 1; i >= 0; i--)
+                {
+                    Polyline3D polyline3D = doc.Entities.Polylines3D.ElementAt(i);
+                    List<Vector2> vertexes = new List<Vector2>();
+                    foreach (var vertex in polyline3D.Vertexes)
+                    {
+                        vertexes.Add(new Vector2(vertex.X, vertex.Y));
+                    }
+                    doc.Entities.Add(new Polyline2D(vertexes));
+                    doc.Entities.Remove(polyline3D);
+                }
+
+                DrawCanvas(null);
+
             }
-            DrawCanvas(null);
+
         }
 
         // 파일 저장
@@ -160,6 +190,7 @@ namespace SEMES_Pixel_Designer
         {
             if (fileName == null) SaveAsDxf(null);
             else doc.Save(fileName);
+            Mediator.FileChangeCount = 0;
         }
 
         // 파일 다른 이름으로 저장
@@ -171,20 +202,21 @@ namespace SEMES_Pixel_Designer
 
             if (dlgSaveAsFile.ShowDialog().ToString() == "OK")
             {
-                System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
+                // System.Windows.MessageBox.Show(dlgSaveAsFile.FileName);
                 doc.Save(dlgSaveAsFile.FileName);
 
                 fileName = dlgSaveAsFile.FileName;
                 Utils.Mediator.NotifyColleagues("StatusBar.PrintFilepath", fileName);
             }
+            Mediator.FileChangeCount = 0;
         }
 
         // 파일 자동 임시저장
         public void SaveBackupDxf(object obj)
         {
-
-            //TODO : 구현
-
+            string backupName = fileName == null ? "./tmpFile.dxf" : fileName;
+            backupName = backupName.Substring(0, backupName.Length - 3) + "bak";
+            doc.Save(backupName);
         }
 
         #endregion
@@ -196,7 +228,8 @@ namespace SEMES_Pixel_Designer
         public void Undo(object obj)
         {
 
-            //TODO : 구현
+            Mediator.Undo();
+
 
         }
 
@@ -204,7 +237,7 @@ namespace SEMES_Pixel_Designer
         public void Redo(object obj)
         {
 
-            //TODO : 구현
+            Mediator.Redo();
 
         }
 
@@ -212,7 +245,7 @@ namespace SEMES_Pixel_Designer
         public void DeleteEntities(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DeleteEntities",obj);
 
         }
 
@@ -220,7 +253,7 @@ namespace SEMES_Pixel_Designer
         public void Copy(object obj)
         {
 
-            //TODO : 구현
+            PolygonEntity.CopySelected();
 
         }
 
@@ -228,7 +261,8 @@ namespace SEMES_Pixel_Designer
         public void Cut(object obj)
         {
 
-            //TODO : 구현
+            PolygonEntity.CopySelected();
+            Mediator.NotifyColleagues("MainDrawer.DeleteEntities", obj);
 
         }
 
@@ -236,7 +270,7 @@ namespace SEMES_Pixel_Designer
         public void Paste(object obj)
         {
 
-            //TODO : 구현
+            Utils.Mediator.NotifyColleagues("MainDrawer.Paste", null);
 
         }
 
@@ -252,7 +286,7 @@ namespace SEMES_Pixel_Designer
         public void DrawLine(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DrawLine", null);
 
         }
 
@@ -260,7 +294,7 @@ namespace SEMES_Pixel_Designer
         public void DrawRectangle(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DrawRectangle", null);
 
         }
 
@@ -268,15 +302,15 @@ namespace SEMES_Pixel_Designer
         public void DrawPolygon(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.DrawPolygon",null);
 
         }
 
         // 선택 도형 N*M개 복제
         public void CloneEntities(object obj)
         {
-
             //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.CloneEntities", null);
 
         }
 
@@ -297,7 +331,7 @@ namespace SEMES_Pixel_Designer
         public void ZoomIn(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.Zoom",-0.1);
 
         }
 
@@ -305,7 +339,7 @@ namespace SEMES_Pixel_Designer
         public void ZoomOut(object obj)
         {
 
-            //TODO : 구현
+            Mediator.NotifyColleagues("MainDrawer.Zoom",0.1);
 
         }
 
@@ -322,6 +356,7 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
+            Utils.Mediator.NotifyColleagues("MainDrawer.FitScreen", null);
 
         }
 
@@ -342,6 +377,7 @@ namespace SEMES_Pixel_Designer
             //TODO : 구현
             // ColorBackground("white") : 흰 배경색
             // ColorBackground("black") : 검은 배경색
+            Mediator.NotifyColleagues("MainDrawer.ColorBackground", null);
 
         }
 
@@ -441,12 +477,15 @@ namespace SEMES_Pixel_Designer
         #region 윈도우 관련 함수들
 
         // 프로그램 종료
-        public void Exit(object obj)
+        public void Exit(object sender)
         {
+            if (!ConfirmSave("프로그램 종료")) this.Close();
+        }
 
-            //TODO : 구현
-            //저장하지 않은 내용 확인 필수!!
 
+        public void ExitHandler(object sender, CancelEventArgs e)
+        {
+            e.Cancel = !ConfirmSave("프로그램 종료");
         }
 
         #endregion
@@ -987,202 +1026,6 @@ namespace SEMES_Pixel_Designer
         }
         #endregion
 
-        #region TCPIP 관련 함수들
-        public class AsyncObject
-        {
-            public Byte[] Buffer;
-            public Socket WorkingSocket;
-            public AsyncObject(Int32 bufferSize)
-            {
-                this.Buffer = new Byte[bufferSize];
-            }
-        }
 
-        private Socket m_ConnectedClient = null;
-        private Socket m_ServerSocket = null;
-        private AsyncCallback m_fnReceiveHandler;
-        private AsyncCallback m_fnSendHandler;
-        private AsyncCallback m_fnAcceptHandler;
-
-        // TCP 연결 대기
-        public void TcpConnection(object obj)
-        {
-
-            //TODO : 구현
-            //저장하지 않은 내용 확인 필수!!
-
-            // TCP 통신을 위한 소켓을 생성합니다.
-            m_ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-
-            // 특정 포트에서 모든 주소로부터 들어오는 연결을 받기 위해 포트를 바인딩합니다.
-            m_ServerSocket.Bind(new IPEndPoint(IPAddress.Any, 1004));
-
-            // 연결 요청을 받기 시작합니다.
-            m_ServerSocket.Listen(5);
-
-            // 비동기 작업에 사용될 대리자를 초기화합니다.
-            m_fnReceiveHandler = new AsyncCallback(handleDataReceive);
-            m_fnSendHandler = new AsyncCallback(handleDataSend);
-            m_fnAcceptHandler = new AsyncCallback(handleClientConnectionRequest);
-
-            // BeginAccept 메서드를 이용해 들어오는 연결 요청을 비동기적으로 처리합니다.
-            // 연결 요청을 처리하는 함수는 handleClientConnectionRequest 입니다.
-            m_ServerSocket.BeginAccept(m_fnAcceptHandler, null);
-
-        }
-
-        private void handleDataReceive(IAsyncResult ar)
-        {
-
-            // 넘겨진 추가 정보를 가져옵니다.
-            // AsyncState 속성의 자료형은 Object 형식이기 때문에 형 변환이 필요합니다~!
-            AsyncObject ao = (AsyncObject)ar.AsyncState;
-
-            // 받은 바이트 수 저장할 변수 선언
-            Int32 recvBytes;
-
-            try
-            {
-                // 자료를 수신하고, 수신받은 바이트를 가져옵니다.
-                recvBytes = ao.WorkingSocket.EndReceive(ar);
-            }
-            catch
-            {
-                // 예외가 발생하면 함수 종료!
-                return;
-            }
-
-            // 수신받은 자료의 크기가 1 이상일 때에만 자료 처리
-            if (recvBytes > 0)
-            {
-                // 공백 문자들이 많이 발생할 수 있으므로, 받은 바이트 수 만큼 배열을 선언하고 복사한다.
-                Byte[] msgByte = new Byte[recvBytes];
-                Array.Copy(ao.Buffer, msgByte, recvBytes);
-
-                // 데이터 파싱
-                string now_data = Encoding.Unicode.GetString(msgByte);
-                string[] parts = now_data.Split(';');
-
-                foreach(string part in parts)
-                {
-                    System.Windows.MessageBox.Show(part);
-                }
-
-                if(parts[0] == "CMDREADY")
-                {
-                    if(parts[1] == "createNew=0")
-                    {
-                        if(parts[2] == "complete=1")
-                        {
-                            SendMessage("CMDREADY;ACK;Path=CAD\\cadFile.cad");
-                        }
-                    }
-                }
-            }
-
-            try
-            {
-                // 비동기적으로 들어오는 자료를 수신하기 위해 BeginReceive 메서드 사용!
-                ao.WorkingSocket.BeginReceive(ao.Buffer, 0, ao.Buffer.Length, SocketFlags.None, m_fnReceiveHandler, ao);
-            }
-            catch (Exception ex)
-            {
-                // 예외가 발생하면 예외 정보 출력 후 함수를 종료한다.
-                System.Windows.MessageBox.Show($"자료 수신 대기 도중 오류 발생! 메세지: {ex.Message}");
-                return;
-            }
-        }
-
-        private void handleDataSend(IAsyncResult ar)
-        {
-
-            // 넘겨진 추가 정보를 가져옵니다.
-            AsyncObject ao = (AsyncObject)ar.AsyncState;
-
-            // 보낸 바이트 수를 저장할 변수 선언
-            Int32 sentBytes;
-
-            try
-            {
-                // 자료를 전송하고, 전송한 바이트를 가져옵니다.
-                sentBytes = ao.WorkingSocket.EndSend(ar);
-            }
-            catch (Exception ex)
-            {
-                // 예외가 발생하면 예외 정보 출력 후 함수를 종료한다.
-                System.Windows.MessageBox.Show($"자료 송신 도중 오류 발생! 메세지: {ex.Message}");
-                return;
-            }
-
-            if (sentBytes > 0)
-            {
-                // 여기도 마찬가지로 보낸 바이트 수 만큼 배열 선언 후 복사한다.
-                Byte[] msgByte = new Byte[sentBytes];
-                Array.Copy(ao.Buffer, msgByte, sentBytes);
-
-                System.Windows.MessageBox.Show($"메세지 보냄: {Encoding.Unicode.GetString(msgByte)}");
-            }
-        }
-
-        private void handleClientConnectionRequest(IAsyncResult ar)
-        {
-            Socket sockClient;
-            try
-            {
-                // 클라이언트의 연결 요청을 수락합니다.
-                sockClient = m_ServerSocket.EndAccept(ar);
-                System.Windows.MessageBox.Show("연결 성공 !");
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show($"연결 수락 도중 오류 발생! 메세지: {ex.Message}");
-                return;
-            }
-
-            // 4096 바이트의 크기를 갖는 바이트 배열을 가진 AsyncObject 클래스 생성
-            AsyncObject ao = new AsyncObject(4096);
-
-            // 작업 중인 소켓을 저장하기 위해 sockClient 할당
-            ao.WorkingSocket = sockClient;
-
-            // 클라이언트 소켓 저장
-            m_ConnectedClient = sockClient;
-
-            try
-            {
-                // 비동기적으로 들어오는 자료를 수신하기 위해 BeginReceive 메서드 사용!
-                sockClient.BeginReceive(ao.Buffer, 0, ao.Buffer.Length, SocketFlags.None, m_fnReceiveHandler, ao);
-            }
-            catch (Exception ex)
-            {
-                // 예외가 발생하면 예외 정보 출력 후 함수를 종료한다.
-                System.Windows.MessageBox.Show($"자료 수신 대기 도중 오류 발생! 메세지: {ex.Message}");
-                return;
-            }
-        }
-        public void SendMessage(String message)
-        {
-            // 추가 정보를 넘기기 위한 변수 선언
-            // 크기를 설정하는게 의미가 없습니다.
-            // 왜냐하면 바로 밑의 코드에서 문자열을 유니코드 형으로 변환한 바이트 배열을 반환하기 때문에
-            // 최소한의 크기르 배열을 초기화합니다.
-            AsyncObject ao = new AsyncObject(1);
-
-            // 문자열을 바이트 배열으로 변환
-            ao.Buffer = Encoding.Unicode.GetBytes(message);
-
-            ao.WorkingSocket = m_ConnectedClient;
-
-            // 전송 시작!
-            try
-            {
-                m_ConnectedClient.BeginSend(ao.Buffer, 0, ao.Buffer.Length, SocketFlags.None, m_fnSendHandler, ao);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("전송 중 오류 발생!\n메세지: {0}", ex.Message);
-            }
-        }
-        #endregion
     }
 }
