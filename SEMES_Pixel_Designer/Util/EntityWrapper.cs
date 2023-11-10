@@ -27,11 +27,12 @@ namespace SEMES_Pixel_Designer.Utils
             defaultColorBrush = Brushes.Black,
             backgroundColorBrush = Brushes.White,
             transparentBrush = Brushes.Transparent,
-            selectedColorBrush = Brushes.Red;
+            selectedColorBrush = Brushes.Red,
+            highlightBrush = new SolidColorBrush(Color.FromArgb(0x70, 0xFF, 0xFF, 0x00));
 
         public static Path canvasOutlinePath;
         public static StreamGeometry geometry;
-
+        public static bool mouseCaptured = false;
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
@@ -748,27 +749,29 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            Coordinates.mouseCaptured = true;
+            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 ToggleSelected(true);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (!selected)
             {
                 ClearSelected();
                 ToggleSelected(true);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
 
-            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
 
-            //source = (UIElement)sender;
-            //Mouse.Capture(source);
 
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
@@ -803,6 +806,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
+            Coordinates.mouseCaptured = false;
             Coordinates.CanvasRef.MouseMove -= MouseMove;
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;

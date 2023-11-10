@@ -36,7 +36,7 @@ namespace SEMES_Pixel_Designer.View
             Coordinates.MinimapRef = this;
             CanvasPosition = new Polygon
             {
-                Fill = Coordinates.transparentBrush,
+                Fill = Coordinates.highlightBrush,
                 Stroke = Coordinates.defaultColorBrush,
             };
             CanvasPosition.Points.Add(new Point(0, 0));

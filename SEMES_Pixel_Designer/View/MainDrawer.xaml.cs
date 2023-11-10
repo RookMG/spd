@@ -77,6 +77,7 @@ namespace SEMES_Pixel_Designer
             Children.Add(Coordinates.gridInfoText);
             Children.Add(Coordinates.canvasOutlinePath);
             SetZIndex(Coordinates.gridInfoText, -1);
+            SetZIndex(this, -1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
@@ -478,7 +479,8 @@ namespace SEMES_Pixel_Designer
 
         public void Select_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-            if(Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
+            if (Coordinates.mouseCaptured) return;
+            if (Children.Contains(drawingPolygon)) Children.Remove(drawingPolygon);
             drawingPolygon = new Polygon
             {
                 Fill = Coordinates.transparentBrush,
@@ -503,6 +505,8 @@ namespace SEMES_Pixel_Designer
         }
         private void Select_MouseMove(object sender, MouseEventArgs e)
         {
+
+
             if(e.LeftButton == MouseButtonState.Released)
             {
                 Select_MouseLeftButtonUp(sender, e);
