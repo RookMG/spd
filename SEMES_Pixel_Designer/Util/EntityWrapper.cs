@@ -16,7 +16,7 @@ namespace SEMES_Pixel_Designer.Utils
     public static class Coordinates
     {
         public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5,
-            glassBottom = 0, glassLeft = 0, patternWidth = 1000, patternHeight = 1000, patternRows = 50, patternCols = 50, patternMarginX = 0, patternMarginY = 0;
+            glassBottom = 0, glassLeft = 0, patternWidth = 1000, patternHeight = 1000, patternRows = 20, patternCols = 20, patternMarginX = 0, patternMarginY = 0;
 
         public static MainCanvas CanvasRef;
         public static MinimapCanvas MinimapRef;

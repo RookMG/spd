@@ -74,7 +74,7 @@ namespace SEMES_Pixel_Designer.View
             if((Coordinates.GetGlassTop() - Coordinates.glassBottom) / (Coordinates.GetGlassRight() - Coordinates.glassLeft) > Window.GetWindow(this).ActualHeight / Window.GetWindow(this).ActualWidth)
             {
                 Height = Window.GetWindow(this).ActualHeight - 40;
-                Width = ActualHeight * (Coordinates.GetGlassTop() - Coordinates.glassBottom) / (Coordinates.GetGlassRight() - Coordinates.glassLeft);
+                Width = ActualHeight * (Coordinates.GetGlassRight() - Coordinates.glassLeft) / (Coordinates.GetGlassTop() - Coordinates.glassBottom);
             }
             else
             {
