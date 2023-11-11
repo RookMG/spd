@@ -23,6 +23,7 @@ namespace SEMES_Pixel_Designer.View
         public Minimap()
         {
             InitializeComponent();
+            SizeChanged += new SizeChangedEventHandler(Coordinates.MinimapRef.ResizeWindow);
         }
     }
 
@@ -33,10 +34,9 @@ namespace SEMES_Pixel_Designer.View
         public MinimapCanvas()
         {
             Coordinates.MinimapRef = this;
-            SizeChanged += new SizeChangedEventHandler(ResizeWindow);
             CanvasPosition = new Polygon
             {
-                Fill = Coordinates.transparentBrush,
+                Fill = Coordinates.highlightBrush,
                 Stroke = Coordinates.defaultColorBrush,
             };
             CanvasPosition.Points.Add(new Point(0, 0));
@@ -45,7 +45,8 @@ namespace SEMES_Pixel_Designer.View
             CanvasPosition.Points.Add(new Point(0, 0));
             Children.Add(CanvasPosition);
 
-            CanvasPosition.MouseLeftButtonDown += Move_MouseLeftButtonDown;
+            MouseRightButtonUp += Move_MouseRightButtonUp;
+            MouseLeftButtonDown += Drag_MouseLeftButtonDown;
             MouseWheel += Zoom_MouseWheel;
 
         }
@@ -56,7 +57,6 @@ namespace SEMES_Pixel_Designer.View
 
         public void UpdatePosition()
         {
-            // TODO : 구현
             double sx = (Coordinates.minX - Coordinates.glassLeft) * ActualWidth / (Coordinates.GetGlassRight() - Coordinates.glassLeft),
                 sy = (Coordinates.GetGlassTop() - Coordinates.minY) * ActualHeight / (Coordinates.GetGlassTop() - Coordinates.glassBottom),
                 ex = (Coordinates.maxX - Coordinates.glassLeft) * ActualWidth / (Coordinates.GetGlassRight() - Coordinates.glassLeft),
@@ -69,19 +69,27 @@ namespace SEMES_Pixel_Designer.View
 
         public void AdjustRatio()
         {
-            // TODO : 구현
-            Height = ActualWidth * (Coordinates.GetGlassTop() - Coordinates.glassBottom) / (Coordinates.GetGlassRight() - Coordinates.glassLeft);
+            if((Coordinates.GetGlassTop() - Coordinates.glassBottom) / (Coordinates.GetGlassRight() - Coordinates.glassLeft) > Window.GetWindow(this).ActualHeight / Window.GetWindow(this).ActualWidth)
+            {
+                Height = Window.GetWindow(this).ActualHeight - 40;
+                Width = ActualHeight * (Coordinates.GetGlassRight() - Coordinates.glassLeft) / (Coordinates.GetGlassTop() - Coordinates.glassBottom);
+            }
+            else
+            {
+                Width = Window.GetWindow(this).ActualWidth - 40;
+                Height = ActualWidth * (Coordinates.GetGlassTop() - Coordinates.glassBottom) / (Coordinates.GetGlassRight() - Coordinates.glassLeft);
+            }
             UpdatePosition();
         }
 
-        private void Move_MouseLeftButtonDown(object sender, MouseEventArgs e)
+        private void Drag_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             offset = new Point(e.GetPosition(this).X, e.GetPosition(this).Y);
-            MouseMove += Move_MouseMove;
-            MouseLeftButtonUp += Move_MouseLeftButtonUp;
+            MouseMove += Drag_MouseMove;
+            MouseLeftButtonUp += Drag_MouseLeftButtonUp;
         }
 
-        private void Move_MouseMove(object sender, MouseEventArgs e)
+        private void Drag_MouseMove(object sender, MouseEventArgs e)
         {
             double dx = (e.GetPosition(this).X - offset.X) * (Coordinates.GetGlassRight() - Coordinates.glassLeft) / ActualWidth,
                 dy = -(e.GetPosition(this).Y - offset.Y) * (Coordinates.GetGlassTop() - Coordinates.glassBottom) / ActualHeight;
@@ -93,10 +101,22 @@ namespace SEMES_Pixel_Designer.View
             Coordinates.CanvasRef.UpdateCanvas();
         }
 
-        private void Move_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Drag_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            MouseMove -= Move_MouseMove;
-            MouseLeftButtonUp -= Move_MouseLeftButtonUp;
+            MouseMove -= Drag_MouseMove;
+            MouseLeftButtonUp -= Drag_MouseLeftButtonUp;
+        }
+        private void Move_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            double x = e.GetPosition(this).X * (Coordinates.GetGlassRight() - Coordinates.glassLeft) / ActualWidth,
+                y = (ActualHeight - e.GetPosition(this).Y) * (Coordinates.GetGlassTop() - Coordinates.glassBottom) / ActualHeight,
+                w = (Coordinates.maxX - Coordinates.minX)/2,
+                h = (Coordinates.maxY - Coordinates.minY)/2;
+            Coordinates.maxX = x + w;
+            Coordinates.minX = x - w;
+            Coordinates.maxY = y + h;
+            Coordinates.minY = y - h;
+            Coordinates.CanvasRef.UpdateCanvas();
         }
 
         private void Zoom_MouseWheel(object sender, MouseWheelEventArgs e)
