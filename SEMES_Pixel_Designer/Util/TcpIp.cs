@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 using System.Globalization;
+using SEMES_Pixel_Designer.ViewModel;
 
 namespace SEMES_Pixel_Designer
 {
@@ -42,6 +43,7 @@ namespace SEMES_Pixel_Designer
         public TcpIp()
         {
             Utils.Mediator.Register("TcpIp.TcpConnection", TcpConnection);
+            TcpIpLogViewModel.Instance.LogMessageList.Add("통신 초기화...");
         }
 
         // system.ini 데이터 파싱
@@ -70,6 +72,7 @@ namespace SEMES_Pixel_Designer
             catch(Exception ex)
             {
                 System.Windows.MessageBox.Show("INI 파일을 읽는 중 오류 발생: " + ex.Message);
+                TcpIpLogViewModel.Instance.LogMessageList.Add("INI 파일을 읽는 중 오류 발생: " + ex.Message);
             }
 
             return iniData;
@@ -132,6 +135,7 @@ namespace SEMES_Pixel_Designer
                         // default 경로 관리
                         string default_Path = iniData["default_path"]; // System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile"));
                         string[] pathParts = Directory.GetDirectories(default_Path);
+                        TcpIpLogViewModel.Instance.LogMessageList.Add($"default path: {default_Path}");
 
                         for (int i = 0; i < pathParts.Length; i++)
                         {
@@ -175,14 +179,18 @@ namespace SEMES_Pixel_Designer
 
                                         chk = true;
                                         // System.Windows.MessageBox.Show("가장 최근 파일: " + mostRecentFile.FilePath);
-                                        SendMessage("GetCADFile;ACK;Path=" + mostRecentFile.FilePath);
+                                        var msgACK = "GetCADFile;ACK;Path=" + mostRecentFile.FilePath;
+                                        SendMessage(msgACK);
+                                        TcpIpLogViewModel.Instance.LogMessageList.Add(msgACK);
                                     }
                                     break;
                                 }
                             }
                             if (!chk)
                             {
-                                SendMessage("GetCADFile;NAK;");
+                                var msgNAK = "GetCADFile;NAK;";
+                                SendMessage(msgNAK);
+                                TcpIpLogViewModel.Instance.LogMessageList.Add(msgNAK);
                             }
                         }
                     }
@@ -216,9 +224,10 @@ namespace SEMES_Pixel_Designer
                 // 자료를 수신하고, 수신받은 바이트를 가져옵니다.
                 recvBytes = ao.WorkingSocket.EndReceive(ar);
             }
-            catch
+            catch(Exception ex)
             {
                 // 예외가 발생하면 함수 종료!
+                TcpIpLogViewModel.Instance.LogMessageList.Add(ex.Message);
                 return;
             }
 
@@ -244,7 +253,8 @@ namespace SEMES_Pixel_Designer
             catch (Exception ex)
             {
                 // 예외가 발생하면 예외 정보 출력 후 함수를 종료한다.
-                System.Windows.MessageBox.Show($"자료 수신 대기 도중 오류 발생! 메세지: {ex.Message}");
+                System.Windows.MessageBox.Show($"자료 수신 대기 도중 오류 발생!\n메세지: {ex.Message}");
+                TcpIpLogViewModel.Instance.LogMessageList.Add($"자료 수신 대기 도중 오류 발생!\n메세지: {ex.Message}");
                 return;
             }
         }
@@ -266,7 +276,8 @@ namespace SEMES_Pixel_Designer
             catch (Exception ex)
             {
                 // 예외가 발생하면 예외 정보 출력 후 함수를 종료한다.
-                System.Windows.MessageBox.Show($"자료 송신 도중 오류 발생! 메세지: {ex.Message}");
+                System.Windows.MessageBox.Show($"자료 송신 도중 오류 발생!\n메세지: {ex.Message}");
+                TcpIpLogViewModel.Instance.LogMessageList.Add($"자료 송신 도중 오류 발생!\n메세지: {ex.Message}");
                 return;
             }
 
@@ -277,6 +288,7 @@ namespace SEMES_Pixel_Designer
                 Array.Copy(ao.Buffer, msgByte, sentBytes);
 
                 System.Windows.MessageBox.Show($"메세지 보냄: {Encoding.Unicode.GetString(msgByte)}");
+                TcpIpLogViewModel.Instance.LogMessageList.Add($"메세지 보냄: {Encoding.Unicode.GetString(msgByte)}");
             }
         }
 
@@ -292,6 +304,7 @@ namespace SEMES_Pixel_Designer
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"연결 수락 도중 오류 발생! 메세지: {ex.Message}");
+                TcpIpLogViewModel.Instance.LogMessageList.Add($"연결 수락 도중 오류 발생! 메세지: {ex.Message}");
                 return;
             }
 
@@ -312,7 +325,8 @@ namespace SEMES_Pixel_Designer
             catch (Exception ex)
             {
                 // 예외가 발생하면 예외 정보 출력 후 함수를 종료한다.
-                System.Windows.MessageBox.Show($"자료 수신 대기 도중 오류 발생! 메세지: {ex.Message}");
+                System.Windows.MessageBox.Show($"자료 수신 대기 도중 오류 발생!\n메세지: {ex.Message}");
+                TcpIpLogViewModel.Instance.LogMessageList.Add($"자료 수신 대기 도중 오류 발생!\n메세지: {ex.Message}");
                 return;
             }
         }
@@ -336,7 +350,8 @@ namespace SEMES_Pixel_Designer
             }
             catch (Exception ex)
             {
-                Console.WriteLine("전송 중 오류 발생!\n메세지: {0}", ex.Message);
+                Console.WriteLine($"전송 중 오류 발생!\n메세지: {ex.Message}");
+                TcpIpLogViewModel.Instance.LogMessageList.Add($"전송 중 오류 발생!\n메세지: {ex.Message}");
             }
         }
         #endregion
