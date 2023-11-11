@@ -69,7 +69,7 @@ namespace SEMES_Pixel_Designer
                     }
                 }
             }
-            catch(Exception ex)
+            catch
             {
                 System.Windows.MessageBox.Show("system.ini 파일을 실행 파일 경로에 추가해주세요");
                 TcpIpLogViewModel.Instance.LogMessageList.Add("system.ini 파일을 실행 파일 경로에 추가해주세요");
@@ -165,6 +165,7 @@ namespace SEMES_Pixel_Designer
                     if (iniData["default_path"] == null)
                     {
                         System.Windows.MessageBox.Show("system.ini에 default_path를 추가해주세요");
+                        TcpIpLogViewModel.Instance.LogMessageList.Add("system.ini에 default_path를 추가해주세요");
                         return;
                     }
 
@@ -348,6 +349,7 @@ namespace SEMES_Pixel_Designer
                 // 클라이언트의 연결 요청을 수락합니다.
                 sockClient = m_ServerSocket.EndAccept(ar);
                 System.Windows.MessageBox.Show("연결 성공 !");
+                TcpIpLogViewModel.Instance.LogMessageList.Add($"연결 성공 !");
             }
             catch (Exception ex)
             {
