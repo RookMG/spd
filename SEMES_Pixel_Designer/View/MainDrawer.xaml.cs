@@ -99,7 +99,7 @@ namespace SEMES_Pixel_Designer
             MouseWheel += Zoom_MouseWheel;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
-            cells.Add(new Cell(100,100,372,372,100,100));
+            cells.Add(new Cell(100,100,372,372,1000,1000));
             selectedCell = cells[0];
 
             Minimap minimap = new Minimap();
