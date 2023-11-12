@@ -30,6 +30,8 @@ namespace SEMES_Pixel_Designer.View
     public class MinimapCanvas : Canvas
     {
         public Line CanvasXPosition, CanvasYPosition;
+        public Path CellPath;
+        public StreamGeometry geometry;
         private Point offset;
         public MinimapCanvas()
         {
@@ -53,9 +55,14 @@ namespace SEMES_Pixel_Designer.View
                 StrokeThickness = 2
             };
             CanvasXPosition.StrokeDashArray = CanvasYPosition.StrokeDashArray = new DoubleCollection(new double[] { 5, 2 });
+            CellPath = new Path
+            {
+                Fill = Coordinates.gridBrush
+            };
+            CellPath.Data = geometry = new StreamGeometry();
+            Children.Add(CellPath);
             Children.Add(CanvasXPosition);
             Children.Add(CanvasYPosition);
-
             MouseRightButtonUp += Move_MouseRightButtonUp;
             MouseLeftButtonDown += Drag_MouseLeftButtonDown;
             MouseWheel += Zoom_MouseWheel;
@@ -74,6 +81,16 @@ namespace SEMES_Pixel_Designer.View
             CanvasYPosition.Y1 = CanvasYPosition.Y2 = y;
             CanvasYPosition.X2 = ActualWidth + 1;
             CanvasXPosition.Y2 = ActualHeight + 1;
+            using(StreamGeometryContext ctx = geometry.Open())
+            {
+                foreach (var cell in Coordinates.CanvasRef.cells)
+                {
+                    ctx.BeginFigure(new Point((cell.patternLeft-Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.patternBottom) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is filled */, true /* is closed */);
+                    ctx.LineTo(new Point((cell.patternLeft - Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.GetPatternTop()) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.GetPatternTop()) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.patternBottom) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is stroked */, false /* is smooth join */);
+                }
+            }
         }
 
         public void AdjustRatio()
