@@ -99,8 +99,11 @@ namespace SEMES_Pixel_Designer
             MouseWheel += Zoom_MouseWheel;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
-            cells.Add(new Cell(100,100,372,372,1000,1000));
-            selectedCell = cells[0];
+            cells.Add(new Cell(100, 100, 372, 372, 1000, 1000));
+            cells.Add(new Cell(1000000, 100, 372, 372, 1000, 1000));
+            cells.Add(new Cell(100, 1000000, 372, 372, 1000, 1000));
+            // cells.Add(new Cell(1000000, 1000000, 372, 372, 1000, 1000));
+            selectedCell = cells[2];
 
             Minimap minimap = new Minimap();
             minimap.Show();
@@ -516,6 +519,7 @@ namespace SEMES_Pixel_Designer
         }
         private void Select_MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
+            if (!Coordinates.mouseCaptured) { 
             double minSelX = Math.Min(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
                    maxSelX = Math.Max(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
                    minSelY = Math.Min(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y),
@@ -557,7 +561,7 @@ namespace SEMES_Pixel_Designer
                     }
                 }
             }
-
+            }
             Children.Remove(drawingPolygon);
 
             MouseMove -= Select_MouseMove;
@@ -631,27 +635,54 @@ namespace SEMES_Pixel_Designer
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
+            double minX = Math.Min(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[1].X)),
+                maxX = Math.Max(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[1].X)),
+                minY = Math.Min(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[1].Y)),
+                maxY = Math.Max(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[1].Y));
+            Cell matchingCell = null;
+            foreach (Cell cell in cells)
+            {
+                if (cell.patternLeft > minX || cell.GetPatternRight() < maxX
+                    || cell.patternBottom > minY || cell.GetPatternTop() < maxY) continue;
+                matchingCell = cell;
 
-            PolygonEntity polygonEntity = new PolygonEntity(selectedCell, drawingPolygon, PolygonEntityType.LINE);
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    DrawingEntities.Add(polygonEntity);
-                },
-                () => {
-                    DrawingEntities.Remove(polygonEntity);
-                    polygonEntity.Delete();
-                },
-                () =>
+                int r = 0, c = 0;
+                while (cell.getPatternOffsetX(c+1) < minX - cell.patternLeft) c++;
+                while (cell.getPatternOffsetY(r+1) < minY - cell.patternBottom) r++;
+                for(int i = 0; i < drawingPolygon.Points.Count; i++)
                 {
-                    DrawingEntities.Add(polygonEntity);
-                    polygonEntity.Restore();
-                },
-                () =>
-                {
-                    polygonEntity.Remove();
+                    drawingPolygon.Points[i] = new System.Windows.Point(Coordinates.ToDxfX(drawingPolygon.Points[i].X) - cell.getPatternOffsetX(c), Coordinates.ToDxfY(drawingPolygon.Points[i].Y) - cell.getPatternOffsetY(r));
                 }
-            ));
+
+                break;
+            }
+
+            if(matchingCell == null)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("셀 밖에는 도형을 그릴 수 없습니다.");
+            }
+            else { 
+                PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.LINE);
+                Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                (
+                    () => {
+                        DrawingEntities.Add(polygonEntity);
+                    },
+                    () => {
+                        DrawingEntities.Remove(polygonEntity);
+                        polygonEntity.Delete();
+                    },
+                    () =>
+                    {
+                        DrawingEntities.Add(polygonEntity);
+                        polygonEntity.Restore();
+                    },
+                    () =>
+                    {
+                        polygonEntity.Remove();
+                    }
+                ));
+            }
 
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
@@ -710,8 +741,34 @@ namespace SEMES_Pixel_Designer
                 MouseRightButtonUp -= DrawRectangle_MouseRightButtonUp;
 
 
+                double minX = Math.Min(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[2].X)),
+                    maxX = Math.Max(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[2].X)),
+                    minY = Math.Min(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[2].Y)),
+                    maxY = Math.Max(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[2].Y));
+                Cell matchingCell = null;
+                foreach (Cell cell in cells)
+                {
+                    if (cell.patternLeft > minX || cell.GetPatternRight() < maxX
+                        || cell.patternBottom > minY || cell.GetPatternTop() < maxY) continue;
+                    matchingCell = cell;
 
-                PolygonEntity polygonEntity = new PolygonEntity(selectedCell, drawingPolygon, PolygonEntityType.POLYLINE);
+                    int r = 0, c = 0;
+                    while (cell.getPatternOffsetX(c + 1) < minX - cell.patternLeft) c++;
+                    while (cell.getPatternOffsetY(r + 1) < minY - cell.patternBottom) r++;
+                    for (int i = 0; i < drawingPolygon.Points.Count; i++)
+                    {
+                        drawingPolygon.Points[i] = new System.Windows.Point(Coordinates.ToDxfX(drawingPolygon.Points[i].X) - cell.getPatternOffsetX(c), Coordinates.ToDxfY(drawingPolygon.Points[i].Y) - cell.getPatternOffsetY(r));
+                    }
+
+                    break;
+                }
+
+                if (matchingCell == null)
+                {
+                    MessageBoxResult result = System.Windows.MessageBox.Show("셀 밖에는 도형을 그릴 수 없습니다.");
+                }
+                else { 
+                PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.POLYLINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
                     () => {
@@ -731,7 +788,7 @@ namespace SEMES_Pixel_Designer
                         polygonEntity.Remove();
                     }
                 ));
-
+                }
                 Children.Remove(drawingPolygon);
                 Children.Remove(drawingEllipse);
                 UpdateLayout();
@@ -786,27 +843,63 @@ namespace SEMES_Pixel_Designer
             if (drawingPolygon.Points.Count <= 1) return;
 
 
-            PolygonEntity polygonEntity = new PolygonEntity(selectedCell, drawingPolygon, PolygonEntityType.POLYLINE);
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    DrawingEntities.Add(polygonEntity);
-                },
-                () => {
-                    DrawingEntities.Remove(polygonEntity);
-                    polygonEntity.Delete();
-                },
-                () =>
-                {
-                    DrawingEntities.Add(polygonEntity);
-                    polygonEntity.Restore();
-                },
-                () =>
-                {
-                    polygonEntity.Remove();
-                }
-            ));
+            double minX = Coordinates.ToDxfX(drawingPolygon.Points[0].X),
+                maxX = Coordinates.ToDxfX(drawingPolygon.Points[0].X),
+                minY = Coordinates.ToDxfY(drawingPolygon.Points[0].Y),
+                maxY = Coordinates.ToDxfY(drawingPolygon.Points[0].Y);
+            for (int i = 1; i < drawingPolygon.Points.Count; i++)
+            {
+                minX = Math.Min(minX, drawingPolygon.Points[i].X);
+                maxX = Math.Max(maxX, drawingPolygon.Points[i].X);
+                minY = Math.Min(minY, drawingPolygon.Points[i].Y);
+                maxY = Math.Max(maxY, drawingPolygon.Points[i].Y);
+            }
+            Cell matchingCell = null;
+            foreach (Cell cell in cells)
+            {
+                if (cell.patternLeft > minX || cell.GetPatternRight() < maxX
+                    || cell.patternBottom > minY || cell.GetPatternTop() < maxY) continue;
+                matchingCell = cell;
 
+                int r = 0, c = 0;
+                while (cell.getPatternOffsetX(c + 1) < minX - cell.patternLeft) c++;
+                while (cell.getPatternOffsetY(r + 1) < minY - cell.patternBottom) r++;
+                for (int i = 0; i < drawingPolygon.Points.Count; i++)
+                {
+                    drawingPolygon.Points[i] = new System.Windows.Point(Coordinates.ToDxfX(drawingPolygon.Points[i].X) - cell.getPatternOffsetX(c), Coordinates.ToDxfY(drawingPolygon.Points[i].Y) - cell.getPatternOffsetY(r));
+                }
+
+                break;
+            }
+
+            if (matchingCell == null)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("셀 밖에는 도형을 그릴 수 없습니다.");
+            }
+            else
+            {
+                PolygonEntity polygonEntity = new PolygonEntity(selectedCell, drawingPolygon, PolygonEntityType.POLYLINE);
+                Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                (
+                    () => {
+                        DrawingEntities.Add(polygonEntity);
+                    },
+                    () => {
+                        DrawingEntities.Remove(polygonEntity);
+                        polygonEntity.Delete();
+                    },
+                    () =>
+                    {
+                        DrawingEntities.Add(polygonEntity);
+                        polygonEntity.Restore();
+                    },
+                    () =>
+                    {
+                        polygonEntity.Remove();
+                    }
+                ));
+
+            }
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;

@@ -25,6 +25,7 @@ namespace SEMES_Pixel_Designer
         public ToolBar()
         {
             InitializeComponent();
+            DataContext = new CommandDataContext();
         }
 
         private void Clone_Button_Click(object sender, RoutedEventArgs e)
