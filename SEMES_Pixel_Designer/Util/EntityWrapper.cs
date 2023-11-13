@@ -1,82 +1,162 @@
 ﻿using netDxf;
 using netDxf.Collections;
 using netDxf.Entities;
+using SEMES_Pixel_Designer.View;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.ComponentModel;
 
 namespace SEMES_Pixel_Designer.Utils
 {
 
+    public class Cell
+    {
+        public double patternLeft, patternBottom, patternWidth, patternHeight;
+        public int patternRows, patternCols;
+
+        public Cell(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            this.patternLeft = patternLeft;
+            this.patternBottom = patternBottom;
+            this.patternWidth = patternWidth;
+            this.patternHeight = patternHeight;
+            this.patternRows = patternRows;
+            this.patternCols = patternCols;
+        }
+
+        public double GetPatternRight()
+        {
+            return patternLeft + patternWidth * patternCols;
+        }
+
+        public double GetPatternTop()
+        {
+            return patternBottom + patternHeight * patternRows;
+        }
+        public double getPatternOffsetX(int column)
+        {
+            return column * patternWidth;
+        }
+        public double getPatternOffsetY(int row)
+        {
+            return row * patternHeight;
+        }
+
+    }
+
     public static class Coordinates
     {
-        public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5;
+        public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5,
+            glassBottom = 0, glassLeft = 0, glassTop = 2500000, glassRight = 2200000;
+        public static List<Cell> cells;
         public static MainCanvas CanvasRef;
+        public static MinimapCanvas MinimapRef;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
         public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
         public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x99, 0x99, 0x99)),
             defaultColorBrush = Brushes.Black,
             backgroundColorBrush = Brushes.White,
-            fillColorBrush = Brushes.Transparent,
-            selectedColorBrush = Brushes.Red;
-
+            transparentBrush = Brushes.Transparent,
+            selectedColorBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0x69, 0xB4)),
+            highlightBrush = new SolidColorBrush(Color.FromArgb(0x70, 0xFF, 0xFF, 0x00));
+        public static Dictionary<Color, SolidColorBrush> BrushDict = new Dictionary<Color, SolidColorBrush>();
+        public static Path borderPath;
+        public static StreamGeometry borderGeometry;
+        public static bool mouseCaptured = false;
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
         public static Action<UIElement, double> SetLeftAction, SetTopAction;
 
-        public static readonly double MINIMUM_VISIBLE_SIZE = 5, MIN_GRID_SIZE = 15;
+        public static readonly double 
+            //MINIMUM_VISIBLE_SIZE = 5, 
+            MIN_GRID_SIZE = 15, 
+            MAX_PATTERN_VIEW = 6,
+             CANVAS_MARGIN = 200,
+            DEFAULT_PATTERN_SIZE = 372;
 
         public static void UpdateRange(DrawingEntities entities)
         {
-            gridSpacing = 0.5;
-            List<double> x = new List<double>(), y = new List<double>();
-            foreach (netDxf.Entities.Line line in entities.Lines)
-            {
-                x.Add(line.StartPoint.X);
-                y.Add(line.StartPoint.Y);
-                x.Add(line.EndPoint.X);
-                y.Add(line.EndPoint.Y);
-            }
-            foreach (netDxf.Entities.Polyline2D polyline in entities.Polylines2D)
-            {
-                foreach (netDxf.Entities.Polyline2DVertex point in polyline.Vertexes)
-                {
-                    x.Add(point.Position.X);
-                    y.Add(point.Position.Y);
-                }
-            }
-            if (x.Count <= 0) return;
-            minX = x.Min();
-            minY = y.Min();
-            maxX = x.Max();
-            maxY = y.Max();
+            minX = glassLeft;
+            minY = glassBottom;
+            maxX = minX + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
+            maxY = minY + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
+            //gridSpacing = 0.5;
+            //minX = minY = double.MaxValue;
+            //maxX = maxY = double.MinValue;
+            //foreach (netDxf.Entities.Line line in entities.Lines)
+            //{
+            //    minX = Math.Min(minX, line.StartPoint.X);
+            //    maxX = Math.Max(maxX, line.StartPoint.X);
+            //    minY = Math.Min(minY, line.StartPoint.Y);
+            //    maxY = Math.Max(maxY, line.StartPoint.Y);
+            //    minX = Math.Min(minX, line.EndPoint.X);
+            //    maxX = Math.Max(maxX, line.EndPoint.X);
+            //    minY = Math.Min(minY, line.EndPoint.Y);
+            //    maxY = Math.Max(maxY, line.EndPoint.Y);
+            //}
+            //foreach (netDxf.Entities.Polyline2D polyline in entities.Polylines2D)
+            //{
+            //    foreach (netDxf.Entities.Polyline2DVertex point in polyline.Vertexes)
+            //    {
+            //        minX = Math.Min(minX, point.Position.X);
+            //        maxX = Math.Max(maxX, point.Position.X);
+            //        minY = Math.Min(minY, point.Position.Y);
+            //        maxY = Math.Max(maxY, point.Position.Y);
+            //    }
+            //}
+            //if (entities.Lines.Count() + entities.Polylines2D.Count() == 0)
+            //{
+            //    minX = 0.0;
+            //    minY = 0.0;
+            //    maxX = 1000.0;
+            //    maxY = 1000.0;
+            //}
+
+            //patternLeft = minX;
+            //patternBottom = minY;
+            //patternWidth = maxX - minX;
+            //patternHeight = maxY - minY;
+            //maxX = minX + Math.Min(MAX_PATTERN_VIEW,patternCols) * patternWidth;
+            //maxY = minY + Math.Min(MAX_PATTERN_VIEW,patternRows) * patternHeight;
             AdjustRatio();
         }
 
         public static void AdjustRatio()
         {
-            if ((maxY - minY) / (maxX - minX) > CanvasRef.ActualHeight / CanvasRef.ActualWidth)
+            if ((maxY - minY) * CanvasRef.ActualWidth > CanvasRef.ActualHeight * (maxX - minX))
             {
-                double dx = (maxY - minY) * CanvasRef.ActualWidth / (CanvasRef.ActualHeight) - maxX + minX;
-                maxX += dx / 2;
-                minX -= dx / 2;
+                double dy = (maxX - minX) * CanvasRef.ActualHeight / CanvasRef.ActualWidth - maxY + minY;
+                maxY += dy;
             }
             else
             {
-                double dy = (maxX - minX) * CanvasRef.ActualHeight / (CanvasRef.ActualWidth) - maxY + minY;
-                maxY += dy / 2;
-                minY -= dy / 2;
+                double dx = (maxY - minY) * CanvasRef.ActualWidth / CanvasRef.ActualHeight - maxX + minX;
+                maxX += dx;
             }
             ratio = CanvasRef.ActualWidth / (maxX - minX);
+            if (MinimapRef == null) return;
+            MinimapRef.AdjustRatio();
         }
         public static void DrawGrid()
         {
+            using (StreamGeometryContext ctx = borderGeometry.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(ToScreenX(glassLeft), ToScreenY(glassBottom)), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(ToScreenX(glassLeft), ToScreenY(glassTop)), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(ToScreenX(glassRight), ToScreenY(glassTop)), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(ToScreenX(glassRight), ToScreenY(glassBottom)), true /* is stroked */, false /* is smooth join */);
+                ctx.BeginFigure(new System.Windows.Point(-1,-1), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(-1, CanvasRef.ActualHeight + 1), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(CanvasRef.ActualWidth + 1, CanvasRef.ActualHeight + 1), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(CanvasRef.ActualWidth + 1, -1), true /* is stroked */, false /* is smooth join */);
+            }
+
             gridSpacing = Math.Pow(10, Math.Floor(Math.Log10(Math.Max(maxY - minY, maxX - minX))));
             if (ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;
             double sX = Math.Floor(minX / gridSpacing) * gridSpacing, eX = (1 + Math.Floor(maxX / gridSpacing)) * gridSpacing,
@@ -134,8 +214,11 @@ namespace SEMES_Pixel_Designer.Utils
 
             gridLines.Add(infoLine);
             BindCanvasAction(infoLine);
-            SetZIndexAction(infoLine, -1);
+            SetZIndexAction(infoLine, 10);
+            SetZIndexAction(gridInfoText,10);
             gridInfoText.Text = " : " + gridSpacing * 0.1;
+            gridInfoText.Foreground = defaultColorBrush;
+            gridInfoText.Background = backgroundColorBrush;
             SetLeftAction(gridInfoText, 15 + ToScreenX(minX + gridSpacing * 0.1));
             SetTopAction(gridInfoText, CanvasRef.ActualHeight - 10 - gridInfoText.FontSize);
         }
@@ -160,54 +243,52 @@ namespace SEMES_Pixel_Designer.Utils
             return (CanvasRef.ActualHeight - screenY) * (maxY - minY) / CanvasRef.ActualHeight + minY;
         }
 
+
         public static string ToolTip(double dxfX, double dxfY)
         {
             return string.Format("x : {0}, y : {1}", dxfX, dxfY);
         }
 
+        public static SolidColorBrush GetSolidColorBrush(Color color)
+        {
+            if (!BrushDict.ContainsKey(color))
+            {
+                BrushDict.Add(color, new SolidColorBrush(color));
+            }
+            return BrushDict[color];
+        }
     }
 
 
     public class PointEntity
     {
+        public Cell cell;
         public Path path;
         public StreamGeometry geometry;
-        private UIElement source = null;
-        private bool isDragging = false, deleted = false;
-        private System.Windows.Point position, offset;
-        private Action<double, double> updateParentAction;
+        public PolygonEntity parent;
+        public int idx;
+        private bool deleted = false;
+        private System.Windows.Point offset, startPoint;
 
         public static readonly double P_RADIUS = 4, SELECT_RADIUS = 8;
 
-        public PointEntity(double x, double y, Action<double, double> updateParentAction)
+        public PointEntity(Cell cell, double dxfX, double dxfY, PolygonEntity parent, int idx)
         {
+            this.cell = cell;
+            this.parent = parent;
+            this.idx = idx;
             path = new Path();
             geometry = new StreamGeometry();
 
             path.Fill = Coordinates.selectedColorBrush;
             path.MouseLeftButtonDown += MouseLeftButtonDown;
             path.MouseLeftButtonUp += MouseLeftButtonUp;
-            position = new System.Windows.Point(x, y);
-
-            using (StreamGeometryContext ctx = geometry.Open())
-            {
-                ctx.BeginFigure(new System.Windows.Point(-P_RADIUS, 0), true /* is filled */, true /* is closed */);
-                ctx.LineTo(new System.Windows.Point(0, -P_RADIUS), true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(new System.Windows.Point(P_RADIUS, 0), true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(new System.Windows.Point(0, P_RADIUS), true /* is stroked */, false /* is smooth join */);
-            }
             geometry.FillRule = FillRule.EvenOdd;
             path.Data = geometry;
-            Coordinates.SetZIndexAction(path, 3);
-            // BindCanvasAction(point);
-            // BindCanvasAction(selectArea);
-            UpdatePosition();
-            this.updateParentAction = updateParentAction;
+
+            ReDraw();
         }
 
-        public PointEntity(double x, double y) : this(x, y, null)
-        {
-        }
 
         public void BindCanvas()
         {
@@ -219,16 +300,12 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.UnbindCanvasAction(path);
         }
 
-        private void UpdatePosition()
-        {
-            UpdatePosition(position.X, position.Y);
-        }
 
-        public void UpdatePosition(double x, double y)
+        public void UpdatePosition(double dxfX, double dxfY)
         {
-            MovePosition(x, y);
-
-            if (updateParentAction != null) updateParentAction(x, y);
+            //MovePosition(dxfX, dxfY);
+            parent.UpdatePoint(dxfX, dxfY, idx, true);
+            parent.ReDraw();
         }
 
         public void Delete()
@@ -247,50 +324,75 @@ namespace SEMES_Pixel_Designer.Utils
         {
             // TODO : 인스턴스 삭제 방법 찾기
         }
-
-        public void MovePosition(double x, double y)
+        public void ReDraw()
         {
-            position = new System.Windows.Point(x, y);
-            Coordinates.SetLeftAction(path, x);
-            Coordinates.SetTopAction(path, y);
+            using (StreamGeometryContext ctx = geometry.Open())
+            {
+                int rStart = 0, cStart = 0;
+                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
+                {
+                    double yStart = cell.getPatternOffsetY(r);
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    {
+                        double xStart = cell.getPatternOffsetX(c);
+                        ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X) - P_RADIUS, Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is filled */, true /* is closed */);
+                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y) - P_RADIUS), true /* is stroked */, false /* is smooth join */);
+                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X) + P_RADIUS, Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is stroked */, false /* is smooth join */);
+                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y) + P_RADIUS), true /* is stroked */, false /* is smooth join */);
+
+                    }
+                }
+            }
         }
+
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            Coordinates.mouseCaptured = true;
             Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
-            source = (UIElement)sender;
-            Mouse.Capture(source);
-            isDragging = true;
-            offset = new System.Windows.Point(Coordinates.ToDxfX(position.X), Coordinates.ToDxfY(position.Y));
-            path.MouseMove += MouseMove;
+            offset = e.GetPosition(Coordinates.CanvasRef);
+            startPoint = new System.Windows.Point(parent.dxfCoords[idx].X, parent.dxfCoords[idx].Y);
+            Coordinates.CanvasRef.MouseMove += MouseMove;
+            Coordinates.CanvasRef.MouseLeftButtonUp += MouseLeftButtonUp;
         }
 
         private void MouseMove(object sender, MouseEventArgs e)
         {
-            if (!isDragging) return;
-            UpdatePosition(e.GetPosition(Coordinates.CanvasRef).X, e.GetPosition(Coordinates.CanvasRef).Y);
+            if (e.LeftButton == MouseButtonState.Released)
+            {
+                MouseLeftButtonUp(sender, e);
+                return;
+            }
+            UpdatePosition(startPoint.X 
+                + (e.GetPosition(Coordinates.CanvasRef).X - offset.X)*(Coordinates.maxX - Coordinates.minX) / Coordinates.CanvasRef.ActualWidth
+                ,
+                startPoint.Y
+                - (e.GetPosition(Coordinates.CanvasRef).Y - offset.Y) * (Coordinates.maxY - Coordinates.minY) / Coordinates.CanvasRef.ActualHeight
+                );
+            //Console.WriteLine(Coordinates.ToDxfX(e.GetPosition(Coordinates.CanvasRef).X - offset.X) + ", " + Coordinates.ToDxfY(e.GetPosition(Coordinates.CanvasRef).Y - offset.Y));
+            //offset = e.GetPosition(Coordinates.CanvasRef);
         }
 
-        private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
-            path.MouseMove -= MouseMove;
+            Coordinates.mouseCaptured = false;
+            Coordinates.CanvasRef.MouseMove -= MouseMove;
+            Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
-            Mouse.Capture(null);
-            isDragging = false;
 
-            System.Windows.Point from = new System.Windows.Point(offset.X, offset.Y),
-                to = new System.Windows.Point(Coordinates.ToDxfX(e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(e.GetPosition(Coordinates.CanvasRef).Y));
-
-            UpdatePosition(e.GetPosition(Coordinates.CanvasRef).X, e.GetPosition(Coordinates.CanvasRef).Y);
+            System.Windows.Point from = new System.Windows.Point(startPoint.X, startPoint.Y),
+                to = new System.Windows.Point(parent.dxfCoords[idx].X, parent.dxfCoords[idx].Y);
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
                 () =>
                 {
-                    UpdatePosition(Coordinates.ToScreenX(from.X), Coordinates.ToScreenY(from.Y));
+                    UpdatePosition(from.X, from.Y);
                 },
                 () =>
                 {
-                    UpdatePosition(Coordinates.ToScreenX(to.X), Coordinates.ToScreenY(to.Y));
+                    UpdatePosition(to.X, to.Y);
                 },
                 () =>
                 {
@@ -310,26 +412,27 @@ namespace SEMES_Pixel_Designer.Utils
 
     public class PolygonEntity : INotifyPropertyChanged
     {
-        public Path path;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Path path, selectArea;
         StreamGeometry geometry;
         //public Polygon selectArea;
 
+        public Cell cell;
         public PointCollection dxfCoords = null;
-        private PointCollection offsets = null;
+        private PointCollection mouseOffsets = null, dxfOffsets = null;
         private List<PointEntity> points = null;
+        public double minX, minY, maxX, maxY;
 
         // dxf 파일에 직접 접근할 때 사용
         private EntityObject entityObject = null;
         private PolygonEntityType entityType;
-
         public bool selected = false, visible = false, deleted = false;
-
-        
         public bool Selected
         {
             get { return selected; }
             set
-            {          
+            {
                 if (selected != value)
                 {
                     ToggleSelected(value);
@@ -338,15 +441,13 @@ namespace SEMES_Pixel_Designer.Utils
             }
         }
 
-        private List<Action<double, double>> setDxfCoordAction = new List<Action<double, double>>();
+        private List<Action<double, double>> setDxfCoordAction;
 
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
         public static List<CopyData> clipboard = new List<CopyData>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public class CopyData
-        { 
+        {
             public PointCollection dxfCoords { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
@@ -380,49 +481,51 @@ namespace SEMES_Pixel_Designer.Utils
             // 생성시 공통적으로 호출되는 내용들
             dxfCoords = new PointCollection();
             path = new Path();
+            selectArea = new Path();
             geometry = new StreamGeometry();
-
-
-            path.MouseLeftButtonDown += MouseLeftButtonDown;
-            path.Stroke = Coordinates.defaultColorBrush;
-            path.Fill = Coordinates.fillColorBrush;
-            path.StrokeThickness = 1;
-
+            setDxfCoordAction = new List<Action<double, double>>();
             points = new List<PointEntity>();
+
+            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
+            path.Stroke = Coordinates.defaultColorBrush;
+            selectArea.Stroke = Coordinates.transparentBrush;
+            // path.Fill = Coordinates.fillColorBrush;
+            path.StrokeThickness = 1;
+            selectArea.StrokeThickness = 13;
+
+            Coordinates.BindCanvasAction(path);
+            Coordinates.BindCanvasAction(selectArea);
             Coordinates.SetZIndexAction(path, 1);
+            Coordinates.SetZIndexAction(selectArea, 2);
+
         }
 
         // Line 생성자
-        public PolygonEntity(netDxf.Entities.Line line)
+        public PolygonEntity(Cell cell, netDxf.Entities.Line line)
         {
+            this.cell = cell;
             init();
             entityObject = line;
             entityType = PolygonEntityType.LINE;
-            setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
-            setDxfCoordAction.Add((double x, double y) => { line.EndPoint = new netDxf.Vector3(x, y, 0); });
-            AddPoint(line.StartPoint);
-            AddPoint(line.EndPoint);
-            ReDraw();
+
+            InitDraw();
         }
 
         // 2d polyline 생성자
         // 3d polyline이 있다면 파일 오픈 시 2d polyline으로 변경해 사용 중 (Mainwindow.OpenDxf 참고);
-        public PolygonEntity(Polyline2D polyline)
+        public PolygonEntity(Cell cell, Polyline2D polyline)
         {
+            this.cell = cell;
             init();
             entityObject = polyline;
             entityType = PolygonEntityType.POLYLINE;
-            setDxfCoordAction = new List<Action<double, double>>();
-            foreach (var point in polyline.Vertexes)
-            {
-                setDxfCoordAction.Add((double x, double y) => { point.Position = new netDxf.Vector2(x, y); });
-                AddPoint(point.Position);
-            }
-            ReDraw();
+
+            InitDraw();
         }
 
-        public PolygonEntity(Polygon polygon, PolygonEntityType type)
+        public PolygonEntity(Cell cell, Polygon polygon, PolygonEntityType type)
         {
+            this.cell = cell;
             if (type == PolygonEntityType.POLYLINE)
             {
                 List<Vector2> vertexes = new List<Vector2>();
@@ -445,39 +548,12 @@ namespace SEMES_Pixel_Designer.Utils
             }
 
             init();
-
             entityType = type;
-            setDxfCoordAction = new List<Action<double, double>>();
-            if (type == PolygonEntityType.POLYLINE)
-            {
-                foreach (var point in ((Polyline2D)entityObject).Vertexes)
-                {
-                    setDxfCoordAction.Add((double x, double y) => { point.Position = new netDxf.Vector2(x, y); });
-                    AddPoint(point.Position);
-                }
-            }
-            else if (type == PolygonEntityType.LINE)
-            {
-                netDxf.Entities.Line line = (netDxf.Entities.Line)entityObject;
-                setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
-                setDxfCoordAction.Add((double x, double y) => { line.EndPoint = new netDxf.Vector3(x, y, 0); });
-                AddPoint(line.StartPoint);
-                AddPoint(line.EndPoint);
-            }
-            ReDraw();
+
+            InitDraw();
         }
 
         #endregion
-
-        public PolygonEntityType GetPolygonType()
-        {
-            return entityType;
-        }
-
-        public EntityObject GetEntityObject()
-        {
-            return entityObject;
-        }
 
         public static void CopySelected()
         {
@@ -502,9 +578,6 @@ namespace SEMES_Pixel_Designer.Utils
             dxfCoords.Add(new System.Windows.Point(dxfX, dxfY));
             double screenX = Coordinates.ToScreenX(dxfX);
             double screenY = Coordinates.ToScreenY(dxfY);
-            PointEntity p = new PointEntity(screenX, screenY, (nx, ny) => { UpdatePoint(nx, ny, idx, true); ReDraw(); });
-            p.path.ToolTip = Coordinates.ToolTip(dxfX, dxfY);
-            points.Add(p);
         }
         public void AddPoint(netDxf.Vector2 point)
         {
@@ -515,65 +588,94 @@ namespace SEMES_Pixel_Designer.Utils
             AddPoint(point.X, point.Y);
         }
 
+        public void InitDraw()
+        {
+            if (entityType == PolygonEntityType.POLYLINE)
+            {
+                foreach (var point in ((Polyline2D)entityObject).Vertexes)
+                {
+                    setDxfCoordAction.Add((double x, double y) => { point.Position = new netDxf.Vector2(x, y); });
+                    AddPoint(point.Position);
+                }
+            }
+            else if (entityType == PolygonEntityType.LINE)
+            {
+                netDxf.Entities.Line line = (netDxf.Entities.Line)entityObject;
+                setDxfCoordAction.Add((double x, double y) => { line.StartPoint = new netDxf.Vector3(x, y, 0); });
+                setDxfCoordAction.Add((double x, double y) => { line.EndPoint = new netDxf.Vector3(x, y, 0); });
+                AddPoint(line.StartPoint);
+                AddPoint(line.EndPoint);
+            }
+            geometry.FillRule = FillRule.EvenOdd;
+            path.Data = geometry;
+            selectArea.Data = geometry;
+            for (int idx = 0; idx < dxfCoords.Count; idx++)
+            {
+                points.Add(new PointEntity(cell, dxfCoords[idx].X, dxfCoords[idx].Y, this, idx));
+            }
+            ReDraw();
+            ReColor();
+        }
+
         public void ReDraw()
         {
             if (dxfCoords == null || deleted) return;
-            List<double> x = new List<double>(), y = new List<double>();
-            for (int i = 0; i < dxfCoords.Count; i++)
+
+            minX = maxX = dxfCoords[0].X;
+            minY = maxY = dxfCoords[0].Y;
+            for (int i = 0; i < dxfCoords.Count; i++) UpdatePoint(i);
+
+            using (StreamGeometryContext ctx = geometry.Open())
             {
-                UpdatePoint(i);
-                x.Add(Coordinates.ToScreenX(dxfCoords[i].X));
-                y.Add(Coordinates.ToScreenY(dxfCoords[i].Y));
-            }
-            double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max(), width = Coordinates.CanvasRef.ActualWidth, height = Coordinates.CanvasRef.ActualHeight;
-            bool valid =
-                // 최소 크기 이상
-                (Math.Max(maxX - minX, maxY - minY) > Coordinates.MINIMUM_VISIBLE_SIZE)
-                // 화면에 포함됨
-                // && ((0 <= minX && minX <= width) || (0 <= maxX && maxX <= width) || (0 <= minY && minY <= height) || (0 <= maxY && maxY <= height))
-                && maxX >= 0 && minX <= width && maxY >= 0 && minY <= height;
-            if (valid)
-            {
-                using (StreamGeometryContext ctx = geometry.Open())
+                int rStart = 0, cStart = 0;
+                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
                 {
-                    ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[0].X), Coordinates.ToScreenY(dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
-                    for (int i = 1; i < dxfCoords.Count; i++)
-                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[i].X), Coordinates.ToScreenY(dxfCoords[i].Y)), true /* is stroked */, false /* is smooth join */);
+                    double yStart = cell.getPatternOffsetY(r);
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    {
+                        double xStart = cell.getPatternOffsetX(c);
+                        ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[0].X), Coordinates.ToScreenY(yStart + dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
+                        for (int i = 1; i < dxfCoords.Count; i++)
+                            ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[i].X), Coordinates.ToScreenY(yStart + dxfCoords[i].Y)), true /* is stroked */, false /* is smooth join */);
+
+                    }
                 }
-                geometry.FillRule = FillRule.EvenOdd;
-                path.Data = geometry;
+
+                //ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[0].X), Coordinates.ToScreenY(dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
+                //for (int i = 1; i < dxfCoords.Count; i++)
+                //    ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[i].X), Coordinates.ToScreenY(dxfCoords[i].Y)), true /* is stroked */, false /* is smooth join */);
+
+
             }
+            geometry.FillRule = FillRule.EvenOdd;
+            path.Data = geometry;
+            selectArea.Data = geometry;
 
-            if (valid == visible) return;
-            if (valid)
+            if (!selected) return;
+            foreach (PointEntity p in points) p.ReDraw();
+
+            //PointEntity p = new PointEntity(screenX, screenY, (nx, ny) => { UpdatePoint(nx, ny, idx, true); ReDraw(); });
+            //p.path.ToolTip = Coordinates.ToolTip(dxfX, dxfY);
+            //points.Add(p);
+
+        }
+
+        public void ReColor()
+        {
+            if (selected)
             {
-                //StreamGeometry geometry = new StreamGeometry();
-                //using (StreamGeometryContext ctx = geometry.Open())
-                //{
-                //    ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[0].X), Coordinates.ToScreenY(dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
-                //    for (int i = 1; i < dxfCoords.Count; i++)
-                //        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(dxfCoords[i].X), Coordinates.ToScreenY(dxfCoords[i].Y)), true /* is stroked */, false /* is smooth join */);
-                //}
-                //geometry.FillRule = FillRule.EvenOdd;
-                //geometry.Freeze();
-                //path.Data = geometry;
-
-
-                visible = true;
-                path.Visibility = Visibility.Visible;
-                //selectArea.Visibility = Visibility.Visible;
-                Coordinates.BindCanvasAction(path);
-                if (!selected) return;
-                foreach (PointEntity p in points) p.path.Visibility = Visibility.Visible;
+                path.Stroke = Coordinates.selectedColorBrush;
+            }
+            else if(entityObject.Color.R % 0xFF == 0 && entityObject.Color.G == entityObject.Color.R && entityObject.Color.B == entityObject.Color.R)
+            {
+                path.Stroke = Coordinates.defaultColorBrush;
             }
             else
             {
-                visible = false;
-                path.Visibility = Visibility.Collapsed;
-                //selectArea.Visibility = Visibility.Collapsed;
-                Coordinates.UnbindCanvasAction(path);
-                if (!selected) return;
-                foreach (PointEntity p in points) p.path.Visibility = Visibility.Collapsed;
+                path.Stroke = Coordinates.GetSolidColorBrush(Color.FromRgb(entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
+                path.Fill = Coordinates.GetSolidColorBrush(Color.FromArgb(0x33,entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
             }
         }
 
@@ -583,13 +685,12 @@ namespace SEMES_Pixel_Designer.Utils
             path.Visibility = Visibility.Collapsed;
             Coordinates.UnbindCanvasAction(path);
 
-            //selectArea.Visibility = Visibility.Collapsed;
-            //Coordinates.UnbindCanvasAction(selectArea);
+            selectArea.Visibility = Visibility.Collapsed;
+            Coordinates.UnbindCanvasAction(selectArea);
 
             Coordinates.CanvasRef.DrawingEntities.Remove(this);
 
             MainWindow.doc.Entities.Remove(entityObject);
-            foreach (PointEntity pointEntity in points) pointEntity.Delete();
             deleted = true;
         }
         public void Restore()
@@ -597,56 +698,41 @@ namespace SEMES_Pixel_Designer.Utils
             path.Visibility = Visibility.Visible;
             Coordinates.BindCanvasAction(path);
 
-            //selectArea.Visibility = Visibility.Visible;
-            //Coordinates.BindCanvasAction(selectArea);
+            selectArea.Visibility = Visibility.Visible;
+            Coordinates.BindCanvasAction(selectArea);
 
             Coordinates.CanvasRef.DrawingEntities.Add(this);
 
             MainWindow.doc.Entities.Add(entityObject);
-            foreach (PointEntity pointEntity in points) pointEntity.Restore();
             deleted = false;
             ReDraw();
         }
         public void Remove()
         {
-            foreach (PointEntity pointEntity in points) pointEntity.Remove();
             // TODO : 인스턴스 삭제 방법 찾기
-        }
-
-        public void UpdateColor()
-        {
-            path.Stroke = Coordinates.defaultColorBrush;
-            if (!selected) return;
-            foreach (PointEntity point in points) point.path.Fill = Coordinates.defaultColorBrush;
         }
 
         private void UpdatePoint(int idx)
         {
-            UpdatePoint(Coordinates.ToScreenX(dxfCoords[idx].X), Coordinates.ToScreenY(dxfCoords[idx].Y), idx, false);
+            UpdatePoint(dxfCoords[idx].X, dxfCoords[idx].Y, idx, false);
         }
 
         private void UpdatePoint(List<double[]> positions)
         {
-            for (int i = 0; i < positions.Count; i++) UpdatePoint(Coordinates.ToScreenX(positions[i][0]), Coordinates.ToScreenY(positions[i][1]), i, true);
+            for (int i = 0; i < positions.Count; i++) UpdatePoint(positions[i][0], positions[i][1], i, true);
         }
 
         private void UpdatePoint(PointCollection positions)
         {
-            for (int i = 0; i < positions.Count; i++) UpdatePoint(Coordinates.ToScreenX(positions[i].X), Coordinates.ToScreenY(positions[i].Y), i, true);
+            for (int i = 0; i < positions.Count; i++) UpdatePoint(positions[i].X, positions[i].Y, i, true);
         }
 
-        private void UpdatePoint(double screenX, double screenY, int idx, bool updateDxf)
+        public void UpdatePoint(double dxfX, double dxfY, int idx, bool updateDxf)
         {
-            // polygon.Points[idx] = new System.Windows.Point(screenX, screenY);
-
-
-            //selectArea.Points[idx] = new System.Windows.Point(screenX, screenY);
-            points[idx].MovePosition(screenX, screenY);
-
-            double dxfX = Coordinates.ToDxfX(screenX);
-            double dxfY = Coordinates.ToDxfY(screenY);
-
-            points[idx].path.ToolTip = Coordinates.ToolTip(dxfX, dxfY);
+            minX = Math.Min(minX, dxfX);
+            minY = Math.Min(minY, dxfY);
+            maxX = Math.Max(maxX, dxfX);
+            maxY = Math.Max(maxY, dxfY);
 
             if (!updateDxf) return;
             setDxfCoordAction[idx](dxfX, dxfY);
@@ -657,27 +743,23 @@ namespace SEMES_Pixel_Designer.Utils
         {
             if (status == selected) return;
 
-            // TODO : 구현
             if (status)
             {
                 selectedEntities.Add(this);
-                path.Stroke = Coordinates.selectedColorBrush;
-                foreach (PointEntity point in points)
+                foreach (var p in points)
                 {
-                    point.BindCanvas();
+                    p.ReDraw();
+                    Coordinates.BindCanvasAction(p.path);
+                    Coordinates.SetZIndexAction(p.path, 4);
                 }
-
-                
             }
             else
             {
                 selectedEntities.Remove(this);
-                path.Stroke = Coordinates.defaultColorBrush;
-                foreach (PointEntity point in points) point.UnbindCanvas();
+                foreach (var p in points) Coordinates.UnbindCanvasAction(p.path);
             }
-
             selected = status;
-
+            ReColor();
             OnPropertyChanged("Selected");
             Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
         }
@@ -689,35 +771,38 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            Coordinates.mouseCaptured = true;
+            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 ToggleSelected(true);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (!selected)
             {
                 ClearSelected();
                 ToggleSelected(true);
+                Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
 
-            Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
 
-            //source = (UIElement)sender;
-            //Mouse.Capture(source);
 
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
-                selectedEntity.offsets = new PointCollection();
+                selectedEntity.mouseOffsets = new PointCollection();
                 for (int i = 0; i < selectedEntity.dxfCoords.Count; i++)
                 {
-                    selectedEntity.offsets.Add(new System.Windows.Point(Coordinates.ToScreenX(selectedEntity.dxfCoords[i].X) - e.GetPosition(Coordinates.CanvasRef).X, Coordinates.ToScreenY(selectedEntity.dxfCoords[i].Y) - e.GetPosition(Coordinates.CanvasRef).Y));
+                    selectedEntity.mouseOffsets.Add(new System.Windows.Point(Coordinates.ToScreenX(selectedEntity.dxfCoords[i].X) - e.GetPosition(Coordinates.CanvasRef).X, Coordinates.ToScreenY(selectedEntity.dxfCoords[i].Y) - e.GetPosition(Coordinates.CanvasRef).Y));
                 }
+                selectedEntity.dxfOffsets = selectedEntity.dxfCoords.Clone();
             }
             Coordinates.CanvasRef.MouseMove += MouseMove;
             Coordinates.CanvasRef.MouseLeftButtonUp += MouseLeftButtonUp;
@@ -725,30 +810,36 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.LeftButton == MouseButtonState.Released)
+            {
+                MouseLeftButtonUp(sender, e);
+                return;
+            }
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
-                if (selectedEntity.offsets == null) continue;
+                if (selectedEntity.mouseOffsets == null) continue;
                 for (int i = 0; i < selectedEntity.dxfCoords.Count; i++)
                 {
-                    selectedEntity.UpdatePoint(selectedEntity.offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X, selectedEntity.offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y, i, true);
+                    selectedEntity.UpdatePoint(Coordinates.ToDxfX(selectedEntity.mouseOffsets[i].X + e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(selectedEntity.mouseOffsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y), i, true);
                 }
                 selectedEntity.ReDraw();
             }
         }
 
-        private void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
+            Coordinates.mouseCaptured = false;
             Coordinates.CanvasRef.MouseMove -= MouseMove;
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             List<Action> forward = new List<Action>(), backward = new List<Action>();
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
-                PointCollection from = selectedEntity.dxfCoords.Clone();
+                PointCollection from = selectedEntity.dxfOffsets.Clone();
                 List<double[]> to = new List<double[]>();
                 for (int i = 0; i < selectedEntity.dxfCoords.Count; i++)
                 {
-                    to.Add(new double[] { Coordinates.ToDxfX(selectedEntity.offsets[i].X + e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(selectedEntity.offsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y) });
+                    to.Add(new double[] { Coordinates.ToDxfX(selectedEntity.mouseOffsets[i].X + e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(selectedEntity.mouseOffsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y) });
                 }
                 forward.Add(() => { selectedEntity.UpdatePoint(to); selectedEntity.ReDraw(); });
                 backward.Add(() => { selectedEntity.UpdatePoint(from); selectedEntity.ReDraw(); });
@@ -765,36 +856,19 @@ namespace SEMES_Pixel_Designer.Utils
                 }
             ));
 
-            //Mouse.Capture(null);
-            offsets = null;
+            mouseOffsets = null;
 
         }
 
-
-        public void debug_ch()
+        public PolygonEntityType GetPolygonType()
         {
-
-            string temp = "";
-
-            if (dxfCoords == null || deleted) return;
-            for (int i = 0; i < dxfCoords.Count; i++)
-            {
-                temp += dxfCoords[i].X.ToString() + ", ";
-                temp += dxfCoords[i].Y.ToString() + "\n";
-            }
-
-            //MessageBox.Show(entityObject., "알림", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            
-
-            //TODO : 구현
+            return entityType;
         }
 
-        public void Update()
+        public EntityObject GetEntityObject()
         {
-            //TODO : 구현
+            return entityObject;
         }
-
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -803,7 +877,5 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
     }
-
-
 
 }
