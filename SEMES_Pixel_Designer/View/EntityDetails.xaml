@@ -136,8 +136,5 @@
 
 
         </Grid>
-
-        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
     </Grid>
 </Page>

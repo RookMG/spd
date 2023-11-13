@@ -972,32 +972,6 @@ namespace SEMES_Pixel_Designer.Utils
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
-        public void debug_ch()
-        {
-
-            string temp = "";
-
-            if (dxfCoords == null || deleted) return;
-            for (int i = 0; i < dxfCoords.Count; i++)
-            {
-                temp += dxfCoords[i].X.ToString() + ", ";
-                temp += dxfCoords[i].Y.ToString() + "\n";
-            }
-
-            //MessageBox.Show(entityObject., "알림", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            
-
-            //TODO : 구현
-        }
-
-        public void Update()
-        {
-            //TODO : 구현
-        }
-
-
         
 
     }

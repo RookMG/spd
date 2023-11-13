@@ -306,7 +306,7 @@ namespace SEMES_Pixel_Designer
                 }
             }
         }
-        private void ShowEntityProperties(object obj, SelectionChangedEventArgs e)
+        public void ShowEntityProperties(object obj)
         {
             //PropertyStackPanel.Children.Clear();
 
@@ -365,8 +365,8 @@ namespace SEMES_Pixel_Designer
                     indexdxfCoords.Add(i.ToString());
                 }
 
-                //VertexesIndexListView.ItemsSource = indexdxfCoords;
-                //VertexesListView.ItemsSource = propertyEntity.dxfCoords;
+                VertexesIndexListView.ItemsSource = indexdxfCoords;
+                VertexesListView.ItemsSource = propertyEntity.dxfCoords;
 
                 /*
                 TextBlock textBlock = new TextBlock();
