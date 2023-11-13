@@ -193,6 +193,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="bin\x64\Debug\system.ini" />
+    <None Include="bin\x64\Release\system.ini" />
     <None Include="packages.config" />
     <None Include="View\packages.config" />
     <None Include="Properties\Settings.settings">
@@ -205,7 +207,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="obj\Debug\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Asset\icon\AddDocument_16x.png">

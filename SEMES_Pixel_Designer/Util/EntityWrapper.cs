@@ -14,13 +14,17 @@ using System.Windows.Shapes;
 namespace SEMES_Pixel_Designer.Utils
 {
 
-    public class Cell
+    public class Cell : INotifyPropertyChanged
     {
         public double patternLeft, patternBottom, patternWidth, patternHeight;
         public int patternRows, patternCols;
+        public string name;
 
-        public Cell(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Cell(string name, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
         {
+            this.name = name;
             this.patternLeft = patternLeft;
             this.patternBottom = patternBottom;
             this.patternWidth = patternWidth;
@@ -45,6 +49,12 @@ namespace SEMES_Pixel_Designer.Utils
         public double getPatternOffsetY(int row)
         {
             return row * patternHeight;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }
@@ -773,12 +783,14 @@ namespace SEMES_Pixel_Designer.Utils
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -786,6 +798,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ClearSelected();
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
