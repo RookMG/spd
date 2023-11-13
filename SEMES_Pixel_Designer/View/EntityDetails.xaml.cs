@@ -29,6 +29,7 @@ namespace SEMES_Pixel_Designer
     public partial class EntityDetails : Page
     {
         Dictionary<string, PolygonEntity> entityDictionary;
+        Dictionary<Cell, TreeViewItem> cellDictionary;
 
         private EntityObject propertyEntityObject = null;
         private PolygonEntity propertyEntity = null;
@@ -38,6 +39,7 @@ namespace SEMES_Pixel_Designer
             InitializeComponent();
 
             entityDictionary = new Dictionary<string, PolygonEntity>();
+            cellDictionary = new Dictionary<Cell, TreeViewItem>();
 
 
             Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
@@ -47,10 +49,164 @@ namespace SEMES_Pixel_Designer
         }
 
 
+        public void ShowCells(object obj)
+        {
+            CellTreeView.Items.Clear();
+            for(int i=0;i< Coordinates.CanvasRef.cells.Count;i++)
+            {
+                Cell c = Coordinates.CanvasRef.cells[i];
+                if (!cellDictionary.ContainsKey(c))
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    StackPanel panel;
+                    TextBlock title;
+                    TextBox content;
+                    Binding binding;
+                    item.Header = c.name;
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Left : "
+                    };
+                    content = new TextBox();
+                    binding = new Binding("PatternLeft")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Bottom : "
+                    };
+                    content = new TextBox();
+                    binding = new Binding("PatternBottom")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Width : "
+                    };
+                    content = new TextBox();
+                    binding = new Binding("PatternWidth")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Height : "
+                    };
+                    content = new TextBox();
+                    binding = new Binding("PatternHeight")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Repetition in X : "
+                    };
+                    content = new TextBox();
+                    binding = new Binding("PatternCols")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Repetition in Y : "
+                    };
+                    content = new TextBox();
+                    binding = new Binding("PatternRows")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+                    cellDictionary.Add(c, item);
+                }
+                TreeViewItem cellViewItem = cellDictionary[c];
+                CellTreeView.Items.Add(cellViewItem);
+            }
+        }
+
+
         public void ShowEntityTypes(object obj)
         {
             TreeViewItem entities = new TreeViewItem();
-
 
             foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
             {
@@ -83,6 +239,9 @@ namespace SEMES_Pixel_Designer
 
         public void ShowEntityComboBox(object obj)
         {
+            // ch_test
+            ShowCells(null);
+
             EntityDetailComboBox.Items.Clear();
 
             foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)

@@ -51,7 +51,7 @@ namespace SEMES_Pixel_Designer
         public double[] offset = null;
         public Polygon drawingPolygon = null;
         public Ellipse drawingEllipse = null;
-        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = -1;
+        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = 10;
         public int pasteCount = 0;
 
         public int zoomCount = 0;
@@ -78,7 +78,7 @@ namespace SEMES_Pixel_Designer
             Children.Add(Coordinates.gridInfoText);
             Children.Add(Coordinates.borderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
-            SetZIndex(this, -1);
+            //SetZIndex(this, -1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
@@ -112,15 +112,14 @@ namespace SEMES_Pixel_Designer
             {
                 for(int c = 0; c < 4; c++)
                 {
-                    cells.Add(new Cell(500000 * c + 100, 500000 * r + 100, 372, 372, 1000, 1000));
+                    cells.Add(new Cell("cell "+(r*5+c),500000 * c + 160000, 500000 * r + 60000, 372, 372, 1000, 1000));
                 }
             }
-            //cells.Add(new Cell(100, 100, 372, 372, 1000, 1000));
             selectedCell = cells[0];
             Polyline2D p;
             List<Vector2> points = new List<Vector2>();
             foreach (Cell c in cells) {
-
+                if (!MainWindow.doc.Layers.Contains(c.name)) MainWindow.doc.Layers.Add(new netDxf.Tables.Layer(c.name));
                 points.Clear();
                 points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 0));
                 points.Add(new Vector2(c.patternLeft + 0, c.patternBottom + 50));
@@ -129,6 +128,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Blue;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -140,6 +140,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Blue;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -151,6 +152,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Red;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -162,6 +164,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Red;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -173,6 +176,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
                 points.Clear();
@@ -183,6 +187,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
                 points.Clear();
@@ -193,6 +198,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
                 points.Clear();
@@ -203,8 +209,10 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
             }
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
             UpdateCanvas();
 
         }
@@ -450,6 +458,12 @@ namespace SEMES_Pixel_Designer
 
         private void DrawLine(object obj)
         {
+            if (Coordinates.mouseCaptured)
+            {
+                MessageBox.Show("다른 작업 중입니다.");
+                return;
+            }
+            Coordinates.mouseCaptured = true;
             ClearSelected();
             drawingPolygon = new Polygon
             {
@@ -486,6 +500,12 @@ namespace SEMES_Pixel_Designer
         }
         private void DrawRectangle(object obj)
         {
+            if (Coordinates.mouseCaptured)
+            {
+                MessageBox.Show("다른 작업 중입니다.");
+                return;
+            }
+            Coordinates.mouseCaptured = true;
             ClearSelected();
             drawingPolygon = new Polygon
             {
@@ -523,6 +543,13 @@ namespace SEMES_Pixel_Designer
 
         private void DrawPolygon(object obj)
         {
+            if (Coordinates.mouseCaptured)
+            {
+                MessageBox.Show("다른 작업 중입니다.");
+                return;
+            }
+            Coordinates.mouseCaptured = true;
+
             ClearSelected();
             drawingPolygon = new Polygon
             {
@@ -784,6 +811,7 @@ namespace SEMES_Pixel_Designer
             }
 
             UpdateLayout();
+            Coordinates.mouseCaptured = false;
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
@@ -803,6 +831,7 @@ namespace SEMES_Pixel_Designer
             drawingPolygon.Points.Clear();
 
             UpdateLayout();
+            Coordinates.mouseCaptured = false;
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
         }
@@ -891,6 +920,7 @@ namespace SEMES_Pixel_Designer
                 Children.Remove(drawingPolygon);
                 Children.Remove(drawingEllipse);
                 UpdateLayout();
+                Coordinates.mouseCaptured = false;
                 MouseLeftButtonDown += Select_MouseLeftButtonDown;
                 MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
@@ -912,6 +942,7 @@ namespace SEMES_Pixel_Designer
 
 
             UpdateLayout();
+            Coordinates.mouseCaptured = false;
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
         }
@@ -935,6 +966,9 @@ namespace SEMES_Pixel_Designer
             MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
             MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
 
+            Coordinates.mouseCaptured = false;
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
@@ -948,10 +982,10 @@ namespace SEMES_Pixel_Designer
                 maxY = Coordinates.ToDxfY(drawingPolygon.Points[0].Y);
             for (int i = 1; i < drawingPolygon.Points.Count; i++)
             {
-                minX = Math.Min(minX, drawingPolygon.Points[i].X);
-                maxX = Math.Max(maxX, drawingPolygon.Points[i].X);
-                minY = Math.Min(minY, drawingPolygon.Points[i].Y);
-                maxY = Math.Max(maxY, drawingPolygon.Points[i].Y);
+                minX = Math.Min(minX, Coordinates.ToDxfX(drawingPolygon.Points[i].X));
+                maxX = Math.Max(maxX, Coordinates.ToDxfX(drawingPolygon.Points[i].X));
+                minY = Math.Min(minY, Coordinates.ToDxfY(drawingPolygon.Points[i].Y));
+                maxY = Math.Max(maxY, Coordinates.ToDxfY(drawingPolygon.Points[i].Y));
             }
             Cell matchingCell = null;
             foreach (Cell cell in cells)
@@ -1000,8 +1034,6 @@ namespace SEMES_Pixel_Designer
 
             }
             UpdateLayout();
-            MouseLeftButtonDown += Select_MouseLeftButtonDown;
-            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
             Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -14,13 +15,102 @@ using System.Windows.Shapes;
 namespace SEMES_Pixel_Designer.Utils
 {
 
-    public class Cell
+    public class Cell : INotifyPropertyChanged
     {
         public double patternLeft, patternBottom, patternWidth, patternHeight;
         public int patternRows, patternCols;
+        public string name;
 
-        public Cell(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        public double PatternLeft
         {
+            get { return patternLeft; }
+            set
+            {
+                if (patternLeft != value)
+                {
+                    patternLeft = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternLeft");
+                }
+            }
+        }
+        public double PatternBottom
+        {
+            get { return patternBottom; }
+            set
+            {
+                if (patternBottom != value)
+                {
+                    patternBottom = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternBottom");
+                }
+            }
+        }
+
+        public double PatternWidth
+        {
+            get { return patternWidth; }
+            set
+            {
+                if (patternWidth != value)
+                {
+                    patternWidth = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternWidth");
+                }
+            }
+        }
+
+        public double PatternHeight
+        {
+            get { return patternHeight; }
+            set
+            {
+                if (patternHeight != value)
+                {
+                    patternHeight = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternHeight");
+                }
+            }
+        }
+
+        public int PatternRows
+        {
+            get { return patternRows; }
+            set
+            {
+                if (patternRows != value)
+                {
+                    patternRows = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternRows");
+                }
+            }
+        }
+
+        public int PatternCols
+        {
+            get { return patternCols; }
+            set
+            {
+                if (patternCols != value)
+                {
+                    patternCols = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternCols");
+                }
+            }
+        }
+
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Cell(string name, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            this.name = name;
             this.patternLeft = patternLeft;
             this.patternBottom = patternBottom;
             this.patternWidth = patternWidth;
@@ -45,6 +135,12 @@ namespace SEMES_Pixel_Designer.Utils
         public double getPatternOffsetY(int row)
         {
             return row * patternHeight;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }
@@ -214,8 +310,8 @@ namespace SEMES_Pixel_Designer.Utils
 
             gridLines.Add(infoLine);
             BindCanvasAction(infoLine);
-            SetZIndexAction(infoLine, 10);
-            SetZIndexAction(gridInfoText,10);
+            SetZIndexAction(infoLine, 2);
+            SetZIndexAction(gridInfoText,2);
             gridInfoText.Text = " : " + gridSpacing * 0.1;
             gridInfoText.Foreground = defaultColorBrush;
             gridInfoText.Background = backgroundColorBrush;
@@ -329,12 +425,12 @@ namespace SEMES_Pixel_Designer.Utils
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 int rStart = 0, cStart = 0;
-                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
-                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
-                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
+                while (cell.getPatternOffsetX(cStart + 2) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 2) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY - cell.patternBottom && r < cell.patternRows; r++)
                 {
                     double yStart = cell.getPatternOffsetY(r);
-                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX - cell.patternLeft && c < cell.patternCols; c++)
                     {
                         double xStart = cell.getPatternOffsetX(c);
                         ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X) - P_RADIUS, Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is filled */, true /* is closed */);
@@ -486,7 +582,6 @@ namespace SEMES_Pixel_Designer.Utils
             setDxfCoordAction = new List<Action<double, double>>();
             points = new List<PointEntity>();
 
-            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             path.Stroke = Coordinates.defaultColorBrush;
             selectArea.Stroke = Coordinates.transparentBrush;
             // path.Fill = Coordinates.fillColorBrush;
@@ -496,7 +591,8 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.BindCanvasAction(path);
             Coordinates.BindCanvasAction(selectArea);
             Coordinates.SetZIndexAction(path, 1);
-            Coordinates.SetZIndexAction(selectArea, 2);
+            Coordinates.SetZIndexAction(selectArea, 3);
+            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
 
         }
 
@@ -747,7 +843,7 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     p.ReDraw();
                     Coordinates.BindCanvasAction(p.path);
-                    Coordinates.SetZIndexAction(p.path, 4);
+                    Coordinates.SetZIndexAction(p.path, 3);
                 }
             }
             else
@@ -773,12 +869,14 @@ namespace SEMES_Pixel_Designer.Utils
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -786,6 +884,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ClearSelected();
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
