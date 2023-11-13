@@ -56,6 +56,8 @@ namespace SEMES_Pixel_Designer
 
         public int zoomCount = 0;
 
+        SEMES_Pixel_Designer.View.MakeCell MakeCell_Test;
+
         public MainCanvas()
         {
             // 초기설정
@@ -92,6 +94,8 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj) => {
                 DeleteEntities(selectedEntities);
             });
+            Utils.Mediator.Register("MainDrawer.MakeNewcell", MakeNewcell_Input);
+            Utils.Mediator.Register("MainDrawer.MakeNewcell_click", MakeNewcell_Clicked);
 
             MouseMove += Info_MouseMove;
 
@@ -104,6 +108,26 @@ namespace SEMES_Pixel_Designer
             minimap.Show();
             Test();
 
+        }
+
+        public void MakeNewcell_Input(object obj)
+        {
+            MakeCell_Test = new SEMES_Pixel_Designer.View.MakeCell();
+            MakeCell_Test.ShowDialog();
+        }
+
+        public void MakeNewcell_Clicked(object obj)
+        {
+            if(MakeCell_Test.left_info.Text != "" && MakeCell_Test.right_info.Text != "" && MakeCell_Test.row_info.Text != "" && MakeCell_Test.col_info.Text != "" && MakeCell_Test.row_rep_info.Text != "" && MakeCell_Test.col_rep_info.Text != "")
+            {
+                cells.Add(new Cell(Double.Parse(MakeCell_Test.left_info.Text), Double.Parse(MakeCell_Test.right_info.Text), Double.Parse(MakeCell_Test.row_info.Text), Double.Parse(MakeCell_Test.col_info.Text), int.Parse(MakeCell_Test.row_rep_info.Text), int.Parse(MakeCell_Test.col_rep_info.Text)));
+
+                MakeCell_Test.Close();
+            }
+            else
+            {
+                MessageBox.Show("값을 입력해주세요 !");
+            }
         }
 
         public void Test()

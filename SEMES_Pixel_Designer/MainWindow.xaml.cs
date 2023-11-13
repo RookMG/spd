@@ -109,9 +109,10 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ShowMousePosition", ShowMousePosition);
             Utils.Mediator.Register("MainWindow.ShowEntitiesPosition", ShowEntitiesPosition);
             Utils.Mediator.Register("MainWindow.Exit", Exit);
+            Utils.Mediator.Register("MainWindow.MakeNewcell", MakeNewcell);
 
             // TcpIp 연결 항시 대기
-            TcpIp tt = new TcpIp();
+            tt = new TcpIp();
             Utils.Mediator.NotifyColleagues("TcpIp.TcpConnection", null);
             /*Utils.Mediator.Register("MainWindow.TcpIp_to_MainWindow", TcpIp_to_MainWindow);
             Utils.Mediator.Register("MainWindow.forCall_SaveDxf_on_MainWindow", forCall_SaveDxf_on_MainWindow);*/
@@ -130,7 +131,7 @@ namespace SEMES_Pixel_Designer
 
         public static bool chk_file = false;
         public static int file_num = 1;
-
+        TcpIp tt;
 
         // 기능 명세서 참고
         // https://pattern-ounce-358.notion.site/a56b400c29784dc18bbf978384464316?pvs=4
@@ -165,7 +166,10 @@ namespace SEMES_Pixel_Designer
 
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
-            dlgOpenFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
+            if (tt.iniData["default_path"] != null)
+            {
+                dlgOpenFile.InitialDirectory = tt.iniData["default_path"];
+            }            
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
             {
@@ -208,7 +212,10 @@ namespace SEMES_Pixel_Designer
         {
             SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
             dlgSaveAsFile.Title = "파일 저장";
-            dlgSaveAsFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
+            if (tt.iniData["default_path"] != null)
+            {
+                dlgSaveAsFile.InitialDirectory = tt.iniData["default_path"];
+            }
             dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
 
             // 파일 번호 관리
@@ -335,6 +342,12 @@ namespace SEMES_Pixel_Designer
 
             //TODO : 구현
 
+        }
+
+        // 셀 만들기
+        public void MakeNewcell(object obj)
+        {
+            Mediator.NotifyColleagues("MainDrawer.MakeNewcell", null);
         }
 
         #endregion
