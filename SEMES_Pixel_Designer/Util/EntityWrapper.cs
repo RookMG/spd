@@ -18,11 +18,13 @@ namespace SEMES_Pixel_Designer.Utils
     {
         public double patternLeft, patternBottom, patternWidth, patternHeight;
         public int patternRows, patternCols;
+        public string name;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Cell(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        public Cell(string name, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
         {
+            this.name = name;
             this.patternLeft = patternLeft;
             this.patternBottom = patternBottom;
             this.patternWidth = patternWidth;

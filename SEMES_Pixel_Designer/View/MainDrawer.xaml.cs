@@ -112,15 +112,14 @@ namespace SEMES_Pixel_Designer
             {
                 for(int c = 0; c < 4; c++)
                 {
-                    cells.Add(new Cell(500000 * c + 100, 500000 * r + 100, 372, 372, 1000, 1000));
+                    cells.Add(new Cell("cell "+(r*5+c),500000 * c + 160000, 500000 * r + 60000, 372, 372, 1000, 1000));
                 }
             }
-            //cells.Add(new Cell(100, 100, 372, 372, 1000, 1000));
             selectedCell = cells[0];
             Polyline2D p;
             List<Vector2> points = new List<Vector2>();
             foreach (Cell c in cells) {
-
+                if (!MainWindow.doc.Layers.Contains(c.name)) MainWindow.doc.Layers.Add(new netDxf.Tables.Layer(c.name));
                 points.Clear();
                 points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 0));
                 points.Add(new Vector2(c.patternLeft + 0, c.patternBottom + 50));
@@ -129,6 +128,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Blue;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -140,6 +140,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Blue;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -151,6 +152,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Red;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -162,6 +164,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Red;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
 
@@ -173,6 +176,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
                 points.Clear();
@@ -183,6 +187,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
                 points.Clear();
@@ -193,6 +198,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
 
                 points.Clear();
@@ -203,6 +209,7 @@ namespace SEMES_Pixel_Designer
                 p = new Polyline2D(points);
                 p.Color = AciColor.Green;
                 MainWindow.doc.Entities.Add(p);
+                p.Layer = MainWindow.doc.Layers[c.name];
                 DrawingEntities.Add(new PolygonEntity(c, p));
             }
             Mediator.NotifyColleagues("EntityDetails.ShowCells", null);

@@ -61,7 +61,7 @@ namespace SEMES_Pixel_Designer
                     StackPanel panel;
                     TextBlock title;
                     TextBox content;
-                    item.Header = string.Format("Cell {0}", i);
+                    item.Header = c.name;
 
 
                     panel = new StackPanel
