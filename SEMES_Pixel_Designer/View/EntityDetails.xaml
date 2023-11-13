@@ -20,7 +20,7 @@
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="셀 목록, 편집" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+        <TreeView Grid.Row="0" x:Name="CellTreeView" />
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
         <TreeView Grid.Row="2" x:Name="EntityTreeView" />
         <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
