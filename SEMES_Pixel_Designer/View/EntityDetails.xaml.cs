@@ -82,9 +82,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -104,9 +105,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -126,9 +128,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -148,9 +151,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -170,9 +174,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -192,9 +197,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -480,7 +486,18 @@ namespace SEMES_Pixel_Designer
             T parent = parentObject as T;
             return parent ?? FindParent<T>(parentObject);
         }
+        
+        private void CellTextBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TextBox textBox = (TextBox)sender;
 
+                textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+
+                e.Handled = true;
+            }
+        }
         private string PolygonTypeToString(PolygonEntity entity)
         {
             if (entity.GetPolygonType() == PolygonEntityType.DOT)
