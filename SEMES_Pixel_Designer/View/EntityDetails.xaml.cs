@@ -47,10 +47,6 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
             Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
 
-            Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
-            Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
-            Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
-
         }
 
 
