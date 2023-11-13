@@ -78,7 +78,7 @@ namespace SEMES_Pixel_Designer
             Children.Add(Coordinates.gridInfoText);
             Children.Add(Coordinates.borderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
-            SetZIndex(this, -1);
+            //SetZIndex(this, -1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
@@ -982,10 +982,10 @@ namespace SEMES_Pixel_Designer
                 maxY = Coordinates.ToDxfY(drawingPolygon.Points[0].Y);
             for (int i = 1; i < drawingPolygon.Points.Count; i++)
             {
-                minX = Math.Min(minX, drawingPolygon.Points[i].X);
-                maxX = Math.Max(maxX, drawingPolygon.Points[i].X);
-                minY = Math.Min(minY, drawingPolygon.Points[i].Y);
-                maxY = Math.Max(maxY, drawingPolygon.Points[i].Y);
+                minX = Math.Min(minX, Coordinates.ToDxfX(drawingPolygon.Points[i].X));
+                maxX = Math.Max(maxX, Coordinates.ToDxfX(drawingPolygon.Points[i].X));
+                minY = Math.Min(minY, Coordinates.ToDxfY(drawingPolygon.Points[i].Y));
+                maxY = Math.Max(maxY, Coordinates.ToDxfY(drawingPolygon.Points[i].Y));
             }
             Cell matchingCell = null;
             foreach (Cell cell in cells)
