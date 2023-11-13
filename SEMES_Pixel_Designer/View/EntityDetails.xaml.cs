@@ -98,6 +98,7 @@ namespace SEMES_Pixel_Designer
                 //entity.debug_ch();
 
                 EntityDetailComboBox.Items.Add(item);
+                EntityDetailComboBox.SelectedItem = item;
             }
 
         }
