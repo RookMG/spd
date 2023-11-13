@@ -60,7 +60,17 @@
 
                             <Border Grid.Column="2">
                                 <StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel">
-                                    <TextBlock x:Name="Color"/>
+                                    <!--<TextBlock x:Name="Color"/>-->
+                                    <ComboBox x:Name="ColorComboBox" SelectionChanged="ColorChange">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Rectangle Fill="{Binding Name}" Width="16" Height="16" Margin="0,2,5,2"/>
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                     <TextBlock x:Name="Color_type"/>
                                     <TextBlock x:Name="Handle"/>
                                     <TextBlock x:Name="Layer"/>

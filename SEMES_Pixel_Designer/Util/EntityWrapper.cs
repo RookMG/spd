@@ -447,7 +447,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
         public static List<CopyData> clipboard = new List<CopyData>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
         public class CopyData
         { 
@@ -563,10 +563,10 @@ namespace SEMES_Pixel_Designer.Utils
             return entityType;
         }
 
-        public EntityObject GetEntityObject()
-        {
-            return entityObject;
-        }
+        //public EntityObject GetEntityObject()
+        //{
+        //    return entityObject;
+        //}
 
         public static void CopySelected()
         {
@@ -876,10 +876,10 @@ namespace SEMES_Pixel_Designer.Utils
 
         }
 
-        public PolygonEntityType GetPolygonType()
-        {
-            return entityType;
-        }
+        //public PolygonEntityType GetPolygonType()
+        //{
+        //    return entityType;
+        //}
 
         public EntityObject GetEntityObject()
         {
@@ -918,11 +918,7 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
+        
 
     }
 
