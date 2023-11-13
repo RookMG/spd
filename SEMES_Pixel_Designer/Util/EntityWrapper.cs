@@ -625,12 +625,12 @@ namespace SEMES_Pixel_Designer.Utils
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 int rStart = 0, cStart = 0;
-                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
-                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
-                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
+                while (cell.getPatternOffsetX(cStart + 2) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 2) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY - cell.patternBottom && r < cell.patternRows; r++)
                 {
                     double yStart = cell.getPatternOffsetY(r);
-                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX - cell.patternLeft && c < cell.patternCols; c++)
                     {
                         double xStart = cell.getPatternOffsetX(c);
                         ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[0].X), Coordinates.ToScreenY(yStart + dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
