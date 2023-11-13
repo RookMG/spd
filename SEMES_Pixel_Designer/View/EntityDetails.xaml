@@ -22,27 +22,28 @@
 
         <TextBlock Grid.Row="0" Text="셀 목록, 편집" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <Grid Grid.Row="2">
-            
+        <TreeView Grid.Row="2" x:Name="EntityTreeView" />
+        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
+        <Grid Grid.Row="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="5*" />
             </Grid.RowDefinitions>
-            
-            <ComboBox  Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
+            <ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="SelectEntityProperties">
             </ComboBox>
-
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel  Orientation="Vertical">
-                    
+
+                <StackPanel Orientation="Vertical">
                     <Expander Header="Common">
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
-                            
+
+
                             <Border Grid.Column="0">
                                 <StackPanel Orientation="Vertical" x:Name="CommonStackPanel">
                                     <TextBlock Text="Color"/>
@@ -56,7 +57,7 @@
                                 </StackPanel>
                             </Border>
 
-							<GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
+                            <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
 
                             <Border Grid.Column="2">
                                 <StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel">
@@ -72,7 +73,6 @@
                             </Border>
                         </Grid>
                     </Expander>
-                    
                     <Expander Header="Geometry">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -83,27 +83,50 @@
 
 
                             <Border Grid.Column="0">
-                                <StackPanel Orientation="Vertical" x:Name="GeometryStackPanel">
-                                    <TextBlock Text="Start_point"/>
-                                    <TextBlock Text="End_point"/>
-                                </StackPanel>
+                                <ListView x:Name="VertexesIndexListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Vertexes" DisplayMemberBinding="{Binding}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
                             </Border>
 
                             <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
 
                             <Border Grid.Column="2">
-                                <StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
 
-                                </StackPanel>
+                                <ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="X">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{Binding X}" LostFocus="MyTextBox_LostFocus"  Tag="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=Content}" />
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="Y">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{Binding Y}"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                <!--<StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
+								</StackPanel>-->
                             </Border>
                         </Grid>
                     </Expander>
-                    
                 </StackPanel>
             </ScrollViewer>
+
+
         </Grid>
 
-        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+
     </Grid>
 </Page>
