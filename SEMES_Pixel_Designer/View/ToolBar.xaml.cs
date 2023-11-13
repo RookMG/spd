@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SEMES_Pixel_Designer.ViewModel;
 
 namespace SEMES_Pixel_Designer
 {
@@ -24,7 +25,6 @@ namespace SEMES_Pixel_Designer
         public ToolBar()
         {
             InitializeComponent();
-            DataContext = new CommandDataContext();
         }
 
         private void Clone_Button_Click(object sender, RoutedEventArgs e)
