@@ -99,12 +99,114 @@ namespace SEMES_Pixel_Designer
             MouseWheel += Zoom_MouseWheel;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
-            cells.Add(new Cell(100,100,372,372,1000,1000));
-            selectedCell = cells[0];
 
             Minimap minimap = new Minimap();
             minimap.Show();
-            
+            Test();
+
+        }
+
+        public void Test()
+        {
+            for(int r = 0; r < 5; r++)
+            {
+                for(int c = 0; c < 4; c++)
+                {
+                    cells.Add(new Cell(500000 * c + 100, 500000 * r + 100, 372, 372, 1000, 1000));
+                }
+            }
+            //cells.Add(new Cell(100, 100, 372, 372, 1000, 1000));
+            selectedCell = cells[0];
+            Polyline2D p;
+            List<Vector2> points = new List<Vector2>();
+            foreach (Cell c in cells) {
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 0));
+                points.Add(new Vector2(c.patternLeft + 0, c.patternBottom + 50));
+                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 100));
+                points.Add(new Vector2(c.patternLeft + 100, c.patternBottom + 50));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Blue;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 186));
+                points.Add(new Vector2(c.patternLeft + 186, c.patternBottom + 236));
+                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 286));
+                points.Add(new Vector2(c.patternLeft + 286, c.patternBottom + 236));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Blue;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 196));
+                points.Add(new Vector2(c.patternLeft + 10, c.patternBottom + 236));
+                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 276));
+                points.Add(new Vector2(c.patternLeft + 90, c.patternBottom + 236));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Red;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 10));
+                points.Add(new Vector2(c.patternLeft + 196, c.patternBottom + 50));
+                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 90));
+                points.Add(new Vector2(c.patternLeft + 276, c.patternBottom + 50));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Red;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 143 + 5, c.patternBottom + 143 - 30));
+                points.Add(new Vector2(c.patternLeft + 143 + 30, c.patternBottom + 143 - 5));
+                points.Add(new Vector2(c.patternLeft + 143 - 5, c.patternBottom + 143 + 30));
+                points.Add(new Vector2(c.patternLeft + 143 - 30, c.patternBottom + 143 + 5));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Green;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 329 + 5, c.patternBottom + 143 - 30));
+                points.Add(new Vector2(c.patternLeft + 329 + 30, c.patternBottom + 143 - 5));
+                points.Add(new Vector2(c.patternLeft + 329 - 5, c.patternBottom + 143 + 30));
+                points.Add(new Vector2(c.patternLeft + 329 - 30, c.patternBottom + 143 + 5));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Green;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 143 - 5, c.patternBottom + 329 - 30));
+                points.Add(new Vector2(c.patternLeft + 143 - 30, c.patternBottom + 329 - 5));
+                points.Add(new Vector2(c.patternLeft + 143 + 5, c.patternBottom + 329 + 30));
+                points.Add(new Vector2(c.patternLeft + 143 + 30, c.patternBottom + 329 + 5));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Green;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+
+                points.Clear();
+                points.Add(new Vector2(c.patternLeft + 329 - 5, c.patternBottom + 329 - 30));
+                points.Add(new Vector2(c.patternLeft + 329 - 30, c.patternBottom + 329 - 5));
+                points.Add(new Vector2(c.patternLeft + 329 + 5, c.patternBottom + 329 + 30));
+                points.Add(new Vector2(c.patternLeft + 329 + 30, c.patternBottom + 329 + 5));
+                p = new Polyline2D(points);
+                p.Color = AciColor.Green;
+                MainWindow.doc.Entities.Add(p);
+                DrawingEntities.Add(new PolygonEntity(c, p));
+            }
+            UpdateCanvas();
+
         }
 
         public void UpdateCanvas()
@@ -516,6 +618,7 @@ namespace SEMES_Pixel_Designer
         }
         private void Select_MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
+            if (!Coordinates.mouseCaptured) { 
             double minSelX = Math.Min(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
                    maxSelX = Math.Max(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
                    minSelY = Math.Min(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y),
@@ -557,7 +660,7 @@ namespace SEMES_Pixel_Designer
                     }
                 }
             }
-
+            }
             Children.Remove(drawingPolygon);
 
             MouseMove -= Select_MouseMove;
@@ -631,27 +734,54 @@ namespace SEMES_Pixel_Designer
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
+            double minX = Math.Min(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[1].X)),
+                maxX = Math.Max(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[1].X)),
+                minY = Math.Min(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[1].Y)),
+                maxY = Math.Max(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[1].Y));
+            Cell matchingCell = null;
+            foreach (Cell cell in cells)
+            {
+                if (cell.patternLeft > minX || cell.GetPatternRight() < maxX
+                    || cell.patternBottom > minY || cell.GetPatternTop() < maxY) continue;
+                matchingCell = cell;
 
-            PolygonEntity polygonEntity = new PolygonEntity(selectedCell, drawingPolygon, PolygonEntityType.LINE);
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    DrawingEntities.Add(polygonEntity);
-                },
-                () => {
-                    DrawingEntities.Remove(polygonEntity);
-                    polygonEntity.Delete();
-                },
-                () =>
+                int r = 0, c = 0;
+                while (cell.getPatternOffsetX(c+1) < minX - cell.patternLeft) c++;
+                while (cell.getPatternOffsetY(r+1) < minY - cell.patternBottom) r++;
+                for(int i = 0; i < drawingPolygon.Points.Count; i++)
                 {
-                    DrawingEntities.Add(polygonEntity);
-                    polygonEntity.Restore();
-                },
-                () =>
-                {
-                    polygonEntity.Remove();
+                    drawingPolygon.Points[i] = new System.Windows.Point(Coordinates.ToDxfX(drawingPolygon.Points[i].X) - cell.getPatternOffsetX(c), Coordinates.ToDxfY(drawingPolygon.Points[i].Y) - cell.getPatternOffsetY(r));
                 }
-            ));
+
+                break;
+            }
+
+            if(matchingCell == null)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("셀 밖에는 도형을 그릴 수 없습니다.");
+            }
+            else { 
+                PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.LINE);
+                Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                (
+                    () => {
+                        DrawingEntities.Add(polygonEntity);
+                    },
+                    () => {
+                        DrawingEntities.Remove(polygonEntity);
+                        polygonEntity.Delete();
+                    },
+                    () =>
+                    {
+                        DrawingEntities.Add(polygonEntity);
+                        polygonEntity.Restore();
+                    },
+                    () =>
+                    {
+                        polygonEntity.Remove();
+                    }
+                ));
+            }
 
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
@@ -710,8 +840,34 @@ namespace SEMES_Pixel_Designer
                 MouseRightButtonUp -= DrawRectangle_MouseRightButtonUp;
 
 
+                double minX = Math.Min(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[2].X)),
+                    maxX = Math.Max(Coordinates.ToDxfX(drawingPolygon.Points[0].X), Coordinates.ToDxfX(drawingPolygon.Points[2].X)),
+                    minY = Math.Min(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[2].Y)),
+                    maxY = Math.Max(Coordinates.ToDxfY(drawingPolygon.Points[0].Y), Coordinates.ToDxfY(drawingPolygon.Points[2].Y));
+                Cell matchingCell = null;
+                foreach (Cell cell in cells)
+                {
+                    if (cell.patternLeft > minX || cell.GetPatternRight() < maxX
+                        || cell.patternBottom > minY || cell.GetPatternTop() < maxY) continue;
+                    matchingCell = cell;
 
-                PolygonEntity polygonEntity = new PolygonEntity(selectedCell, drawingPolygon, PolygonEntityType.POLYLINE);
+                    int r = 0, c = 0;
+                    while (cell.getPatternOffsetX(c + 1) < minX - cell.patternLeft) c++;
+                    while (cell.getPatternOffsetY(r + 1) < minY - cell.patternBottom) r++;
+                    for (int i = 0; i < drawingPolygon.Points.Count; i++)
+                    {
+                        drawingPolygon.Points[i] = new System.Windows.Point(Coordinates.ToDxfX(drawingPolygon.Points[i].X) - cell.getPatternOffsetX(c), Coordinates.ToDxfY(drawingPolygon.Points[i].Y) - cell.getPatternOffsetY(r));
+                    }
+
+                    break;
+                }
+
+                if (matchingCell == null)
+                {
+                    MessageBoxResult result = System.Windows.MessageBox.Show("셀 밖에는 도형을 그릴 수 없습니다.");
+                }
+                else { 
+                PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.POLYLINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
                     () => {
@@ -731,7 +887,7 @@ namespace SEMES_Pixel_Designer
                         polygonEntity.Remove();
                     }
                 ));
-
+                }
                 Children.Remove(drawingPolygon);
                 Children.Remove(drawingEllipse);
                 UpdateLayout();
@@ -786,27 +942,63 @@ namespace SEMES_Pixel_Designer
             if (drawingPolygon.Points.Count <= 1) return;
 
 
-            PolygonEntity polygonEntity = new PolygonEntity(selectedCell, drawingPolygon, PolygonEntityType.POLYLINE);
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    DrawingEntities.Add(polygonEntity);
-                },
-                () => {
-                    DrawingEntities.Remove(polygonEntity);
-                    polygonEntity.Delete();
-                },
-                () =>
-                {
-                    DrawingEntities.Add(polygonEntity);
-                    polygonEntity.Restore();
-                },
-                () =>
-                {
-                    polygonEntity.Remove();
-                }
-            ));
+            double minX = Coordinates.ToDxfX(drawingPolygon.Points[0].X),
+                maxX = Coordinates.ToDxfX(drawingPolygon.Points[0].X),
+                minY = Coordinates.ToDxfY(drawingPolygon.Points[0].Y),
+                maxY = Coordinates.ToDxfY(drawingPolygon.Points[0].Y);
+            for (int i = 1; i < drawingPolygon.Points.Count; i++)
+            {
+                minX = Math.Min(minX, drawingPolygon.Points[i].X);
+                maxX = Math.Max(maxX, drawingPolygon.Points[i].X);
+                minY = Math.Min(minY, drawingPolygon.Points[i].Y);
+                maxY = Math.Max(maxY, drawingPolygon.Points[i].Y);
+            }
+            Cell matchingCell = null;
+            foreach (Cell cell in cells)
+            {
+                if (cell.patternLeft > minX || cell.GetPatternRight() < maxX
+                    || cell.patternBottom > minY || cell.GetPatternTop() < maxY) continue;
+                matchingCell = cell;
 
+                int r = 0, c = 0;
+                while (cell.getPatternOffsetX(c + 1) < minX - cell.patternLeft) c++;
+                while (cell.getPatternOffsetY(r + 1) < minY - cell.patternBottom) r++;
+                for (int i = 0; i < drawingPolygon.Points.Count; i++)
+                {
+                    drawingPolygon.Points[i] = new System.Windows.Point(Coordinates.ToDxfX(drawingPolygon.Points[i].X) - cell.getPatternOffsetX(c), Coordinates.ToDxfY(drawingPolygon.Points[i].Y) - cell.getPatternOffsetY(r));
+                }
+
+                break;
+            }
+
+            if (matchingCell == null)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("셀 밖에는 도형을 그릴 수 없습니다.");
+            }
+            else
+            {
+                PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.POLYLINE);
+                Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                (
+                    () => {
+                        DrawingEntities.Add(polygonEntity);
+                    },
+                    () => {
+                        DrawingEntities.Remove(polygonEntity);
+                        polygonEntity.Delete();
+                    },
+                    () =>
+                    {
+                        DrawingEntities.Add(polygonEntity);
+                        polygonEntity.Restore();
+                    },
+                    () =>
+                    {
+                        polygonEntity.Remove();
+                    }
+                ));
+
+            }
             UpdateLayout();
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;

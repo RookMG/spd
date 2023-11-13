@@ -531,7 +531,7 @@ namespace SEMES_Pixel_Designer.Utils
                 List<Vector2> vertexes = new List<Vector2>();
                 foreach (var point in polygon.Points)
                 {
-                    vertexes.Add(new Vector2(Coordinates.ToDxfX(point.X), Coordinates.ToDxfY(point.Y)));
+                    vertexes.Add(new Vector2(point.X, point.Y));
                 }
                 Polyline2D polyline = new Polyline2D(vertexes);
                 MainWindow.doc.Entities.Add(polyline);
@@ -540,8 +540,8 @@ namespace SEMES_Pixel_Designer.Utils
             else if (type == PolygonEntityType.LINE)
             {
                 netDxf.Entities.Line line = new netDxf.Entities.Line(
-                    new Vector2(Coordinates.ToDxfX(polygon.Points[0].X), Coordinates.ToDxfY(polygon.Points[0].Y)),
-                    new Vector2(Coordinates.ToDxfX(polygon.Points[1].X), Coordinates.ToDxfY(polygon.Points[1].Y))
+                    new Vector2(polygon.Points[0].X, polygon.Points[0].Y),
+                    new Vector2(polygon.Points[1].X, polygon.Points[1].Y)
                 );
                 MainWindow.doc.Entities.Add(line);
                 entityObject = line;
@@ -574,10 +574,7 @@ namespace SEMES_Pixel_Designer.Utils
         public void AddPoint(double dxfX, double dxfY)
         {
             // TODO : DXF 파일에서의 점 추가
-            var idx = dxfCoords.Count;
             dxfCoords.Add(new System.Windows.Point(dxfX, dxfY));
-            double screenX = Coordinates.ToScreenX(dxfX);
-            double screenY = Coordinates.ToScreenY(dxfY);
         }
         public void AddPoint(netDxf.Vector2 point)
         {
@@ -628,12 +625,12 @@ namespace SEMES_Pixel_Designer.Utils
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 int rStart = 0, cStart = 0;
-                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
-                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
-                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
+                while (cell.getPatternOffsetX(cStart + 2) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 2) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY - cell.patternBottom && r < cell.patternRows; r++)
                 {
                     double yStart = cell.getPatternOffsetY(r);
-                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX - cell.patternLeft && c < cell.patternCols; c++)
                     {
                         double xStart = cell.getPatternOffsetX(c);
                         ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[0].X), Coordinates.ToScreenY(yStart + dxfCoords[0].Y)), true /* is filled */, true /* is closed */);

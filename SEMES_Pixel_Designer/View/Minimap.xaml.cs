@@ -57,7 +57,7 @@ namespace SEMES_Pixel_Designer.View
             CanvasXPosition.StrokeDashArray = CanvasYPosition.StrokeDashArray = new DoubleCollection(new double[] { 5, 2 });
             CellPath = new Path
             {
-                Fill = Coordinates.gridBrush
+                Fill = Brushes.Aqua
             };
             CellPath.Data = geometry = new StreamGeometry();
             Children.Add(CellPath);
