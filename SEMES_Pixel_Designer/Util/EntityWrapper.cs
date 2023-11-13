@@ -781,12 +781,14 @@ namespace SEMES_Pixel_Designer.Utils
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -794,6 +796,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ClearSelected();
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }

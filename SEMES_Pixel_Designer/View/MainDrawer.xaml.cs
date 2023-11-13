@@ -51,7 +51,7 @@ namespace SEMES_Pixel_Designer
         public double[] offset = null;
         public Polygon drawingPolygon = null;
         public Ellipse drawingEllipse = null;
-        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = -1;
+        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = 10;
         public int pasteCount = 0;
 
         public int zoomCount = 0;
@@ -451,6 +451,12 @@ namespace SEMES_Pixel_Designer
 
         private void DrawLine(object obj)
         {
+            if (Coordinates.mouseCaptured)
+            {
+                MessageBox.Show("다른 작업 중입니다.");
+                return;
+            }
+            Coordinates.mouseCaptured = true;
             ClearSelected();
             drawingPolygon = new Polygon
             {
@@ -487,6 +493,12 @@ namespace SEMES_Pixel_Designer
         }
         private void DrawRectangle(object obj)
         {
+            if (Coordinates.mouseCaptured)
+            {
+                MessageBox.Show("다른 작업 중입니다.");
+                return;
+            }
+            Coordinates.mouseCaptured = true;
             ClearSelected();
             drawingPolygon = new Polygon
             {
@@ -524,6 +536,13 @@ namespace SEMES_Pixel_Designer
 
         private void DrawPolygon(object obj)
         {
+            if (Coordinates.mouseCaptured)
+            {
+                MessageBox.Show("다른 작업 중입니다.");
+                return;
+            }
+            Coordinates.mouseCaptured = true;
+
             ClearSelected();
             drawingPolygon = new Polygon
             {
@@ -785,6 +804,7 @@ namespace SEMES_Pixel_Designer
             }
 
             UpdateLayout();
+            Coordinates.mouseCaptured = false;
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
@@ -804,6 +824,7 @@ namespace SEMES_Pixel_Designer
             drawingPolygon.Points.Clear();
 
             UpdateLayout();
+            Coordinates.mouseCaptured = false;
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
         }
@@ -892,6 +913,7 @@ namespace SEMES_Pixel_Designer
                 Children.Remove(drawingPolygon);
                 Children.Remove(drawingEllipse);
                 UpdateLayout();
+                Coordinates.mouseCaptured = false;
                 MouseLeftButtonDown += Select_MouseLeftButtonDown;
                 MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
@@ -913,6 +935,7 @@ namespace SEMES_Pixel_Designer
 
 
             UpdateLayout();
+            Coordinates.mouseCaptured = false;
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
         }
@@ -936,6 +959,9 @@ namespace SEMES_Pixel_Designer
             MouseLeftButtonUp -= DrawPolygon_MouseLeftButtonUp;
             MouseRightButtonUp -= DrawPolygon_MouseRightButtonUp;
 
+            Coordinates.mouseCaptured = false;
+            MouseLeftButtonDown += Select_MouseLeftButtonDown;
+            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
             Children.Remove(drawingPolygon);
             Children.Remove(drawingEllipse);
@@ -1001,8 +1027,6 @@ namespace SEMES_Pixel_Designer
 
             }
             UpdateLayout();
-            MouseLeftButtonDown += Select_MouseLeftButtonDown;
-            MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
             Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
