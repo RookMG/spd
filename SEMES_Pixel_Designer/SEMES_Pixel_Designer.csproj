@@ -112,6 +112,9 @@
     <Compile Include="View\MainDrawer.xaml.cs">
       <DependentUpon>MainDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\MakeCell.xaml.cs">
+      <DependentUpon>MakeCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MenuBar.xaml.cs">
       <DependentUpon>MenuBar.xaml</DependentUpon>
     </Compile>
@@ -154,6 +157,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\MakeCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MenuBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

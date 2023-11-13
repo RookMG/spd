@@ -64,6 +64,9 @@
             <Button Click="Clone_Button_Click" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/EditLayoutTable_16x.png" />
             </Button>
+            <Button CommandParameter="MainWindow.MakeNewcell" Style="{StaticResource ImgBtnStyle}">
+                <Image Source="../Asset/icon/EditLayoutTable_16x.png" />
+            </Button>
         </ToolBar>
 
         <ToolBar Band="1" BandIndex="2">

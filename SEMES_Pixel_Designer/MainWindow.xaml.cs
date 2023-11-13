@@ -109,6 +109,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ShowMousePosition", ShowMousePosition);
             Utils.Mediator.Register("MainWindow.ShowEntitiesPosition", ShowEntitiesPosition);
             Utils.Mediator.Register("MainWindow.Exit", Exit);
+            Utils.Mediator.Register("MainWindow.MakeNewcell", MakeNewcell);
 
             // TcpIp 연결 항시 대기
             tt = new TcpIp();
@@ -341,6 +342,12 @@ namespace SEMES_Pixel_Designer
 
             //TODO : 구현
 
+        }
+
+        // 셀 만들기
+        public void MakeNewcell(object obj)
+        {
+            Mediator.NotifyColleagues("MainDrawer.MakeNewcell", null);
         }
 
         #endregion
