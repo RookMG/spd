@@ -28,7 +28,7 @@
 				<RowDefinition Height="1*" />
 				<RowDefinition Height="5*" />
 			</Grid.RowDefinitions>
-			<ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
+			<ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="SelectEntityProperties">
 			</ComboBox>
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 
@@ -98,8 +98,20 @@
 								<ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									<ListView.View>
 										<GridView>
-											<GridViewColumn Header="X" DisplayMemberBinding="{Binding X}" />
-											<GridViewColumn Header="Y" DisplayMemberBinding="{Binding Y}" />
+											<GridViewColumn Header="X">
+												<GridViewColumn.CellTemplate>
+													<DataTemplate>
+														<TextBox Text="{Binding X}" LostFocus="MyTextBox_LostFocus"  Tag="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=Content}" />
+													</DataTemplate>
+												</GridViewColumn.CellTemplate>
+											</GridViewColumn>
+											<GridViewColumn Header="Y">
+												<GridViewColumn.CellTemplate>
+													<DataTemplate>
+														<TextBox Text="{Binding Y}"/>
+													</DataTemplate>
+												</GridViewColumn.CellTemplate>
+											</GridViewColumn>
 										</GridView>
 									</ListView.View>
 								</ListView>

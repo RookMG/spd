@@ -18,6 +18,7 @@ using netDxf.Collections;
 using netDxf.Entities;
 using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 using netDxf.Tables;
+using System.Reflection;
 
 namespace SEMES_Pixel_Designer
 {
@@ -29,6 +30,7 @@ namespace SEMES_Pixel_Designer
         Dictionary<string, PolygonEntity> entityDictionary;
 
         private EntityObject propertyEntityObject = null;
+        private PolygonEntity propertyEntity = null;
 
         public EntityDetails()
         {
@@ -39,6 +41,7 @@ namespace SEMES_Pixel_Designer
 
             Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
             Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
+            Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
             Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
 
         }
@@ -100,17 +103,22 @@ namespace SEMES_Pixel_Designer
                 EntityDetailComboBox.Items.Add(item);
             }
 
+            if (EntityDetailComboBox.Items.Count > 0)
+            {
+                EntityDetailComboBox.SelectedIndex = 0;
+            }
+
         }
 
-        private void ShowEntityProperties(object obj, SelectionChangedEventArgs e)
+        public void ShowEntityProperties(object obj)
         {
             //PropertyStackPanel.Children.Clear();
 
             if (EntityDetailComboBox.SelectedItem != null)
             {
-                string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
+                string selectedItem = (string)obj;
 
-                PolygonEntity propertyEntity = null;
+                
                 foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
                 {
                     if (entity.GetEntityObject().Handle != selectedItem) continue;
@@ -145,29 +153,61 @@ namespace SEMES_Pixel_Designer
 
                 VertexesIndexListView.ItemsSource = indexdxfCoords;
                 VertexesListView.ItemsSource = propertyEntity.dxfCoords;
-
-                /*
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = "Name";
-                textBlock.Background = Brushes.White;
-                textBlock.Margin = new Thickness(1);
-
-                TextBlock textBlock2  = new TextBlock();
-                textBlock2.Text = "Color";
-                textBlock2.Background = Brushes.White;
-                //PropertyStackPanel.Children.Add();
-                //textBlock.Text = "Color";
-                //PropertyStackPanel.Children.Add(textBlock);
-                //PropertyStackPanel.Children.Add(textBlock2);
-                //entityDictionary[selectedItem];*/
             }
         }
 
+
+
+        public void ClearEntityProperties(object obj)
+        {
+
+        }
 
         public void ShowEntityPropertyDetail(object obj)
         {
         }
 
+        private void SelectEntityProperties(object obj, SelectionChangedEventArgs e)
+        {
+            if (EntityDetailComboBox.SelectedItem == null)
+                return;
+
+            string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
+            ShowEntityProperties(selectedItem);
+        }
+
+        private void MyTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // 텍스트 입력이 완료되었을 때 실행될 코드
+            if(sender is TextBox textBox)
+            {
+                string coordiString = textBox.Text;
+                double coordiReal;
+                if (double.TryParse(coordiString, out coordiReal))
+                {
+                    //MessageBox.Show("Text input completed!");
+
+                    MessageBox.Show($"TextBox in row {textBox.Tag.GetType()} ");
+                    
+                    /*
+                    if (dxfCoords != null)
+                    {
+                        int index = VertexesListView.Items.IndexOf(dxfCoords);
+                        // index를 사용하여 몇 번째 항목인지 확인 가능
+                        MessageBox.Show($"TextBox in row {index} ");
+                    }
+                    //propertyEntity.dxfCoords[1]*/
+                }
+                else
+                {
+                    MessageBox.Show("WRONG VALUE!!");
+                }
+
+       
+                
+            }
+
+        }
         private string PolygonTypeToString(PolygonEntity entity)
         {
             if (entity.GetPolygonType() == PolygonEntityType.DOT)
