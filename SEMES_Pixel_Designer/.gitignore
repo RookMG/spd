@@ -20,6 +20,7 @@ x86/
 build/
 bld/
 [Bb]in/
+![Bb]in/[Dd]ebug/system.ini
 [Oo]bj/
 
 # Visual Studo 2015 cache/options directory

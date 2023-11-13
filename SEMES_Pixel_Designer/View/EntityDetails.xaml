@@ -13,17 +13,18 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="3*" />
+            <RowDefinition Height="2*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
 
-		<TreeView x:Name="EntityTreeView"/>
-		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-
-		<Grid Grid.Row="2">
+        <TextBlock Grid.Row="0" Text="셀 목록, 편집" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
+        <TreeView Grid.Row="2" x:Name="EntityTreeView" />
+		<GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
+		<Grid Grid.Row="4">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="1*" />
 				<RowDefinition Height="5*" />
@@ -127,7 +128,5 @@
 		</Grid>
 
 
-		<GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-		<TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
     </Grid>
 </Page>

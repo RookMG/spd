@@ -58,9 +58,6 @@
     <Reference Include="netDxf, Version=2022.11.2.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
       <HintPath>packages\netDxf.2022.11.2\lib\net45\netDxf.dll</HintPath>
     </Reference>
-    <Reference Include="netDxfLib">
-      <HintPath>..\..\..\..\Documents\netDxfLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -108,6 +105,7 @@
     <Compile Include="CloneEntity.xaml.cs">
       <DependentUpon>CloneEntity.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\TcpIpLogViewModel.cs" />
     <Compile Include="View\EntityDetails.xaml.cs">
       <DependentUpon>EntityDetails.xaml</DependentUpon>
     </Compile>
@@ -122,6 +120,9 @@
     </Compile>
     <Compile Include="View\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TcpIpLog.xaml.cs">
+      <DependentUpon>TcpIpLog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
@@ -165,6 +166,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\TcpIpLog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -201,7 +206,6 @@
   <ItemGroup>
     <Folder Include="Model\" />
     <Folder Include="obj\Debug\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Asset\icon\AddDocument_16x.png">
