@@ -7,21 +7,110 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.ComponentModel;
 
 namespace SEMES_Pixel_Designer.Utils
 {
 
-    public class Cell
+    public class Cell : INotifyPropertyChanged
     {
         public double patternLeft, patternBottom, patternWidth, patternHeight;
         public int patternRows, patternCols;
+        public string name;
 
-        public Cell(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        public double PatternLeft
         {
+            get { return patternLeft; }
+            set
+            {
+                if (patternLeft != value)
+                {
+                    patternLeft = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternLeft");
+                }
+            }
+        }
+        public double PatternBottom
+        {
+            get { return patternBottom; }
+            set
+            {
+                if (patternBottom != value)
+                {
+                    patternBottom = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternBottom");
+                }
+            }
+        }
+
+        public double PatternWidth
+        {
+            get { return patternWidth; }
+            set
+            {
+                if (patternWidth != value)
+                {
+                    patternWidth = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternWidth");
+                }
+            }
+        }
+
+        public double PatternHeight
+        {
+            get { return patternHeight; }
+            set
+            {
+                if (patternHeight != value)
+                {
+                    patternHeight = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternHeight");
+                }
+            }
+        }
+
+        public int PatternRows
+        {
+            get { return patternRows; }
+            set
+            {
+                if (patternRows != value)
+                {
+                    patternRows = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternRows");
+                }
+            }
+        }
+
+        public int PatternCols
+        {
+            get { return patternCols; }
+            set
+            {
+                if (patternCols != value)
+                {
+                    patternCols = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternCols");
+                }
+            }
+        }
+
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Cell(string name, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            this.name = name;
             this.patternLeft = patternLeft;
             this.patternBottom = patternBottom;
             this.patternWidth = patternWidth;
@@ -46,6 +135,12 @@ namespace SEMES_Pixel_Designer.Utils
         public double getPatternOffsetY(int row)
         {
             return row * patternHeight;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }
@@ -215,8 +310,8 @@ namespace SEMES_Pixel_Designer.Utils
 
             gridLines.Add(infoLine);
             BindCanvasAction(infoLine);
-            SetZIndexAction(infoLine, 10);
-            SetZIndexAction(gridInfoText,10);
+            SetZIndexAction(infoLine, 2);
+            SetZIndexAction(gridInfoText,2);
             gridInfoText.Text = " : " + gridSpacing * 0.1;
             gridInfoText.Foreground = defaultColorBrush;
             gridInfoText.Background = backgroundColorBrush;
@@ -330,12 +425,12 @@ namespace SEMES_Pixel_Designer.Utils
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 int rStart = 0, cStart = 0;
-                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
-                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
-                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
+                while (cell.getPatternOffsetX(cStart + 2) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 2) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY - cell.patternBottom && r < cell.patternRows; r++)
                 {
                     double yStart = cell.getPatternOffsetY(r);
-                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX - cell.patternLeft && c < cell.patternCols; c++)
                     {
                         double xStart = cell.getPatternOffsetX(c);
                         ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X) - P_RADIUS, Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is filled */, true /* is closed */);
@@ -447,10 +542,8 @@ namespace SEMES_Pixel_Designer.Utils
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
         public static List<CopyData> clipboard = new List<CopyData>();
 
-        //public event PropertyChangedEventHandler PropertyChanged;
-
         public class CopyData
-        { 
+        {
             public PointCollection dxfCoords { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
@@ -489,7 +582,6 @@ namespace SEMES_Pixel_Designer.Utils
             setDxfCoordAction = new List<Action<double, double>>();
             points = new List<PointEntity>();
 
-            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             path.Stroke = Coordinates.defaultColorBrush;
             selectArea.Stroke = Coordinates.transparentBrush;
             // path.Fill = Coordinates.fillColorBrush;
@@ -499,7 +591,8 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.BindCanvasAction(path);
             Coordinates.BindCanvasAction(selectArea);
             Coordinates.SetZIndexAction(path, 1);
-            Coordinates.SetZIndexAction(selectArea, 2);
+            Coordinates.SetZIndexAction(selectArea, 3);
+            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
 
         }
 
@@ -534,7 +627,7 @@ namespace SEMES_Pixel_Designer.Utils
                 List<Vector2> vertexes = new List<Vector2>();
                 foreach (var point in polygon.Points)
                 {
-                    vertexes.Add(new Vector2(Coordinates.ToDxfX(point.X), Coordinates.ToDxfY(point.Y)));
+                    vertexes.Add(new Vector2(point.X, point.Y));
                 }
                 Polyline2D polyline = new Polyline2D(vertexes);
                 MainWindow.doc.Entities.Add(polyline);
@@ -543,8 +636,8 @@ namespace SEMES_Pixel_Designer.Utils
             else if (type == PolygonEntityType.LINE)
             {
                 netDxf.Entities.Line line = new netDxf.Entities.Line(
-                    new Vector2(Coordinates.ToDxfX(polygon.Points[0].X), Coordinates.ToDxfY(polygon.Points[0].Y)),
-                    new Vector2(Coordinates.ToDxfX(polygon.Points[1].X), Coordinates.ToDxfY(polygon.Points[1].Y))
+                    new Vector2(polygon.Points[0].X, polygon.Points[0].Y),
+                    new Vector2(polygon.Points[1].X, polygon.Points[1].Y)
                 );
                 MainWindow.doc.Entities.Add(line);
                 entityObject = line;
@@ -557,16 +650,6 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
         #endregion
-
-        public PolygonEntityType GetPolygonType()
-        {
-            return entityType;
-        }
-
-        //public EntityObject GetEntityObject()
-        //{
-        //    return entityObject;
-        //}
 
         public static void CopySelected()
         {
@@ -587,10 +670,7 @@ namespace SEMES_Pixel_Designer.Utils
         public void AddPoint(double dxfX, double dxfY)
         {
             // TODO : DXF 파일에서의 점 추가
-            var idx = dxfCoords.Count;
             dxfCoords.Add(new System.Windows.Point(dxfX, dxfY));
-            double screenX = Coordinates.ToScreenX(dxfX);
-            double screenY = Coordinates.ToScreenY(dxfY);
         }
         public void AddPoint(netDxf.Vector2 point)
         {
@@ -641,12 +721,12 @@ namespace SEMES_Pixel_Designer.Utils
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 int rStart = 0, cStart = 0;
-                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
-                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
-                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
+                while (cell.getPatternOffsetX(cStart + 2) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 2) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY - cell.patternBottom && r < cell.patternRows; r++)
                 {
                     double yStart = cell.getPatternOffsetY(r);
-                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX - cell.patternLeft && c < cell.patternCols; c++)
                     {
                         double xStart = cell.getPatternOffsetX(c);
                         ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + dxfCoords[0].X), Coordinates.ToScreenY(yStart + dxfCoords[0].Y)), true /* is filled */, true /* is closed */);
@@ -763,17 +843,14 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     p.ReDraw();
                     Coordinates.BindCanvasAction(p.path);
-                    Coordinates.SetZIndexAction(p.path, 4);
+                    Coordinates.SetZIndexAction(p.path, 3);
                 }
-
-                
             }
             else
             {
                 selectedEntities.Remove(this);
                 foreach (var p in points) Coordinates.UnbindCanvasAction(p.path);
             }
-
             selected = status;
             ReColor();
             OnPropertyChanged("Selected");
@@ -792,12 +869,14 @@ namespace SEMES_Pixel_Designer.Utils
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -805,6 +884,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ClearSelected();
                 ToggleSelected(true);
+                Coordinates.mouseCaptured = false;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -876,10 +956,10 @@ namespace SEMES_Pixel_Designer.Utils
 
         }
 
-        //public PolygonEntityType GetPolygonType()
-        //{
-        //    return entityType;
-        //}
+        public PolygonEntityType GetPolygonType()
+        {
+            return entityType;
+        }
 
         public EntityObject GetEntityObject()
         {
@@ -921,7 +1001,5 @@ namespace SEMES_Pixel_Designer.Utils
         
 
     }
-
-
 
 }

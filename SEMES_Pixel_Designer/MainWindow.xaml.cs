@@ -146,8 +146,6 @@ namespace SEMES_Pixel_Designer
             DrawCanvas(null);
             fileName = null;
             Mediator.FileChangeCount = 0;
-
-            Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         // 파일 저장 확인
@@ -448,7 +446,7 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
-            Utils.Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", obj);
+
         }
 
         // 엔티티 속성
@@ -456,7 +454,7 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
-            Utils.Mediator.NotifyColleagues("EntityDetails.ShowEntityProperties", obj);
+
         }
 
         // 엔티티 속성 상세 설명
@@ -464,7 +462,6 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
-            Utils.Mediator.NotifyColleagues("EntityDetails.ShowEntityPropertyDetail", obj);
 
         }
 

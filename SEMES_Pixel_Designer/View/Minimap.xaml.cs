@@ -57,7 +57,7 @@ namespace SEMES_Pixel_Designer.View
             CanvasXPosition.StrokeDashArray = CanvasYPosition.StrokeDashArray = new DoubleCollection(new double[] { 5, 2 });
             CellPath = new Path
             {
-                Fill = Coordinates.gridBrush
+                Fill = Brushes.Aqua
             };
             CellPath.Data = geometry = new StreamGeometry();
             Children.Add(CellPath);
@@ -81,14 +81,15 @@ namespace SEMES_Pixel_Designer.View
             CanvasYPosition.Y1 = CanvasYPosition.Y2 = y;
             CanvasYPosition.X2 = ActualWidth + 1;
             CanvasXPosition.Y2 = ActualHeight + 1;
-            using(StreamGeometryContext ctx = geometry.Open())
+            double xRatio = ActualWidth/(Coordinates.glassRight - Coordinates.glassLeft), yRatio = ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom);
+            using (StreamGeometryContext ctx = geometry.Open())
             {
                 foreach (var cell in Coordinates.CanvasRef.cells)
                 {
-                    ctx.BeginFigure(new Point((cell.patternLeft-Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.patternBottom) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is filled */, true /* is closed */);
-                    ctx.LineTo(new Point((cell.patternLeft - Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.GetPatternTop()) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is stroked */, false /* is smooth join */);
-                    ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.GetPatternTop()) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is stroked */, false /* is smooth join */);
-                    ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft), (Coordinates.glassTop - cell.patternBottom) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom)), true /* is stroked */, false /* is smooth join */);
+                    ctx.BeginFigure(new Point((cell.patternLeft-Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.patternBottom) * yRatio), true /* is filled */, true /* is closed */);
+                    ctx.LineTo(new Point((cell.patternLeft - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.GetPatternTop()) * yRatio), true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.GetPatternTop()) * yRatio), true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.patternBottom) * yRatio), true /* is stroked */, false /* is smooth join */);
                 }
             }
         }
@@ -103,7 +104,7 @@ namespace SEMES_Pixel_Designer.View
             else
             {
                 Width = Window.GetWindow(this).ActualWidth - 40;
-                Height = ActualWidth * (Coordinates.glassTop - Coordinates.glassRight) / (Coordinates.glassRight - Coordinates.glassLeft);
+                Height = ActualWidth * (Coordinates.glassTop - Coordinates.glassBottom) / (Coordinates.glassRight - Coordinates.glassLeft);
             }
             UpdatePosition();
         }

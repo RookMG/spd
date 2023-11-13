@@ -8,7 +8,7 @@
       d:DesignHeight="54" d:DesignWidth="800"
       Title="ToolBar">
 
-    <ToolBarTray Background="White">
+    <ToolBarTray Background="WhiteSmoke">
         <ToolBar Band="1" BandIndex="1">
             <ToolBar.Resources>
                 <Style TargetType="{x:Type Button}" x:Key="ImgBtnStyle">
