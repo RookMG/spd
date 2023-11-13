@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -19,6 +20,91 @@ namespace SEMES_Pixel_Designer.Utils
         public double patternLeft, patternBottom, patternWidth, patternHeight;
         public int patternRows, patternCols;
         public string name;
+
+        public double PatternLeft
+        {
+            get { return patternLeft; }
+            set
+            {
+                if (patternLeft != value)
+                {
+                    patternLeft = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternLeft");
+                }
+            }
+        }
+        public double PatternBottom
+        {
+            get { return patternBottom; }
+            set
+            {
+                if (patternBottom != value)
+                {
+                    patternBottom = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternBottom");
+                }
+            }
+        }
+
+        public double PatternWidth
+        {
+            get { return patternWidth; }
+            set
+            {
+                if (patternWidth != value)
+                {
+                    patternWidth = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternWidth");
+                }
+            }
+        }
+
+        public double PatternHeight
+        {
+            get { return patternHeight; }
+            set
+            {
+                if (patternHeight != value)
+                {
+                    patternHeight = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternHeight");
+                }
+            }
+        }
+
+        public int PatternRows
+        {
+            get { return patternRows; }
+            set
+            {
+                if (patternRows != value)
+                {
+                    patternRows = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternRows");
+                }
+            }
+        }
+
+        public int PatternCols
+        {
+            get { return patternCols; }
+            set
+            {
+                if (patternCols != value)
+                {
+                    patternCols = value;
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    OnPropertyChanged("PatternCols");
+                }
+            }
+        }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

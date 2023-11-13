@@ -61,6 +61,7 @@ namespace SEMES_Pixel_Designer
                     StackPanel panel;
                     TextBlock title;
                     TextBox content;
+                    Binding binding;
                     item.Header = c.name;
 
 
@@ -74,7 +75,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Left : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternLeft.ToString();
+                    binding = new Binding("PatternLeft")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -90,7 +97,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Bottom : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternBottom.ToString();
+                    binding = new Binding("PatternBottom")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -106,7 +119,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Width : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternWidth.ToString();
+                    binding = new Binding("PatternWidth")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -122,7 +141,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Height : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternHeight.ToString();
+                    binding = new Binding("PatternHeight")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -138,7 +163,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Repetition in X : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternCols.ToString();
+                    binding = new Binding("PatternCols")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -154,7 +185,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Repetition in Y : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternRows.ToString();
+                    binding = new Binding("PatternRows")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -170,7 +207,6 @@ namespace SEMES_Pixel_Designer
         public void ShowEntityTypes(object obj)
         {
             TreeViewItem entities = new TreeViewItem();
-
 
             foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
             {
@@ -203,6 +239,9 @@ namespace SEMES_Pixel_Designer
 
         public void ShowEntityComboBox(object obj)
         {
+            // ch_test
+            ShowCells(null);
+
             EntityDetailComboBox.Items.Clear();
 
             foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
