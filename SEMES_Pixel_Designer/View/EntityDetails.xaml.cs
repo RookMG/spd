@@ -19,6 +19,7 @@ using netDxf.Entities;
 using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 using netDxf.Tables;
 using System.Reflection;
+using System.Windows.Markup;
 
 namespace SEMES_Pixel_Designer
 {
@@ -97,8 +98,6 @@ namespace SEMES_Pixel_Designer
 
 
                 propertyEntityObject = entity.GetEntityObject();
-                //entityDictionary.Add(entity., entity);
-                //entity.debug_ch();
 
                 EntityDetailComboBox.Items.Add(item);
                 EntityDetailComboBox.SelectedItem = item;
@@ -179,22 +178,25 @@ namespace SEMES_Pixel_Designer
 
         private void MyTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            // 텍스트 입력이 완료되었을 때 실행될 코드
-            if(sender is TextBox textBox)
+            if(sender is TextBox textBox && textBox.DataContext is System.Windows.Point indexCoordi)
             {
+
                 string coordiString = textBox.Text;
                 double coordiReal;
                 if (double.TryParse(coordiString, out coordiReal))
                 {
-                    //MessageBox.Show("Text input completed!");
-
-                    MessageBox.Show($"TextBox in row {textBox.Tag.GetType()} ");
-                    
                     /*
+                    //MessageBox.Show("Text input completed!");
+                    //int index = VertexesListView.Items.IndexOf(data);
+                    
+                    //grid
+                    //int index = VertexesListView.Items.IndexOf(coordiString);
+                    //MessageBox.Show($"TextBox in row {index} ");
+                    
+
                     if (dxfCoords != null)
                     {
                         int index = VertexesListView.Items.IndexOf(dxfCoords);
-                        // index를 사용하여 몇 번째 항목인지 확인 가능
                         MessageBox.Show($"TextBox in row {index} ");
                     }
                     //propertyEntity.dxfCoords[1]*/
