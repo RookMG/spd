@@ -45,7 +45,6 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
             Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
             Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
-            Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
 
         }
 
@@ -62,6 +61,7 @@ namespace SEMES_Pixel_Designer
                     StackPanel panel;
                     TextBlock title;
                     TextBox content;
+                    Binding binding;
                     item.Header = c.name;
 
 
@@ -75,7 +75,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Left : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternLeft.ToString();
+                    binding = new Binding("PatternLeft")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -91,7 +97,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Bottom : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternBottom.ToString();
+                    binding = new Binding("PatternBottom")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -107,7 +119,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Width : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternWidth.ToString();
+                    binding = new Binding("PatternWidth")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -123,7 +141,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Height : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternHeight.ToString();
+                    binding = new Binding("PatternHeight")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -139,7 +163,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Repetition in X : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternCols.ToString();
+                    binding = new Binding("PatternCols")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -155,7 +185,13 @@ namespace SEMES_Pixel_Designer
                         Text = "Repetition in Y : "
                     };
                     content = new TextBox();
-                    content.Text = c.patternRows.ToString();
+                    binding = new Binding("PatternRows")
+                    {
+                        Source = c,
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    };
+                    content.SetBinding(TextBox.TextProperty, binding);
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -171,7 +207,6 @@ namespace SEMES_Pixel_Designer
         public void ShowEntityTypes(object obj)
         {
             TreeViewItem entities = new TreeViewItem();
-
 
             foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
             {
@@ -204,6 +239,9 @@ namespace SEMES_Pixel_Designer
 
         public void ShowEntityComboBox(object obj)
         {
+            // ch_test
+            ShowCells(null);
+
             EntityDetailComboBox.Items.Clear();
 
             foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
@@ -265,6 +303,7 @@ namespace SEMES_Pixel_Designer
 
                 Name.Text = propertyEntityObject.CodeName;
 
+                
                 List<string> indexdxfCoords = new List<string>();
                 for (int i = 0; i < propertyEntity.dxfCoords.Count; i++)
                 {
@@ -283,9 +322,6 @@ namespace SEMES_Pixel_Designer
 
         }
 
-        public void ShowEntityPropertyDetail(object obj)
-        {
-        }
 
         private void SelectEntityProperties(object obj, SelectionChangedEventArgs e)
         {
@@ -296,41 +332,91 @@ namespace SEMES_Pixel_Designer
             ShowEntityProperties(selectedItem);
         }
 
-        private void MyTextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void XTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if(sender is TextBox textBox && textBox.DataContext is System.Windows.Point indexCoordi)
+            EditCoordi(sender, true);
+        }
+
+        private void YTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            EditCoordi(sender, false);
+        }
+
+        private void XTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                EditCoordi(sender, true);
+                e.Handled = true;
+            }
+        }
+
+        private void YTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                EditCoordi(sender, false);
+                e.Handled = true;
+            }
+        }
+
+
+        private void EditCoordi(object sender, bool isX)
+        {
+            if (sender is TextBox textBox && textBox.DataContext is System.Windows.Point indexCoordi)
             {
 
-                string coordiString = textBox.Text;
-                double coordiReal;
-                if (double.TryParse(coordiString, out coordiReal))
-                {
-                    /*
-                    //MessageBox.Show("Text input completed!");
-                    //int index = VertexesListView.Items.IndexOf(data);
-                    
-                    //grid
-                    //int index = VertexesListView.Items.IndexOf(coordiString);
-                    //MessageBox.Show($"TextBox in row {index} ");
-                    
 
-                    if (dxfCoords != null)
+                ListViewItem listViewItem = FindParent<ListViewItem>(textBox);
+
+                ListView listView = FindParent<ListView>(listViewItem);
+                int index = listView.ItemContainerGenerator.IndexFromContainer(listViewItem);
+
+                if (listViewItem != null)
+                {
+                    string coordiString = textBox.Text;
+                    double coordiReal;
+                    if (double.TryParse(coordiString, out coordiReal))
                     {
-                        int index = VertexesListView.Items.IndexOf(dxfCoords);
-                        MessageBox.Show($"TextBox in row {index} ");
+                        if(isX == true)
+                            EditCoordiX(index, coordiReal);
+                        else
+                            EditCoordiY(index, coordiReal);
                     }
-                    //propertyEntity.dxfCoords[1]*/
+                    else
+                    {
+                        MessageBox.Show("WRONG VALUE!!");
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("WRONG VALUE!!");
-                }
+            }
+        }
 
-       
-                
+
+        private void EditCoordiX(int index, double coordiReal)
+        {
+            propertyEntity.dxfCoords[index] = new System.Windows.Point(coordiReal, propertyEntity.dxfCoords[index].Y);
+            propertyEntity.ReDraw();
+        }
+
+        private void EditCoordiY(int index, double coordiReal)
+        {
+            propertyEntity.dxfCoords[index] = new System.Windows.Point(propertyEntity.dxfCoords[index].X, coordiReal);
+            propertyEntity.ReDraw();
+        }
+
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+
+            if (parentObject == null)
+            {
+                return null;
             }
 
+            T parent = parentObject as T;
+            return parent ?? FindParent<T>(parentObject);
         }
+
         private string PolygonTypeToString(PolygonEntity entity)
         {
             if (entity.GetPolygonType() == PolygonEntityType.DOT)
