@@ -18,7 +18,8 @@ using netDxf.Collections;
 using netDxf.Entities;
 using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 using netDxf.Tables;
-using System.Globalization;
+using System.Reflection;
+using System.Windows.Markup;
 
 namespace SEMES_Pixel_Designer
 {
@@ -31,6 +32,7 @@ namespace SEMES_Pixel_Designer
         Dictionary<Cell, TreeViewItem> cellDictionary;
 
         private EntityObject propertyEntityObject = null;
+        private PolygonEntity propertyEntity = null;
 
         public EntityDetails()
         {
@@ -40,7 +42,10 @@ namespace SEMES_Pixel_Designer
             cellDictionary = new Dictionary<Cell, TreeViewItem>();
 
 
-            Mediator.Register("EntityDetails.ShowCells", ShowCells);
+            Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
+            Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
+            Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
+            Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
 
             Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
             Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
@@ -217,24 +222,27 @@ namespace SEMES_Pixel_Designer
 
 
                 propertyEntityObject = entity.GetEntityObject();
-                //entityDictionary.Add(entity., entity);
-                //entity.debug_ch();
 
                 EntityDetailComboBox.Items.Add(item);
                 EntityDetailComboBox.SelectedItem = item;
             }
 
+            if (EntityDetailComboBox.Items.Count > 0)
+            {
+                EntityDetailComboBox.SelectedIndex = 0;
+            }
+
         }
 
-        private void ShowEntityProperties(object obj, SelectionChangedEventArgs e)
+        public void ShowEntityProperties(object obj)
         {
             //PropertyStackPanel.Children.Clear();
 
             if (EntityDetailComboBox.SelectedItem != null)
             {
-                string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
+                string selectedItem = (string)obj;
 
-                PolygonEntity propertyEntity = null;
+                
                 foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
                 {
                     if (entity.GetEntityObject().Handle != selectedItem) continue;
@@ -269,29 +277,64 @@ namespace SEMES_Pixel_Designer
 
                 VertexesIndexListView.ItemsSource = indexdxfCoords;
                 VertexesListView.ItemsSource = propertyEntity.dxfCoords;
-
-                /*
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = "Name";
-                textBlock.Background = Brushes.White;
-                textBlock.Margin = new Thickness(1);
-
-                TextBlock textBlock2  = new TextBlock();
-                textBlock2.Text = "Color";
-                textBlock2.Background = Brushes.White;
-                //PropertyStackPanel.Children.Add();
-                //textBlock.Text = "Color";
-                //PropertyStackPanel.Children.Add(textBlock);
-                //PropertyStackPanel.Children.Add(textBlock2);
-                //entityDictionary[selectedItem];*/
             }
         }
 
+
+
+        public void ClearEntityProperties(object obj)
+        {
+
+        }
 
         public void ShowEntityPropertyDetail(object obj)
         {
         }
 
+        private void SelectEntityProperties(object obj, SelectionChangedEventArgs e)
+        {
+            if (EntityDetailComboBox.SelectedItem == null)
+                return;
+
+            string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
+            ShowEntityProperties(selectedItem);
+        }
+
+        private void MyTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if(sender is TextBox textBox && textBox.DataContext is System.Windows.Point indexCoordi)
+            {
+
+                string coordiString = textBox.Text;
+                double coordiReal;
+                if (double.TryParse(coordiString, out coordiReal))
+                {
+                    /*
+                    //MessageBox.Show("Text input completed!");
+                    //int index = VertexesListView.Items.IndexOf(data);
+                    
+                    //grid
+                    //int index = VertexesListView.Items.IndexOf(coordiString);
+                    //MessageBox.Show($"TextBox in row {index} ");
+                    
+
+                    if (dxfCoords != null)
+                    {
+                        int index = VertexesListView.Items.IndexOf(dxfCoords);
+                        MessageBox.Show($"TextBox in row {index} ");
+                    }
+                    //propertyEntity.dxfCoords[1]*/
+                }
+                else
+                {
+                    MessageBox.Show("WRONG VALUE!!");
+                }
+
+       
+                
+            }
+
+        }
         private string PolygonTypeToString(PolygonEntity entity)
         {
             if (entity.GetPolygonType() == PolygonEntityType.DOT)
