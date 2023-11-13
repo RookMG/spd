@@ -224,8 +224,8 @@ namespace SEMES_Pixel_Designer.Utils
 
             gridLines.Add(infoLine);
             BindCanvasAction(infoLine);
-            SetZIndexAction(infoLine, 10);
-            SetZIndexAction(gridInfoText,10);
+            SetZIndexAction(infoLine, 2);
+            SetZIndexAction(gridInfoText,2);
             gridInfoText.Text = " : " + gridSpacing * 0.1;
             gridInfoText.Foreground = defaultColorBrush;
             gridInfoText.Background = backgroundColorBrush;
@@ -339,12 +339,12 @@ namespace SEMES_Pixel_Designer.Utils
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 int rStart = 0, cStart = 0;
-                while (cell.getPatternOffsetX(cStart + 1) < Coordinates.minX - cell.patternLeft) cStart++;
-                while (cell.getPatternOffsetY(rStart + 1) < Coordinates.minY - cell.patternBottom) rStart++;
-                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY && r < cell.patternRows; r++)
+                while (cell.getPatternOffsetX(cStart + 2) < Coordinates.minX - cell.patternLeft) cStart++;
+                while (cell.getPatternOffsetY(rStart + 2) < Coordinates.minY - cell.patternBottom) rStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= Coordinates.maxY - cell.patternBottom && r < cell.patternRows; r++)
                 {
                     double yStart = cell.getPatternOffsetY(r);
-                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX && c < cell.patternCols; c++)
+                    for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX - cell.patternLeft && c < cell.patternCols; c++)
                     {
                         double xStart = cell.getPatternOffsetX(c);
                         ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X) - P_RADIUS, Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is filled */, true /* is closed */);
@@ -496,7 +496,6 @@ namespace SEMES_Pixel_Designer.Utils
             setDxfCoordAction = new List<Action<double, double>>();
             points = new List<PointEntity>();
 
-            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             path.Stroke = Coordinates.defaultColorBrush;
             selectArea.Stroke = Coordinates.transparentBrush;
             // path.Fill = Coordinates.fillColorBrush;
@@ -506,7 +505,8 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.BindCanvasAction(path);
             Coordinates.BindCanvasAction(selectArea);
             Coordinates.SetZIndexAction(path, 1);
-            Coordinates.SetZIndexAction(selectArea, 2);
+            Coordinates.SetZIndexAction(selectArea, 3);
+            selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
 
         }
 
@@ -757,7 +757,7 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     p.ReDraw();
                     Coordinates.BindCanvasAction(p.path);
-                    Coordinates.SetZIndexAction(p.path, 4);
+                    Coordinates.SetZIndexAction(p.path, 3);
                 }
             }
             else
