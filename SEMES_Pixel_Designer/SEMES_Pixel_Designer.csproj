@@ -193,6 +193,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="bin\x64\Debug\system.ini" />
     <None Include="bin\x64\Release\system.ini" />
     <None Include="packages.config" />
     <None Include="View\packages.config" />

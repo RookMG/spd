@@ -205,6 +205,7 @@ namespace SEMES_Pixel_Designer
                 MainWindow.doc.Entities.Add(p);
                 DrawingEntities.Add(new PolygonEntity(c, p));
             }
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
             UpdateCanvas();
 
         }

@@ -14,10 +14,12 @@ using System.Windows.Shapes;
 namespace SEMES_Pixel_Designer.Utils
 {
 
-    public class Cell
+    public class Cell : INotifyPropertyChanged
     {
         public double patternLeft, patternBottom, patternWidth, patternHeight;
         public int patternRows, patternCols;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public Cell(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
         {
@@ -45,6 +47,12 @@ namespace SEMES_Pixel_Designer.Utils
         public double getPatternOffsetY(int row)
         {
             return row * patternHeight;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

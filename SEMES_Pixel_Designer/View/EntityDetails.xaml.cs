@@ -18,6 +18,7 @@ using netDxf.Collections;
 using netDxf.Entities;
 using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 using netDxf.Tables;
+using System.Globalization;
 
 namespace SEMES_Pixel_Designer
 {
@@ -27,6 +28,7 @@ namespace SEMES_Pixel_Designer
     public partial class EntityDetails : Page
     {
         Dictionary<string, PolygonEntity> entityDictionary;
+        Dictionary<Cell, TreeViewItem> cellDictionary;
 
         private EntityObject propertyEntityObject = null;
 
@@ -35,12 +37,133 @@ namespace SEMES_Pixel_Designer
             InitializeComponent();
 
             entityDictionary = new Dictionary<string, PolygonEntity>();
+            cellDictionary = new Dictionary<Cell, TreeViewItem>();
 
 
-            Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
-            Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
-            Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
+            Mediator.Register("EntityDetails.ShowCells", ShowCells);
 
+            Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
+            Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
+            Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
+
+        }
+
+
+        public void ShowCells(object obj)
+        {
+            CellTreeView.Items.Clear();
+            for(int i=0;i< Coordinates.CanvasRef.cells.Count;i++)
+            {
+                Cell c = Coordinates.CanvasRef.cells[i];
+                if (!cellDictionary.ContainsKey(c))
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    StackPanel panel;
+                    TextBlock title;
+                    TextBox content;
+                    item.Header = string.Format("Cell {0}", i);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Left : "
+                    };
+                    content = new TextBox();
+                    content.Text = c.patternLeft.ToString();
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Bottom : "
+                    };
+                    content = new TextBox();
+                    content.Text = c.patternBottom.ToString();
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Width : "
+                    };
+                    content = new TextBox();
+                    content.Text = c.patternWidth.ToString();
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Height : "
+                    };
+                    content = new TextBox();
+                    content.Text = c.patternHeight.ToString();
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Repetition in X : "
+                    };
+                    content = new TextBox();
+                    content.Text = c.patternCols.ToString();
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+
+                    panel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    title = new TextBlock
+                    {
+                        Text = "Repetition in Y : "
+                    };
+                    content = new TextBox();
+                    content.Text = c.patternRows.ToString();
+                    panel.Children.Add(title);
+                    panel.Children.Add(content);
+                    item.Items.Add(panel);
+
+                    cellDictionary.Add(c, item);
+                }
+                TreeViewItem cellViewItem = cellDictionary[c];
+                CellTreeView.Items.Add(cellViewItem);
+            }
         }
 
 
