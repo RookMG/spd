@@ -78,7 +78,7 @@ namespace SEMES_Pixel_Designer
             Children.Add(Coordinates.gridInfoText);
             Children.Add(Coordinates.borderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
-            SetZIndex(this, -1);
+            //SetZIndex(this, -1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
