@@ -276,7 +276,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5,
             glassBottom = 0, glassLeft = 0, glassTop = 2500000, glassRight = 2200000;
         public static MainCanvas CanvasRef;
-        public static MinimapCanvas MinimapRef;
+        public static MinimapCanvas MinimapRef = null;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
         public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
         public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x99, 0x99, 0x99)),
@@ -558,10 +558,10 @@ namespace SEMES_Pixel_Designer.Utils
                     for (int c = cStart; cell.getPatternOffsetX(c) <= Coordinates.maxX - cell.patternLeft && c < cell.patternCols; c++)
                     {
                         double xStart = cell.getPatternOffsetX(c);
-                        ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X) - P_RADIUS, Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is filled */, true /* is closed */);
-                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y) - P_RADIUS), true /* is stroked */, false /* is smooth join */);
-                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X) + P_RADIUS, Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is stroked */, false /* is smooth join */);
-                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y) + P_RADIUS), true /* is stroked */, false /* is smooth join */);
+                        ctx.BeginFigure(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X - P_RADIUS), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is filled */, true /* is closed */);
+                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y - P_RADIUS)), true /* is stroked */, false /* is smooth join */);
+                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X + P_RADIUS), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y)), true /* is stroked */, false /* is smooth join */);
+                        ctx.LineTo(new System.Windows.Point(Coordinates.ToScreenX(xStart + parent.dxfCoords[idx].X), Coordinates.ToScreenY(yStart + parent.dxfCoords[idx].Y + P_RADIUS)), true /* is stroked */, false /* is smooth join */);
 
                     }
                 }

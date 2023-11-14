@@ -115,16 +115,15 @@ namespace SEMES_Pixel_Designer
             //cells.Add(new Cell("cell 0", 0, 0, 372, 372, 1000, 1000));
             //selectedCell = cells[0];
 
-            Minimap minimap = new Minimap();
-            minimap.Show();
+            OpenMinimap(null);
             // Test();
 
         }
         public void OpenMinimap(object obj)
 
         {
-            Minimap minimap = new Minimap();
-            minimap.Show();
+            if (Coordinates.MinimapRef != null) return;
+            new Minimap().Show();
         }
 
         public void MakeNewcell_Input(object obj)
@@ -329,6 +328,7 @@ namespace SEMES_Pixel_Designer
                 gridLine.MouseWheel += Zoom_MouseWheel;
                 gridLine.MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
+            if(Coordinates.MinimapRef!= null)
             Coordinates.MinimapRef.AdjustRatio();
         }
 
@@ -337,7 +337,8 @@ namespace SEMES_Pixel_Designer
             //Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
             //Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
             Coordinates.AdjustRatio();
-            Coordinates.MinimapRef.AdjustRatio();
+            if (Coordinates.MinimapRef != null)
+                Coordinates.MinimapRef.AdjustRatio();
             UpdateCanvas();
         }
 
