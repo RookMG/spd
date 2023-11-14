@@ -58,7 +58,7 @@ namespace SEMES_Pixel_Designer
 
             ColorComboBox.Items.Clear();
             ColorComboBox.ItemsSource = typeof(Colors).GetProperties().Where(p => p.PropertyType == typeof(Color) && (p.Name == "Red" || p.Name == "Blue" || p.Name == "Green")).ToList();
-
+            AddCellButton.DataContext = new CommandDataContext();
         }
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {

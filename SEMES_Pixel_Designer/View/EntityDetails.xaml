@@ -18,24 +18,30 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <ListView Grid.Row="0" x:Name="CellListView" >
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Expander Header="{Binding Name}">
-                        <TreeView ItemsSource="{Binding Children}" >
-                            <TreeView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Width="120">
-                                        <CheckBox IsChecked="{Binding Selected}"></CheckBox>
-                                        <TextBlock Text="{Binding Name}"></TextBlock>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </TreeView.ItemTemplate>
-                        </TreeView>
-                    </Expander>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+
+            <Button x:Name="AddCellButton" Command="{Binding DelCommand}" CommandParameter="MainWindow.MakeNewcell" >
+                <TextBlock>새 셀 추가</TextBlock>
+            </Button>
+            <ListView x:Name="CellListView" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Expander Header="{Binding Name}">
+                            <TreeView ItemsSource="{Binding Children}" >
+                                <TreeView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Width="120">
+                                            <CheckBox IsChecked="{Binding Selected}"></CheckBox>
+                                            <TextBlock Text="{Binding Name}"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
+                        </Expander>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
