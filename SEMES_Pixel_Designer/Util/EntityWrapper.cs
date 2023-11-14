@@ -28,9 +28,36 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 if (patternLeft != value)
                 {
-                    patternLeft = value;
-                    Coordinates.CanvasRef.UpdateCanvas();
-                    OnPropertyChanged("PatternLeft");
+                    double from = patternLeft, to = value;
+                    List<PolygonEntity> targetEntities = new List<PolygonEntity>();
+                    foreach(PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+                    {
+                        if (entity.cell == this) targetEntities.Add(entity);
+                    }
+                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                    (
+                        () => {
+                            foreach (PolygonEntity entity in targetEntities)
+                            {
+                                entity.Move(from - to, 0);
+                                patternLeft = from;
+                                Coordinates.CanvasRef.UpdateCanvas();
+                                OnPropertyChanged("PatternLeft");
+                            }
+                        },
+                        () => {
+                            foreach (PolygonEntity entity in targetEntities)
+                            {
+                                entity.Move(to - from, 0);
+                                patternLeft = to;
+                                Coordinates.CanvasRef.UpdateCanvas();
+                                OnPropertyChanged("PatternLeft");
+                            }
+                        },
+                        () =>
+                        {
+                        }
+                    ));
                 }
             }
         }
@@ -41,9 +68,36 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 if (patternBottom != value)
                 {
-                    patternBottom = value;
-                    Coordinates.CanvasRef.UpdateCanvas();
-                    OnPropertyChanged("PatternBottom");
+                    double from = patternBottom, to = value;
+                    List<PolygonEntity> targetEntities = new List<PolygonEntity>();
+                    foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+                    {
+                        if (entity.cell == this) targetEntities.Add(entity);
+                    }
+                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                    (
+                        () => {
+                            foreach (PolygonEntity entity in targetEntities)
+                            {
+                                entity.Move(0, from - to);
+                                patternBottom = from;
+                                Coordinates.CanvasRef.UpdateCanvas();
+                                OnPropertyChanged("PatternBottom");
+                            }
+                        },
+                        () => {
+                            foreach (PolygonEntity entity in targetEntities)
+                            {
+                                entity.Move(0, to - from);
+                                patternBottom = to;
+                                Coordinates.CanvasRef.UpdateCanvas();
+                                OnPropertyChanged("PatternBottom");
+                            }
+                        },
+                        () =>
+                        {
+                        }
+                    ));
                 }
             }
         }
@@ -55,9 +109,23 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 if (patternWidth != value)
                 {
-                    patternWidth = value;
-                    Coordinates.CanvasRef.UpdateCanvas();
-                    OnPropertyChanged("PatternWidth");
+                    double from = patternWidth, to = value;
+                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                    (
+                        () => {
+                            patternWidth = from;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternWidth");
+                        },
+                        () => {
+                            patternWidth = to;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternWidth");
+                        },
+                        () =>
+                        {
+                        }
+                    ));
                 }
             }
         }
@@ -69,9 +137,23 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 if (patternHeight != value)
                 {
-                    patternHeight = value;
-                    Coordinates.CanvasRef.UpdateCanvas();
-                    OnPropertyChanged("PatternHeight");
+                    double from = patternHeight, to = value;
+                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                    (
+                        () => {
+                            patternHeight = from;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternHeight");
+                        },
+                        () => {
+                            patternHeight = to;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternHeight");
+                        },
+                        () =>
+                        {
+                        }
+                    ));
                 }
             }
         }
@@ -83,9 +165,23 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 if (patternRows != value)
                 {
-                    patternRows = value;
-                    Coordinates.CanvasRef.UpdateCanvas();
-                    OnPropertyChanged("PatternRows");
+                    int from = patternRows, to = value;
+                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                    (
+                        () => {
+                            patternRows = from;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternRows");
+                        },
+                        () => {
+                            patternRows = to;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternRows");
+                        },
+                        () =>
+                        {
+                        }
+                    ));
                 }
             }
         }
@@ -97,9 +193,23 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 if (patternCols != value)
                 {
-                    patternCols = value;
-                    Coordinates.CanvasRef.UpdateCanvas();
-                    OnPropertyChanged("PatternCols");
+                    int from = patternCols, to = value;
+                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+                    (
+                        () => {
+                            patternCols = from;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternCols");
+                        },
+                        () => {
+                            patternCols = to;
+                            Coordinates.CanvasRef.UpdateCanvas();
+                            OnPropertyChanged("PatternCols");
+                        },
+                        () =>
+                        {
+                        }
+                    ));
                 }
             }
         }
@@ -149,7 +259,6 @@ namespace SEMES_Pixel_Designer.Utils
     {
         public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5,
             glassBottom = 0, glassLeft = 0, glassTop = 2500000, glassRight = 2200000;
-        public static List<Cell> cells;
         public static MainCanvas CanvasRef;
         public static MinimapCanvas MinimapRef;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
@@ -651,6 +760,13 @@ namespace SEMES_Pixel_Designer.Utils
 
         #endregion
 
+        public void Move(double dxfX, double dxfY)
+        {
+            minX = minY = double.MaxValue;
+            maxX = maxY = double.MaxValue;
+            for (int i = 0; i < dxfCoords.Count; i++) UpdatePoint(dxfCoords[i].X + dxfX, dxfCoords[i].Y + dxfY, i, true);
+        }
+
         public static void CopySelected()
         {
             Coordinates.CanvasRef.pasteCount = 1;
@@ -971,6 +1087,8 @@ namespace SEMES_Pixel_Designer.Utils
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        
 
     }
 

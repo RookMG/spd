@@ -46,8 +46,18 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
             Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
 
-        }
+            ColorComboBox.Items.Clear();
+            ColorComboBox.ItemsSource = typeof(Colors).GetProperties().Where(p => p.PropertyType == typeof(Color) && (p.Name == "Red" || p.Name == "Blue" || p.Name == "Green")).ToList();
 
+        }
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
+            }
+        }
 
         public void ShowCells(object obj)
         {
@@ -74,14 +84,19 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Left : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternLeft")
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -96,14 +111,19 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Bottom : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternBottom")
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -118,14 +138,19 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Width : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternWidth")
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -140,14 +165,19 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Height : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternHeight")
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -162,14 +192,19 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Repetition in X : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternCols")
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -184,14 +219,19 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Repetition in Y : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternRows")
                     {
                         Source = c,
                         Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
                     };
                     content.SetBinding(TextBox.TextProperty, binding);
+                    content.KeyDown += CellTextBoxKeyDown;
                     panel.Children.Add(title);
                     panel.Children.Add(content);
                     item.Items.Add(panel);
@@ -268,6 +308,35 @@ namespace SEMES_Pixel_Designer
 
         }
 
+        private void ColorChange(object obj, SelectionChangedEventArgs e)
+        {
+            if (propertyEntityObject != null && propertyEntity != null && ColorComboBox.SelectedItem != null)
+            {
+                if (ColorComboBox.SelectedItem is PropertyInfo selectedColor)
+                {
+                    string selectedColorName = selectedColor.Name;
+
+                    if(selectedColorName == "Red")
+                    {
+                        AciColor myColor = new AciColor(255, 0, 0);
+                        propertyEntityObject.Color = myColor;
+                        propertyEntity.path.Fill = Brushes.Red;
+                    }
+                    else if (selectedColorName == "Green")
+                    {
+                        AciColor myColor = new AciColor(0, 255, 0);
+                        propertyEntityObject.Color = myColor;
+                        propertyEntity.path.Fill = Brushes.Green;
+                    }
+                    else if (selectedColorName == "Blue")
+                    {
+                        AciColor myColor = new AciColor(0, 0, 255);
+                        propertyEntityObject.Color = myColor;
+                        propertyEntity.path.Fill = Brushes.Blue;
+                    }
+                }
+            }
+        }
         public void ShowEntityProperties(object obj)
         {
             //PropertyStackPanel.Children.Clear();
@@ -286,8 +355,25 @@ namespace SEMES_Pixel_Designer
 
                 }
 
-                Color.Text = "R:" + propertyEntityObject.Color.R.ToString() + " G:" + propertyEntityObject.Color.G.ToString() + " B:"
-                    + propertyEntityObject.Color.B.ToString();
+                //Color.Text = "R:" + propertyEntityObject.Color.R.ToString() + " G:" + propertyEntityObject.Color.G.ToString() + " B:"
+                //    + propertyEntityObject.Color.B.ToString();
+
+                if (propertyEntityObject.Color.R == 255)
+                {
+                    ColorComboBox.SelectedItem = typeof(Colors).GetProperty("Red");
+                    propertyEntity.path.Fill = Brushes.Red;
+                }
+                else if (propertyEntityObject.Color.G == 255)
+                {
+                    ColorComboBox.SelectedItem = typeof(Colors).GetProperty("Green");
+                    propertyEntity.path.Fill = Brushes.Green;
+                }
+                else if (propertyEntityObject.Color.B == 255)
+                {
+                    ColorComboBox.SelectedItem = typeof(Colors).GetProperty("Blue");
+                    propertyEntity.path.Fill = Brushes.Blue;
+                }
+
 
                 Color_type.Text = propertyEntityObject.Color.ToString();
 
@@ -312,6 +398,21 @@ namespace SEMES_Pixel_Designer
 
                 VertexesIndexListView.ItemsSource = indexdxfCoords;
                 VertexesListView.ItemsSource = propertyEntity.dxfCoords;
+
+                /*
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = "Name";
+                textBlock.Background = Brushes.White;
+                textBlock.Margin = new Thickness(1);
+
+                TextBlock textBlock2  = new TextBlock();
+                textBlock2.Text = "Color";
+                textBlock2.Background = Brushes.White;
+                //PropertyStackPanel.Children.Add();
+                //textBlock.Text = "Color";
+                //PropertyStackPanel.Children.Add(textBlock);
+                //PropertyStackPanel.Children.Add(textBlock2);
+                //entityDictionary[selectedItem];*/
             }
         }
 
@@ -335,11 +436,15 @@ namespace SEMES_Pixel_Designer
         private void XTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             EditCoordi(sender, true);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+            Keyboard.ClearFocus();
         }
 
         private void YTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             EditCoordi(sender, false);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+            Keyboard.ClearFocus();
         }
 
         private void XTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -348,6 +453,8 @@ namespace SEMES_Pixel_Designer
             {
                 EditCoordi(sender, true);
                 e.Handled = true;
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
             }
         }
 
@@ -357,6 +464,8 @@ namespace SEMES_Pixel_Designer
             {
                 EditCoordi(sender, false);
                 e.Handled = true;
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
             }
         }
 
@@ -394,14 +503,42 @@ namespace SEMES_Pixel_Designer
 
         private void EditCoordiX(int index, double coordiReal)
         {
-            propertyEntity.dxfCoords[index] = new System.Windows.Point(coordiReal, propertyEntity.dxfCoords[index].Y);
-            propertyEntity.ReDraw();
+            double from = propertyEntity.dxfCoords[index].X, to = coordiReal;
+            if (from == to) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    propertyEntity.UpdatePoint(from, propertyEntity.dxfCoords[index].Y, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () => {
+                    propertyEntity.UpdatePoint(to, propertyEntity.dxfCoords[index].Y, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () =>
+                {
+                }
+            ));
         }
 
         private void EditCoordiY(int index, double coordiReal)
         {
-            propertyEntity.dxfCoords[index] = new System.Windows.Point(propertyEntity.dxfCoords[index].X, coordiReal);
-            propertyEntity.ReDraw();
+            double from = propertyEntity.dxfCoords[index].Y, to = coordiReal;
+            if (from == to) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, from, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () => {
+                    propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, to, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () =>
+                {
+                }
+            ));
         }
 
         private static T FindParent<T>(DependencyObject child) where T : DependencyObject
@@ -416,7 +553,18 @@ namespace SEMES_Pixel_Designer
             T parent = parentObject as T;
             return parent ?? FindParent<T>(parentObject);
         }
+        
+        private void CellTextBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TextBox textBox = (TextBox)sender;
 
+                textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+
+                e.Handled = true;
+            }
+        }
         private string PolygonTypeToString(PolygonEntity entity)
         {
             if (entity.GetPolygonType() == PolygonEntityType.DOT)
@@ -433,6 +581,11 @@ namespace SEMES_Pixel_Designer
             }
             else
                 return null;
+        }
+
+        private void Color_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
