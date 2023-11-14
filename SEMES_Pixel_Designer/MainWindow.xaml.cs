@@ -515,13 +515,20 @@ namespace SEMES_Pixel_Designer
         // 프로그램 종료
         public void Exit(object sender)
         {
-            if (!ConfirmSave("프로그램 종료")) this.Close();
+            if (!ConfirmSave("프로그램 종료")){
+                Mediator.NotifyColleagues("Minimap.Close", null);
+                this.Close();
+            }
         }
 
 
         public void ExitHandler(object sender, CancelEventArgs e)
         {
-            e.Cancel = !ConfirmSave("프로그램 종료");
+            if(!(e.Cancel = !ConfirmSave("프로그램 종료")))
+            {
+                Mediator.NotifyColleagues("Minimap.Close", null);
+            }
+            
         }
 
         #endregion

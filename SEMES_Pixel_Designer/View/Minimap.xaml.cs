@@ -1,6 +1,7 @@
 ﻿using SEMES_Pixel_Designer.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,12 @@ namespace SEMES_Pixel_Designer.View
         {
             InitializeComponent();
             SizeChanged += new SizeChangedEventHandler(Coordinates.MinimapRef.ResizeWindow);
+            Closing += ExitHandler;
+            Mediator.Register("Minimap.Close",(obj)=> { Close(); });
+        }
+        public void ExitHandler(object sender, CancelEventArgs e)
+        {
+            Coordinates.MinimapRef = null;
         }
     }
 
