@@ -972,6 +972,8 @@ namespace SEMES_Pixel_Designer.Utils
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        
+
     }
 
 }
