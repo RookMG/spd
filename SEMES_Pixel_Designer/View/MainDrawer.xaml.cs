@@ -157,12 +157,12 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 크기 값으로 숫자를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(MakeCell_Test.col_info.Text, out rows))
+            if (!int.TryParse(MakeCell_Test.col_info.Text, out cols))
             {
                 MessageBox.Show("패턴 가로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(MakeCell_Test.row_info.Text, out cols))
+            if (!int.TryParse(MakeCell_Test.row_info.Text, out rows))
             {
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
@@ -337,8 +337,8 @@ namespace SEMES_Pixel_Designer
             //Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
             //Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
             Coordinates.AdjustRatio();
-            if (Coordinates.MinimapRef != null)
-                Coordinates.MinimapRef.AdjustRatio();
+            if(Coordinates.MinimapRef!= null)
+            Coordinates.MinimapRef.AdjustRatio();
             UpdateCanvas();
         }
 
