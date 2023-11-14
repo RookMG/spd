@@ -47,7 +47,14 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
 
         }
-
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
+            }
+        }
 
         public void ShowCells(object obj)
         {
@@ -78,6 +85,7 @@ namespace SEMES_Pixel_Designer
                     {
                         UndoLimit = 0
                     };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternLeft")
                     {
                         Source = c,
@@ -103,6 +111,7 @@ namespace SEMES_Pixel_Designer
                     {
                         UndoLimit = 0
                     };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternBottom")
                     {
                         Source = c,
@@ -128,6 +137,7 @@ namespace SEMES_Pixel_Designer
                     {
                         UndoLimit = 0
                     };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternWidth")
                     {
                         Source = c,
@@ -153,6 +163,7 @@ namespace SEMES_Pixel_Designer
                     {
                         UndoLimit = 0
                     };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternHeight")
                     {
                         Source = c,
@@ -178,6 +189,7 @@ namespace SEMES_Pixel_Designer
                     {
                         UndoLimit = 0
                     };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternCols")
                     {
                         Source = c,
@@ -203,6 +215,7 @@ namespace SEMES_Pixel_Designer
                     {
                         UndoLimit = 0
                     };
+                    content.KeyDown += TextBox_KeyDown;
                     binding = new Binding("PatternRows")
                     {
                         Source = c,
@@ -353,11 +366,15 @@ namespace SEMES_Pixel_Designer
         private void XTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             EditCoordi(sender, true);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+            Keyboard.ClearFocus();
         }
 
         private void YTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             EditCoordi(sender, false);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+            Keyboard.ClearFocus();
         }
 
         private void XTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -366,6 +383,8 @@ namespace SEMES_Pixel_Designer
             {
                 EditCoordi(sender, true);
                 e.Handled = true;
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
             }
         }
 
@@ -375,6 +394,8 @@ namespace SEMES_Pixel_Designer
             {
                 EditCoordi(sender, false);
                 e.Handled = true;
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
             }
         }
 
@@ -412,14 +433,42 @@ namespace SEMES_Pixel_Designer
 
         private void EditCoordiX(int index, double coordiReal)
         {
-            propertyEntity.dxfCoords[index] = new System.Windows.Point(coordiReal, propertyEntity.dxfCoords[index].Y);
-            propertyEntity.ReDraw();
+            double from = propertyEntity.dxfCoords[index].X, to = coordiReal;
+            if (from == to) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    propertyEntity.UpdatePoint(from, propertyEntity.dxfCoords[index].Y, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () => {
+                    propertyEntity.UpdatePoint(to, propertyEntity.dxfCoords[index].Y, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () =>
+                {
+                }
+            ));
         }
 
         private void EditCoordiY(int index, double coordiReal)
         {
-            propertyEntity.dxfCoords[index] = new System.Windows.Point(propertyEntity.dxfCoords[index].X, coordiReal);
-            propertyEntity.ReDraw();
+            double from = propertyEntity.dxfCoords[index].Y, to = coordiReal;
+            if (from == to) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, from, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () => {
+                    propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, to, index, true);
+                    propertyEntity.ReDraw();
+                },
+                () =>
+                {
+                }
+            ));
         }
 
         private static T FindParent<T>(DependencyObject child) where T : DependencyObject
