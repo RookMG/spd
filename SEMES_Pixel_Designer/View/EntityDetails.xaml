@@ -26,17 +26,15 @@
         <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
         <Grid Grid.Row="4">
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
+                <RowDefinition Height="20" />
                 <RowDefinition Height="5*" />
             </Grid.RowDefinitions>
-            <ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="SelectEntityProperties">
-            </ComboBox>
+            <ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="SelectEntityProperties" />
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 
                 <StackPanel Orientation="Vertical">
-                    <Expander Header="Common">
 
-                        <Grid>
+                    <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="Auto" />
@@ -46,14 +44,14 @@
 
                             <Border Grid.Column="0">
                                 <StackPanel Orientation="Vertical" x:Name="CommonStackPanel">
-                                    <TextBlock Text="Color"/>
-                                    <TextBlock Text="Color_type"/>
-                                    <TextBlock Text="Handle"/>
-                                    <TextBlock Text="Layer"/>
-                                    <TextBlock Text="Line_type"/>
-                                    <TextBlock Text="Line_weight"/>
-                                    <TextBlock Text="Line_Type_scale"/>
-                                    <TextBlock Text="Name"/>
+                                    <TextBlock Text="Color" Height="20"/>
+                                    <TextBlock Text="Color_type" Height="20"/>
+                                    <TextBlock Text="Handle" Height="20"/>
+                                    <TextBlock Text="Layer" Height="20"/>
+                                    <TextBlock Text="Line_type" Height="20"/>
+                                    <TextBlock Text="Line_weight" Height="20"/>
+                                    <TextBlock Text="Line_Type_scale" Height="20"/>
+                                    <TextBlock Text="Name" Height="20"/>
                                 </StackPanel>
                             </Border>
 
@@ -62,75 +60,55 @@
                             <Border Grid.Column="2">
                                 <StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel">
                                     <!--<TextBlock x:Name="Color"/>-->
-                                    <ComboBox x:Name="ColorComboBox" SelectionChanged="ColorChange">
+                                    <ComboBox x:Name="ColorComboBox" SelectionChanged="ColorChange" Height="20">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <Rectangle Fill="{Binding Name}" Width="16" Height="16" Margin="0,2,5,2"/>
+                                                    <Rectangle Fill="{Binding Name}" Width="12" Height="12" />
                                                     <TextBlock Text="{Binding Name}"/>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
-                                    <TextBlock x:Name="Color_type"/>
-                                    <TextBlock x:Name="Handle"/>
-                                    <TextBlock x:Name="Layer"/>
-                                    <TextBlock x:Name="Line_type"/>
-                                    <TextBlock x:Name="Line_weight"/>
-                                    <TextBlock x:Name="Line_Type_scale"/>
-                                    <TextBlock x:Name="Name"/>
+                                    <TextBlock x:Name="Color_type" Height="20"/>
+                                    <TextBlock x:Name="Handle" Height="20"/>
+                                    <TextBlock x:Name="Layer" Height="20"/>
+                                    <TextBlock x:Name="Line_type" Height="20"/>
+                                    <TextBlock x:Name="Line_weight" Height="20"/>
+                                    <TextBlock x:Name="Line_Type_scale" Height="20"/>
+                                    <TextBlock x:Name="Name" Height="20"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
-                    </Expander>
-                    <Expander Header="Geometry">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="2*" />
-                            </Grid.ColumnDefinitions>
-
-
-                            <Border Grid.Column="0">
-                                <ListView x:Name="VertexesIndexListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                    <ListView.View>
-                                        <GridView>
-                                            <GridViewColumn Header="Vertexes" DisplayMemberBinding="{Binding}" />
-                                        </GridView>
-                                    </ListView.View>
-                                </ListView>
-                            </Border>
-
-                            <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
-
-                            <Border Grid.Column="2">
-
-                                <ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                    <ListView.View>
-                                        <GridView>
-                                            <GridViewColumn Header="X">
-                                                <GridViewColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{Binding X}" UndoLimit ="0" LostFocus="XTextBox_LostFocus" PreviewKeyDown="XTextBox_PreviewKeyDown"/>
-                                                    </DataTemplate>
-                                                </GridViewColumn.CellTemplate>
-                                            </GridViewColumn>
-                                            <GridViewColumn Header="Y">
-                                                <GridViewColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{Binding Y}" UndoLimit ="0" LostFocus="YTextBox_LostFocus" PreviewKeyDown="YTextBox_PreviewKeyDown"/>
-                                                    </DataTemplate>
-                                                </GridViewColumn.CellTemplate>
-                                            </GridViewColumn>
-                                        </GridView>
-                                    </ListView.View>
-                                </ListView>
-                                <!--<StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
-								</StackPanel>-->
-                            </Border>
-                        </Grid>
-                    </Expander>
+                    <Grid>
+                        <ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Index" Width="40">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding idx}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="X" Width="70">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding X}" UndoLimit ="0" LostFocus="XTextBox_LostFocus" PreviewKeyDown="XTextBox_PreviewKeyDown"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Y" Width="70">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding Y}" UndoLimit ="0" LostFocus="YTextBox_LostFocus" PreviewKeyDown="YTextBox_PreviewKeyDown"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
 

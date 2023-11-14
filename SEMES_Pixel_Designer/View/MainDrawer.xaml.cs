@@ -301,14 +301,14 @@ namespace SEMES_Pixel_Designer
             SetZIndex(Coordinates.gridInfoText, -1);
             UpdateLayout();
 
-            Coordinates.UpdateRange(MainWindow.doc.Entities);
-            Coordinates.DrawGrid();
             foreach (var layer in MainWindow.doc.Layers)
             {
                 string[] args = layer.Description.Split(',');
                 if (args.Length != 6) continue;
                 cells.Add(new Cell(layer.Name, double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5])));
             }
+            Coordinates.UpdateRange(MainWindow.doc.Entities);
+            Coordinates.DrawGrid();
             DrawingEntities.Clear();
 
             foreach (var line in MainWindow.doc.Entities.Lines)

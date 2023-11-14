@@ -33,7 +33,18 @@ namespace SEMES_Pixel_Designer
 
         private EntityObject propertyEntityObject = null;
         private PolygonEntity propertyEntity = null;
-
+        public class CoordInfo
+        {
+            public int idx { get; set; }
+            public double X { get; set; }
+            public double Y { get; set; }
+            public CoordInfo(int idx, System.Windows.Point p)
+            {
+                this.idx = idx;
+                X = p.X;
+                Y = p.Y;
+            }
+        }
         public EntityDetails()
         {
             InitializeComponent();
@@ -390,14 +401,15 @@ namespace SEMES_Pixel_Designer
                 Name.Text = propertyEntityObject.CodeName;
 
                 
-                List<string> indexdxfCoords = new List<string>();
+                List<CoordInfo> dxfCoordsInfo = new List<CoordInfo>();
                 for (int i = 0; i < propertyEntity.dxfCoords.Count; i++)
                 {
-                    indexdxfCoords.Add(i.ToString());
+                    dxfCoordsInfo.Add(new CoordInfo(i, propertyEntity.dxfCoords[i]));
                 }
 
-                VertexesIndexListView.ItemsSource = indexdxfCoords;
-                VertexesListView.ItemsSource = propertyEntity.dxfCoords;
+                //VertexesIndexListView.ItemsSource = indexdxfCoords;
+                // VertexesListView.ItemsSource = propertyEntity.dxfCoords;
+                VertexesListView.ItemsSource = dxfCoordsInfo;
 
                 /*
                 TextBlock textBlock = new TextBlock();
@@ -472,31 +484,26 @@ namespace SEMES_Pixel_Designer
 
         private void EditCoordi(object sender, bool isX)
         {
-            if (sender is TextBox textBox && textBox.DataContext is System.Windows.Point indexCoordi)
+            if (sender is TextBox textBox && textBox.DataContext is CoordInfo coord)
             {
-
 
                 ListViewItem listViewItem = FindParent<ListViewItem>(textBox);
 
                 ListView listView = FindParent<ListView>(listViewItem);
-                int index = listView.ItemContainerGenerator.IndexFromContainer(listViewItem);
-
-                if (listViewItem != null)
+                string coordiString = textBox.Text;
+                double coordiReal;
+                if (double.TryParse(coordiString, out coordiReal))
                 {
-                    string coordiString = textBox.Text;
-                    double coordiReal;
-                    if (double.TryParse(coordiString, out coordiReal))
-                    {
-                        if(isX == true)
-                            EditCoordiX(index, coordiReal);
-                        else
-                            EditCoordiY(index, coordiReal);
-                    }
+                    if (isX == true)
+                        EditCoordiX(coord.idx, coordiReal);
                     else
-                    {
-                        MessageBox.Show("WRONG VALUE!!");
-                    }
+                        EditCoordiY(coord.idx, coordiReal);
                 }
+                else
+                {
+                    MessageBox.Show("WRONG VALUE!!");
+                }
+
             }
         }
 
