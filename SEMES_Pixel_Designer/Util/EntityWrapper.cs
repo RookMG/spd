@@ -696,7 +696,6 @@ namespace SEMES_Pixel_Designer.Utils
             // path.Fill = Coordinates.fillColorBrush;
             path.StrokeThickness = 1;
             selectArea.StrokeThickness = 13;
-
             Coordinates.BindCanvasAction(path);
             Coordinates.BindCanvasAction(selectArea);
             Coordinates.SetZIndexAction(path, 1);
@@ -954,11 +953,6 @@ namespace SEMES_Pixel_Designer.Utils
 
             if (status)
             {
-                double w = Coordinates.maxX - Coordinates.minX, h = Coordinates.maxY - Coordinates.minY;
-                Coordinates.minX = (minX + maxX - w) / 2;
-                Coordinates.maxX = (minX + maxX + w) / 2;
-                Coordinates.minY = (minY + maxY - h) / 2;
-                Coordinates.maxY = (minY + maxY + h) / 2;
                 selectedEntities.Add(this);
                 foreach (var p in points)
                 {
