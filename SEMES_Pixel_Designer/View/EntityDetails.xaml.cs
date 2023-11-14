@@ -77,7 +77,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Left : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
                     binding = new Binding("PatternLeft")
                     {
                         Source = c,
@@ -100,7 +103,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Bottom : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
                     binding = new Binding("PatternBottom")
                     {
                         Source = c,
@@ -123,7 +129,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Width : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
                     binding = new Binding("PatternWidth")
                     {
                         Source = c,
@@ -146,7 +155,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Height : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
                     binding = new Binding("PatternHeight")
                     {
                         Source = c,
@@ -169,7 +181,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Repetition in X : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
                     binding = new Binding("PatternCols")
                     {
                         Source = c,
@@ -192,7 +207,10 @@ namespace SEMES_Pixel_Designer
                     {
                         Text = "Repetition in Y : "
                     };
-                    content = new TextBox();
+                    content = new TextBox
+                    {
+                        UndoLimit = 0
+                    };
                     binding = new Binding("PatternRows")
                     {
                         Source = c,
