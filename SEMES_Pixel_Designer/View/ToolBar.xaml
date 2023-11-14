@@ -45,6 +45,9 @@
             <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/FitToScreen_16x.png" />
             </Button>
+            <Button CommandParameter="MainWindow.OpenMinimap" Style="{StaticResource ImgBtnStyle}">
+                <Image Source="../Asset/icon/OpenMinimap.png" />
+            </Button>
             <Separator/>
             <Button CommandParameter="MainWindow.DrawDot" Style="{StaticResource ImgBtnStyle}">
                 <Image Source="../Asset/icon/Dot_16x.png" />
