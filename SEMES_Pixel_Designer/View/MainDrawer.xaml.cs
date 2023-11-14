@@ -57,6 +57,7 @@ namespace SEMES_Pixel_Designer
         public int zoomCount = 0;
 
         SEMES_Pixel_Designer.View.MakeCell MakeCell_Test;
+        SEMES_Pixel_Designer.View.GlassSetting SetGlass_Test;
 
         public MainCanvas()
         {
@@ -97,6 +98,8 @@ namespace SEMES_Pixel_Designer
             });
             Utils.Mediator.Register("MainDrawer.MakeNewcell", MakeNewcell_Input);
             Utils.Mediator.Register("MainDrawer.MakeNewcell_click", MakeNewcell_Clicked);
+            Utils.Mediator.Register("MainDrawer.SetGlass", SetGlass_Input);
+            Utils.Mediator.Register("MainDrawer.SetGlass_click", SetGlass_Clicked);
 
             MouseMove += Info_MouseMove;
 
@@ -192,6 +195,44 @@ namespace SEMES_Pixel_Designer
 
             MakeCell_Test.Close();
         }
+
+        public void SetGlass_Input(object obj)
+        {
+            SetGlass_Test = new SEMES_Pixel_Designer.View.GlassSetting();
+            SetGlass_Test.ShowDialog();
+        }
+
+        public void SetGlass_Clicked(object obj)
+        {
+            string glass_size = SetGlass_Test.glass_size.Text;
+            double width, height;
+
+            if (glass_size=="사용자 지정")
+            {
+                if (!double.TryParse(SetGlass_Test.glass_width.Text, out width))
+                {
+                    MessageBox.Show("글라스 너비를 숫자로 입력해주세요");
+                    return;
+                }
+                if (!double.TryParse(SetGlass_Test.glass_height.Text, out height))
+                {
+                    MessageBox.Show("글라스 높이를 숫자로 입력해주세요");
+                    return;
+                }
+                // width, height 값을 어떻게 써먹는가..
+            }
+            else
+            {
+                string[] xy = SetGlass_Test.glass_size.Text.Split('x');
+                width = (Double.Parse(xy[0]));
+                height = (Double.Parse(xy[1]));
+                // width, height 값을 어떻게 써먹는가..
+            }
+            
+
+            SetGlass_Test.Close();
+        }
+
         public Cell FindCellByName(string name)
         {
             foreach(Cell c in cells)
