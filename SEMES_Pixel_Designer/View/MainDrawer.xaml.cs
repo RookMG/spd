@@ -84,6 +84,7 @@ namespace SEMES_Pixel_Designer
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
             Utils.Mediator.Register("MainDrawer.FitScreen", FitScreen);
+            Utils.Mediator.Register("MainDrawer.Open_minimap", Open_minimap);
             Utils.Mediator.Register("MainDrawer.DrawLine", DrawLine);
             Utils.Mediator.Register("MainDrawer.DrawRectangle", DrawRectangle);
             Utils.Mediator.Register("MainDrawer.DrawPolygon", DrawPolygon);
@@ -118,6 +119,12 @@ namespace SEMES_Pixel_Designer
             minimap.Show();
             // Test();
 
+        }
+        public void Open_minimap(object obj)
+
+        {
+            Minimap minimap = new Minimap();
+            minimap.Show();
         }
 
         public void MakeNewcell_Input(object obj)
