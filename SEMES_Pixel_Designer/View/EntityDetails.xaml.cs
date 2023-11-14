@@ -283,6 +283,7 @@ namespace SEMES_Pixel_Designer
 
             EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
 
+            ShowEntityProperties(null);
         }
 
         private void ColorChange(object obj, SelectionChangedEventArgs e)
@@ -366,6 +367,11 @@ namespace SEMES_Pixel_Designer
 
             //    Name.Text = propertyEntityObject.CodeName;
 
+            if(propertyEntity == null)
+            {
+                VertexesListView.ItemsSource = null;
+                return;
+            }
 
             List<CoordInfo> dxfCoordsInfo = new List<CoordInfo>();
             for (int i = 0; i < propertyEntity.dxfCoords.Count; i++)
@@ -404,8 +410,8 @@ namespace SEMES_Pixel_Designer
 
         private void SelectEntityProperties(object sender, SelectionChangedEventArgs e)
         {
-            if (EntityDetailComboBox.SelectedItem == null)
-                return;
+            //if (EntityDetailComboBox.SelectedItem == null)
+            //    return;
             CommonValueStackPanel.DataContext = propertyEntity = (PolygonEntity)(sender as ComboBox).SelectedItem;
 
 
