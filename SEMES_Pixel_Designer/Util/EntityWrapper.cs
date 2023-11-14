@@ -20,6 +20,35 @@ namespace SEMES_Pixel_Designer.Utils
         public double patternLeft, patternBottom, patternWidth, patternHeight;
         public int patternRows, patternCols;
         public string name;
+        public List<PolygonEntity> children;
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Cell(string name, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            this.name = name;
+            this.patternLeft = patternLeft;
+            this.patternBottom = patternBottom;
+            this.patternWidth = patternWidth;
+            this.patternHeight = patternHeight;
+            this.patternRows = patternRows;
+            this.patternCols = patternCols;
+            children = new List<PolygonEntity>();
+        }
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public List<PolygonEntity> Children
+        {
+            get { return children;  }
+            set { }
+        }
+
 
         public double PatternLeft
         {
@@ -215,19 +244,6 @@ namespace SEMES_Pixel_Designer.Utils
         }
 
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Cell(string name, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
-        {
-            this.name = name;
-            this.patternLeft = patternLeft;
-            this.patternBottom = patternBottom;
-            this.patternWidth = patternWidth;
-            this.patternHeight = patternHeight;
-            this.patternRows = patternRows;
-            this.patternCols = patternCols;
-        }
 
         public double GetPatternRight()
         {
@@ -646,6 +662,64 @@ namespace SEMES_Pixel_Designer.Utils
             }
         }
 
+        public string Name
+        {
+            get
+            {
+                return string.Format("[{0}]{1}_{2}", cell.name, entityType, entityObject.Handle);
+            }
+            set { }
+        }
+        public string Color_type
+        {
+            get
+            {
+                return entityObject.Color.ToString();
+            }
+            set { }
+        }
+        public string Handle
+        {
+            get
+            {
+
+                return entityObject.Handle;
+            }
+            set { }
+        }
+        public string Layer
+        {
+            get
+            {
+                return entityObject.Layer.Name;
+            }
+            set { }
+        }
+        public string Line_type
+        {
+            get
+            {
+                return entityObject.Linetype.Name;
+            }
+            set { }
+        }
+        public string Line_weight
+        {
+            get
+            {
+
+                return entityObject.Lineweight.ToString();
+            }
+            set { }
+        }
+        public string Line_Type_scale
+        {
+            get
+            {
+                return entityObject.LinetypeScale.ToString();
+            }
+            set { }
+        }
         private List<Action<double, double>> setDxfCoordAction;
 
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
@@ -701,7 +775,7 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.SetZIndexAction(path, 1);
             Coordinates.SetZIndexAction(selectArea, 3);
             selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
-
+            cell.children.Add(this);
         }
 
         // Line 생성자
@@ -900,6 +974,7 @@ namespace SEMES_Pixel_Designer.Utils
 
             MainWindow.doc.Entities.Remove(entityObject);
             deleted = true;
+            cell.children.Remove(this);
         }
         public void Restore()
         {
@@ -914,6 +989,7 @@ namespace SEMES_Pixel_Designer.Utils
             MainWindow.doc.Entities.Add(entityObject);
             deleted = false;
             ReDraw();
+            cell.children.Add(this);
         }
         public void Remove()
         {
