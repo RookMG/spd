@@ -274,7 +274,6 @@ namespace SEMES_Pixel_Designer
                     Mode = BindingMode.TwoWay
                 };
 
-
                 checkBox.SetBinding(CheckBox.IsCheckedProperty, binding);
                 entities.Items.Add(checkBox);
             }
