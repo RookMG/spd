@@ -281,14 +281,14 @@ namespace SEMES_Pixel_Designer.Utils
         public static readonly double 
             //MINIMUM_VISIBLE_SIZE = 5, 
             MIN_GRID_SIZE = 15, 
-            MAX_PATTERN_VIEW = 6,
+            MAX_PATTERN_VIEW = 25,
              CANVAS_MARGIN = 200,
             DEFAULT_PATTERN_SIZE = 372;
 
         public static void UpdateRange(DrawingEntities entities)
         {
-            minX = glassLeft;
-            minY = glassBottom;
+            minX = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternLeft : glassLeft;
+            minY = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternBottom : glassBottom;
             maxX = minX + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
             maxY = minY + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
             //gridSpacing = 0.5;
@@ -954,6 +954,11 @@ namespace SEMES_Pixel_Designer.Utils
 
             if (status)
             {
+                double w = Coordinates.maxX - Coordinates.minX, h = Coordinates.maxY - Coordinates.minY;
+                Coordinates.minX = (minX + maxX - w) / 2;
+                Coordinates.maxX = (minX + maxX + w) / 2;
+                Coordinates.minY = (minY + maxY - h) / 2;
+                Coordinates.maxY = (minY + maxY + h) / 2;
                 selectedEntities.Add(this);
                 foreach (var p in points)
                 {
@@ -968,7 +973,9 @@ namespace SEMES_Pixel_Designer.Utils
                 foreach (var p in points) Coordinates.UnbindCanvasAction(p.path);
             }
             selected = status;
+            ReDraw();
             ReColor();
+            Coordinates.CanvasRef.UpdateCanvas();
             OnPropertyChanged("Selected");
             Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
         }
