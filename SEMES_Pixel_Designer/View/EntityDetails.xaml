@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SEMES_Pixel_Designer"
-     mc:Ignorable="d" 
+      mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="200"
       Title="EntityDetails">
 
@@ -15,30 +15,49 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <TreeView Grid.Row="0" x:Name="CellTreeView" />
+        <ListView Grid.Row="0" x:Name="CellListView" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Expander Header="{Binding Name}">
+                        <TreeView ItemsSource="{Binding Children}" >
+                            <TreeView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Width="120">
+                                        <CheckBox IsChecked="{Binding Selected}"></CheckBox>
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                    </Expander>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <TreeView Grid.Row="2" x:Name="EntityTreeView" />
-        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20" />
                 <RowDefinition Height="5*" />
             </Grid.RowDefinitions>
-            <ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="SelectEntityProperties" />
+            <ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="SelectEntityProperties" >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 
                 <StackPanel Orientation="Vertical">
 
                     <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
 
 
@@ -50,16 +69,14 @@
                                     <TextBlock Text="Layer" Height="20"/>
                                     <TextBlock Text="Line_type" Height="20"/>
                                     <TextBlock Text="Line_weight" Height="20"/>
-                                    <TextBlock Text="Line_Type_scale" Height="20"/>
-                                    <TextBlock Text="Name" Height="20"/>
-                                </StackPanel>
+                                <TextBlock Text="Line_Type_scale" Height="20"/>
+                            </StackPanel>
                             </Border>
 
                             <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
 
                             <Border Grid.Column="2">
-                                <StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel">
-                                    <!--<TextBlock x:Name="Color"/>-->
+                                <StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel" >
                                     <ComboBox x:Name="ColorComboBox" SelectionChanged="ColorChange" Height="20">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
@@ -70,13 +87,12 @@
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
-                                    <TextBlock x:Name="Color_type" Height="20"/>
-                                    <TextBlock x:Name="Handle" Height="20"/>
-                                    <TextBlock x:Name="Layer" Height="20"/>
-                                    <TextBlock x:Name="Line_type" Height="20"/>
-                                    <TextBlock x:Name="Line_weight" Height="20"/>
-                                    <TextBlock x:Name="Line_Type_scale" Height="20"/>
-                                    <TextBlock x:Name="Name" Height="20"/>
+                                    <TextBlock Text="{Binding Color_type}" Height="20"/>
+                                    <TextBlock Text="{Binding Handle}" Height="20"/>
+                                    <TextBlock Text="{Binding Layer}" Height="20"/>
+                                    <TextBlock Text="{Binding Line_type}" Height="20"/>
+                                    <TextBlock Text="{Binding Line_weight}" Height="20"/>
+                                    <TextBlock Text="{Binding Line_Type_scale}" Height="20"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
