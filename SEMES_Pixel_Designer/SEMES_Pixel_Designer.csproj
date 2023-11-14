@@ -270,5 +270,10 @@
   <ItemGroup>
     <Resource Include="Asset\icon\SPD_icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\AddClause_16x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
