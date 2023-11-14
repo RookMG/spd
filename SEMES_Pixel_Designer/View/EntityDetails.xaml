@@ -102,14 +102,14 @@
                                             <GridViewColumn Header="X">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <TextBox Text="{Binding X}" LostFocus="XTextBox_LostFocus" PreviewKeyDown="XTextBox_PreviewKeyDown"/>
+                                                        <TextBox Text="{Binding X}" UndoLimit ="0" LostFocus="XTextBox_LostFocus" PreviewKeyDown="XTextBox_PreviewKeyDown"/>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
                                             <GridViewColumn Header="Y">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <TextBox Text="{Binding Y}" LostFocus="YTextBox_LostFocus" PreviewKeyDown="YTextBox_PreviewKeyDown"/>
+                                                        <TextBox Text="{Binding Y}" UndoLimit ="0" LostFocus="YTextBox_LostFocus" PreviewKeyDown="YTextBox_PreviewKeyDown"/>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
