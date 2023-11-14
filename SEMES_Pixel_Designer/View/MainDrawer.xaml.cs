@@ -554,7 +554,6 @@ namespace SEMES_Pixel_Designer
                 }
             ));
 
-            //Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
         }
 
         private void DrawLine(object obj)
