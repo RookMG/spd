@@ -96,6 +96,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ZoomOut", ZoomOut);
             Utils.Mediator.Register("MainWindow.MoveScreen", MoveScreen);
             Utils.Mediator.Register("MainWindow.FitScreen", FitScreen);
+            Utils.Mediator.Register("MainWindow.OpenMinimap", OpenMinimap);
             Utils.Mediator.Register("MainWindow.ColorScreen", ColorScreen);
             Utils.Mediator.Register("MainWindow.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainWindow.ToggleGrid", ToggleGrid);
@@ -385,6 +386,13 @@ namespace SEMES_Pixel_Designer
 
             //TODO : 구현
             Utils.Mediator.NotifyColleagues("MainDrawer.FitScreen", null);
+
+        }
+        public void OpenMinimap(object obj)
+        {
+
+            //TODO : 구현
+            Utils.Mediator.NotifyColleagues("MainDrawer.OpenMinimap", null);
 
         }
 
