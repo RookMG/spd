@@ -351,6 +351,7 @@ namespace SEMES_Pixel_Designer
         public void DrawCanvas(object obj)
         {
             Children.Clear();
+            cells.Clear();
             Children.Add(Coordinates.gridInfoText);
             Children.Add(Coordinates.borderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
@@ -764,36 +765,27 @@ namespace SEMES_Pixel_Designer
                 ClearSelected();
             }
             // TODO: 영역 안의 폴리곤 선택
+            StreamGeometry selectedAreaGeometry = new StreamGeometry();
+            using (StreamGeometryContext ctx = selectedAreaGeometry.Open())
+            {
+                ctx.BeginFigure(drawingPolygon.Points[0], true /* is filled */, true /* is closed */);
+                ctx.LineTo(drawingPolygon.Points[1], true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(drawingPolygon.Points[2], true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(drawingPolygon.Points[3], true /* is stroked */, false /* is smooth join */);
+            }
 
-            List<double> x = new List<double>(), y = new List<double>();
+                //List<double> x = new List<double>(), y = new List<double>();
             foreach (PolygonEntity entity in DrawingEntities)
             {
+                if (selectedAreaGeometry.FillContainsWithDetail(entity.geometry, 1, ToleranceType.Relative) == IntersectionDetail.Empty) continue;
 
-                x.Clear();
-                y.Clear();
-                foreach(var point in entity.dxfCoords)
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
-                    x.Add(Coordinates.ToScreenX(point.X));
-                    y.Add(Coordinates.ToScreenY(point.Y));
+                    entity.ToggleSelected(!entity.selected);
                 }
-                double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
-                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY)
+                else
                 {
-                    if(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                    {
-                        if (entity.selected)
-                        {
-                            entity.ToggleSelected(false);
-                        }
-                        else
-                        {
-                            entity.ToggleSelected(true);
-                        }
-                    }
-                    else
-                    {
-                        entity.ToggleSelected(true);
-                    }
+                    entity.ToggleSelected(true);
                 }
             }
             }

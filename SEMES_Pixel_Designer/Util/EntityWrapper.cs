@@ -636,7 +636,7 @@ namespace SEMES_Pixel_Designer.Utils
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Path path, selectArea;
-        StreamGeometry geometry;
+        public StreamGeometry geometry;
         //public Polygon selectArea;
 
         public Cell cell;
