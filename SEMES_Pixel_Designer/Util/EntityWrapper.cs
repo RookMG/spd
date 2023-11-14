@@ -670,13 +670,19 @@ namespace SEMES_Pixel_Designer.Utils
             }
             set { }
         }
-        public string Color_type
+        public AciColor Color_type
         {
             get
             {
-                return entityObject.Color.ToString();
+                return entityObject.Color;
             }
-            set { }
+            set 
+            {
+                if(entityObject.Color != value)
+                {
+                    entityObject.Color = value;
+                }
+            }
         }
         public string Handle
         {

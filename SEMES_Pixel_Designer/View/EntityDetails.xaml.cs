@@ -287,7 +287,7 @@ namespace SEMES_Pixel_Designer
 
         private void ColorChange(object obj, SelectionChangedEventArgs e)
         {
-            if (propertyEntityObject != null && propertyEntity != null && ColorComboBox.SelectedItem != null)
+            if (propertyEntity != null && ColorComboBox.SelectedItem != null)
             {
                 if (ColorComboBox.SelectedItem is PropertyInfo selectedColor)
                 {
@@ -296,19 +296,19 @@ namespace SEMES_Pixel_Designer
                     if(selectedColorName == "Red")
                     {
                         AciColor myColor = new AciColor(255, 0, 0);
-                        propertyEntityObject.Color = myColor;
+                        propertyEntity.Color_type = myColor;
                         propertyEntity.path.Fill = Brushes.Red;
                     }
                     else if (selectedColorName == "Green")
                     {
                         AciColor myColor = new AciColor(0, 255, 0);
-                        propertyEntityObject.Color = myColor;
+                        propertyEntity.Color_type = myColor;
                         propertyEntity.path.Fill = Brushes.Green;
                     }
                     else if (selectedColorName == "Blue")
                     {
                         AciColor myColor = new AciColor(0, 0, 255);
-                        propertyEntityObject.Color = myColor;
+                        propertyEntity.Color_type = myColor;
                         propertyEntity.path.Fill = Brushes.Blue;
                     }
                 }
