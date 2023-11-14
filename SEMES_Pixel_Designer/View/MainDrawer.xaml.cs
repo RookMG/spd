@@ -46,7 +46,7 @@ namespace SEMES_Pixel_Designer
     {
         public bool darkMode = false;
         public List<Cell> cells = new List<Cell>();
-        public Cell selectedCell;
+        //public Cell selectedCell;
         public List<PolygonEntity> DrawingEntities = new List<PolygonEntity>();
         public double[] offset = null;
         public Polygon drawingPolygon = null;
@@ -99,11 +99,31 @@ namespace SEMES_Pixel_Designer
             MouseWheel += Zoom_MouseWheel;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
+            //for (int r = 0; r < 5; r++)
+            //{
+            //    for (int c = 0; c < 4; c++)
+            //    {
+            //        cells.Add(new Cell("cell " + (r * 5 + c), 500000 * c + 160000, 500000 * r + 60000, 372, 372, 1000, 1000));
+            //    }
+            //}
+            //selectedCell = cells[0];
+            //cells.Add(new Cell("cell 0", 0, 0, 372, 372, 1000, 1000));
+            //selectedCell = cells[0];
 
             Minimap minimap = new Minimap();
             minimap.Show();
-            Test();
+            // Test();
 
+        }
+
+        public Cell FindCellByName(string name)
+        {
+            foreach(Cell c in cells)
+            {
+                if (c.name.Equals(name)) return c;
+            }
+            Console.WriteLine("Alert : cannot find cell by name");
+            return cells[0];
         }
 
         public void Test()
@@ -115,11 +135,15 @@ namespace SEMES_Pixel_Designer
                     cells.Add(new Cell("cell "+(r*5+c),500000 * c + 160000, 500000 * r + 60000, 372, 372, 1000, 1000));
                 }
             }
-            selectedCell = cells[0];
             Polyline2D p;
             List<Vector2> points = new List<Vector2>();
             foreach (Cell c in cells) {
-                if (!MainWindow.doc.Layers.Contains(c.name)) MainWindow.doc.Layers.Add(new netDxf.Tables.Layer(c.name));
+                if (!MainWindow.doc.Layers.Contains(c.name))
+                {
+                    netDxf.Tables.Layer layer = new netDxf.Tables.Layer(c.name);
+                    layer.Description = string.Format("{0},{1},{2},{3},{4},{5}",c.patternLeft, c.patternBottom, c.patternWidth, c.patternHeight, c.patternRows, c.patternCols);
+                    MainWindow.doc.Layers.Add(layer);
+                }
                 points.Clear();
                 points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 0));
                 points.Add(new Vector2(c.patternLeft + 0, c.patternBottom + 50));
@@ -213,7 +237,7 @@ namespace SEMES_Pixel_Designer
                 DrawingEntities.Add(new PolygonEntity(c, p));
             }
             Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
-            UpdateCanvas();
+            //UpdateCanvas();
 
         }
 
@@ -256,19 +280,26 @@ namespace SEMES_Pixel_Designer
 
             Coordinates.UpdateRange(MainWindow.doc.Entities);
             Coordinates.DrawGrid();
-
+            foreach (var layer in MainWindow.doc.Layers)
+            {
+                string[] args = layer.Description.Split(',');
+                if (args.Length != 6) continue;
+                cells.Add(new Cell(layer.Name, double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5])));
+            }
             DrawingEntities.Clear();
 
             foreach (var line in MainWindow.doc.Entities.Lines)
             {
-                DrawingEntities.Add(new PolygonEntity(selectedCell, line));
+                DrawingEntities.Add(new PolygonEntity(FindCellByName(line.Layer.Name), line));
             }
 
             foreach (var polyline in MainWindow.doc.Entities.Polylines2D)
             {
-                DrawingEntities.Add(new PolygonEntity(selectedCell, polyline));
+                DrawingEntities.Add(new PolygonEntity(FindCellByName(polyline.Layer.Name), polyline));
             }
+            //Test();
             UpdateCanvas();
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
         }
 
         public void ColorBackground(object obj)
@@ -306,11 +337,11 @@ namespace SEMES_Pixel_Designer
                 MainWindow.doc.Entities.Add(entity);
                 if (data.type == PolygonEntityType.LINE)
                 {
-                    pasted.Add(new PolygonEntity(selectedCell, entity as netDxf.Entities.Line));
+                    pasted.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as netDxf.Entities.Line));
                 }
                 else if (data.type == PolygonEntityType.POLYLINE)
                 {
-                    pasted.Add(new PolygonEntity(selectedCell, entity as Polyline2D));
+                    pasted.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as Polyline2D));
                 }
 
             }
@@ -375,11 +406,11 @@ namespace SEMES_Pixel_Designer
                         MainWindow.doc.Entities.Add(entity);
                         if (data.type == PolygonEntityType.LINE)
                         {
-                            cloned.Add(new PolygonEntity(selectedCell, entity as netDxf.Entities.Line));
+                            cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as netDxf.Entities.Line));
                         }
                         else if (data.type == PolygonEntityType.POLYLINE)
                         {
-                            cloned.Add(new PolygonEntity(selectedCell, entity as Polyline2D));
+                            cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as Polyline2D));
                         }
                     }
                 }
