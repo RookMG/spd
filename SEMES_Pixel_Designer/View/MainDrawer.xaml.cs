@@ -128,16 +128,63 @@ namespace SEMES_Pixel_Designer
 
         public void MakeNewcell_Clicked(object obj)
         {
-            if(MakeCell_Test.left_info.Text != "" && MakeCell_Test.right_info.Text != "" && MakeCell_Test.row_info.Text != "" && MakeCell_Test.col_info.Text != "" && MakeCell_Test.row_rep_info.Text != "" && MakeCell_Test.col_rep_info.Text != "")
-            {
-                cells.Add(new Cell(Double.Parse(MakeCell_Test.left_info.Text), Double.Parse(MakeCell_Test.right_info.Text), Double.Parse(MakeCell_Test.row_info.Text), Double.Parse(MakeCell_Test.col_info.Text), int.Parse(MakeCell_Test.row_rep_info.Text), int.Parse(MakeCell_Test.col_rep_info.Text)));
+            double left, bottom, width, height;
+            int rows, cols;
 
-                MakeCell_Test.Close();
-            }
-            else
+            if (!double.TryParse(MakeCell_Test.left_info.Text, out left))
             {
-                MessageBox.Show("값을 입력해주세요 !");
+                MessageBox.Show("시작 좌표 왼쪽 값으로 숫자를 입력해주세요");
+                return;
             }
+            if (!double.TryParse(MakeCell_Test.bottom_info.Text, out bottom))
+            {
+                MessageBox.Show("시작 좌표 아랫쪽 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(MakeCell_Test.width_info.Text, out width))
+            {
+                MessageBox.Show("패턴 가로 크기 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(MakeCell_Test.height_info.Text, out height))
+            {
+                MessageBox.Show("패턴 세로 크기 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!int.TryParse(MakeCell_Test.col_info.Text, out rows))
+            {
+                MessageBox.Show("패턴 가로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            if (!int.TryParse(MakeCell_Test.row_info.Text, out cols))
+            {
+                MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            Cell c = new Cell(MakeCell_Test.cell_name.Text, left, bottom, width, height, rows, cols);
+            netDxf.Tables.Layer layer = new netDxf.Tables.Layer(c.name);
+            layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", c.patternLeft, c.patternBottom, c.patternWidth, c.patternHeight, c.patternRows, c.patternCols);
+            
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    MainWindow.doc.Layers.Remove(layer);
+                    cells.Remove(c);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () => {
+                    MainWindow.doc.Layers.Add(layer);
+                    cells.Add(c);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () =>
+                {
+                }
+            ));
+
+            MakeCell_Test.Close();
         }
         public Cell FindCellByName(string name)
         {

@@ -7,23 +7,25 @@
         mc:Ignorable="d"
         Title="MakeCell" Height="300" Width="400">
     <Grid>
-        <TextBox x:Name="left_info" HorizontalAlignment="Left" Height="23" Margin="132,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="right_info" HorizontalAlignment="Left" Height="23" Margin="132,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="row_info" HorizontalAlignment="Left" Height="23" Margin="132,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="col_info" HorizontalAlignment="Left" Height="23" Margin="132,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="row_rep_info" HorizontalAlignment="Left" Height="23" Margin="132,183,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="col_rep_info" HorizontalAlignment="Left" Height="23" Margin="132,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="왼쪽" VerticalAlignment="Top" Margin="74,13,0,0"/>
-        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="아래쪽" VerticalAlignment="Top" Margin="74,59,0,0"/>
-        <TextBlock x:Name="textBlock_Copy1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="가로" VerticalAlignment="Top" Margin="75,102,0,0"/>
-        <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="세로" VerticalAlignment="Top" Margin="74,144,0,0"/>
-        <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" TextWrapping="Wrap" Text="가로" VerticalAlignment="Top" Margin="74,187,0,0"/>
-        <TextBlock x:Name="textBlock_Copy4" HorizontalAlignment="Left" TextWrapping="Wrap" Text="세로" VerticalAlignment="Top" Margin="75,229,0,0"/>
-        <TextBlock x:Name="textBlock_Copy5" HorizontalAlignment="Left" TextWrapping="Wrap" Text="시작 좌표" VerticalAlignment="Top" Margin="11,35,0,0"/>
-        <TextBlock x:Name="textBlock_Copy6" HorizontalAlignment="Left" TextWrapping="Wrap" Text="패턴 크기" VerticalAlignment="Top" Margin="11,122,0,0"/>
-        <TextBlock x:Name="textBlock_Copy7" HorizontalAlignment="Left" TextWrapping="Wrap" Text="반복 횟수" VerticalAlignment="Top" Margin="11,207,0,0"/>
-        <Button x:Name="button" IsDefault="True" Click="cng_bool" Content="입력" HorizontalAlignment="Left" Margin="296,119,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="left_info" HorizontalAlignment="Left" Height="20" Margin="132,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="bottom_info" HorizontalAlignment="Left" Height="20" Margin="132,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="width_info" HorizontalAlignment="Left" Height="20" Margin="132,118,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="height_info" HorizontalAlignment="Left" Height="20" Margin="132,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="col_info" HorizontalAlignment="Left" Height="20" Margin="132,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="row_info" HorizontalAlignment="Left" Height="20" Margin="132,228,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="왼쪽" VerticalAlignment="Top" Margin="74,44,0,0" Height="14"/>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="아래쪽" VerticalAlignment="Top" Margin="74,84,0,0" Height="14"/>
+        <TextBlock x:Name="textBlock_Copy1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="가로" VerticalAlignment="Top" Margin="74,124,0,0" Height="14"/>
+        <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="세로" VerticalAlignment="Top" Margin="74,158,0,0" Height="14"/>
+        <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" TextWrapping="Wrap" Text="가로" VerticalAlignment="Top" Margin="74,195,0,0" Height="14"/>
+        <TextBlock x:Name="textBlock_Copy4" HorizontalAlignment="Left" TextWrapping="Wrap" Text="세로" VerticalAlignment="Top" Margin="75,232,0,0" Height="13"/>
+        <TextBlock x:Name="textBlock_Copy5" HorizontalAlignment="Left" TextWrapping="Wrap" Text="시작 좌표" VerticalAlignment="Top" Margin="11,63,0,0" Height="14"/>
+        <TextBlock x:Name="textBlock_Copy6" HorizontalAlignment="Left" TextWrapping="Wrap" Text="패턴 크기" VerticalAlignment="Top" Margin="11,139,0,0" Height="14"/>
+        <TextBlock x:Name="textBlock_Copy7" HorizontalAlignment="Left" TextWrapping="Wrap" Text="반복 횟수" VerticalAlignment="Top" Margin="11,212,0,0" Height="14"/>
+        <Button x:Name="button" IsDefault="True" Click="cng_bool" Content="추가" HorizontalAlignment="Left" Margin="296,119,0,0" VerticalAlignment="Top" Width="75"/>
         <Button x:Name="button_Copy" IsCancel="True" Content="취소" HorizontalAlignment="Left" Margin="296,150,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="cell_name" HorizontalAlignment="Left" Height="20" Margin="133,8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock x:Name="textBlock_Copy8" HorizontalAlignment="Left" TextWrapping="Wrap" Text="셀 이름" VerticalAlignment="Top" Margin="33,10,0,0" Height="14" Width="66"/>
 
 
     </Grid>
