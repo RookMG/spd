@@ -14,15 +14,34 @@
             <Separator />
             <Frame Source="/View/ToolBar.xaml"/>
         </StackPanel>
-        <StackPanel DockPanel.Dock="Bottom" Height="100">
-            <Frame Source="/View/TcpIpLog.xaml" />
-        </StackPanel>
-        <Frame Source="/View/EntityDetails.xaml" Width="200" />
         <Grid>
-            <DockPanel>
-                <Frame DockPanel.Dock="Bottom" Source="/View/StatusBar.xaml"/>
-                <Frame Source="/View/MainDrawer.xaml"/>
-            </DockPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Frame Source="/View/EntityDetails.xaml" />
+                </Grid>
+                <GridSplitter Grid.Column="1" Width="3" Background="LightGray" ResizeBehavior="PreviousAndNext" ShowsPreview="True"/>
+                <Grid Grid.Column="2">
+                    <DockPanel>
+                        <Frame DockPanel.Dock="Bottom" Source="/View/StatusBar.xaml"/>
+                        <Frame Source="/View/MainDrawer.xaml"/>
+                    </DockPanel>
+                </Grid>
+            </Grid>
+            <GridSplitter Grid.Row="1" Height="3" Background="Lightgray" ResizeBehavior="PreviousAndNext" ShowsPreview="True" ResizeDirection="Rows" HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"/>
+            <Grid Grid.Row="2">
+                <Frame Source="/View/TcpIpLog.xaml" />
+            </Grid>
         </Grid>
     </DockPanel>
 </Window>
