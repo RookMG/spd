@@ -1,6 +1,6 @@
 # SPD(SEMES Pixel Design): 셀 단위 픽셀 패턴 디자인
 
-![](./docs/Readme_img/image-1.png)
+<img src="./docs/Readme_img/image-1.png"/>
 
 반도체 장비기업 SEMES와 진행한 기업 연계 프로젝트.
 
@@ -10,9 +10,12 @@
   - process1
   - process2
   - process3
-![](./docs/Readme_img/image-5.png)
-![](./docs/Readme_img/image-3.png)
-![](./docs/Readme_img/image-2.png)
+
+<img src="./docs/Readme_img/image-5.png" width="400"/>
+<br>
+<img src="./docs/Readme_img/image-3.png" width="400"/>
+<img src="./docs/Readme_img/image-2.png" width="400"/>
+
 출처 : https://news.samsungdisplay.com/32664
       https://blog.naver.com/ckbc6101/221085068781
 
