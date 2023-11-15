@@ -60,6 +60,7 @@ namespace SEMES_Pixel_Designer
             ColorComboBox.Items.Clear();
             ColorComboBox.ItemsSource = typeof(Colors).GetProperties().Where(p => p.PropertyType == typeof(Color) && (p.Name == "Red" || p.Name == "Blue" || p.Name == "Green")).ToList();
             AddCellButton.DataContext = new CommandDataContext();
+            //SetCellButton.DataContext = new CommandDataContext();
         }
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -73,186 +74,7 @@ namespace SEMES_Pixel_Designer
         public void ShowCells(object obj)
         {
             CellListView.ItemsSource = Coordinates.CanvasRef.cells;
-            //CellTreeView.Items.Clear();
-            //for(int i=0;i< Coordinates.CanvasRef.cells.Count;i++)
-            //{
-            //    Cell c = Coordinates.CanvasRef.cells[i];
-            //    if (!cellDictionary.ContainsKey(c))
-            //    {
-            //        TreeViewItem item = new TreeViewItem();
-            //        StackPanel panel;
-            //        TextBlock title;
-            //        TextBox content;
-            //        Binding binding;
-            //        item.Header = c.name;
-
-
-            //        panel = new StackPanel
-            //        {
-            //            Orientation = Orientation.Horizontal
-            //        };
-
-            //        title = new TextBlock
-            //        {
-            //            Text = "Left : "
-            //        };
-            //        content = new TextBox
-            //        {
-            //            UndoLimit = 0
-            //        };
-            //        content.KeyDown += TextBox_KeyDown;
-            //        binding = new Binding("PatternLeft")
-            //        {
-            //            Source = c,
-            //            Mode = BindingMode.TwoWay,
-            //            UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-            //        };
-            //        content.SetBinding(TextBox.TextProperty, binding);
-            //        content.KeyDown += CellTextBoxKeyDown;
-            //        panel.Children.Add(title);
-            //        panel.Children.Add(content);
-            //        item.Items.Add(panel);
-
-
-            //        panel = new StackPanel
-            //        {
-            //            Orientation = Orientation.Horizontal
-            //        };
-
-            //        title = new TextBlock
-            //        {
-            //            Text = "Bottom : "
-            //        };
-            //        content = new TextBox
-            //        {
-            //            UndoLimit = 0
-            //        };
-            //        content.KeyDown += TextBox_KeyDown;
-            //        binding = new Binding("PatternBottom")
-            //        {
-            //            Source = c,
-            //            Mode = BindingMode.TwoWay,
-            //            UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-            //        };
-            //        content.SetBinding(TextBox.TextProperty, binding);
-            //        content.KeyDown += CellTextBoxKeyDown;
-            //        panel.Children.Add(title);
-            //        panel.Children.Add(content);
-            //        item.Items.Add(panel);
-
-
-            //        panel = new StackPanel
-            //        {
-            //            Orientation = Orientation.Horizontal
-            //        };
-
-            //        title = new TextBlock
-            //        {
-            //            Text = "Width : "
-            //        };
-            //        content = new TextBox
-            //        {
-            //            UndoLimit = 0
-            //        };
-            //        content.KeyDown += TextBox_KeyDown;
-            //        binding = new Binding("PatternWidth")
-            //        {
-            //            Source = c,
-            //            Mode = BindingMode.TwoWay,
-            //            UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-            //        };
-            //        content.SetBinding(TextBox.TextProperty, binding);
-            //        content.KeyDown += CellTextBoxKeyDown;
-            //        panel.Children.Add(title);
-            //        panel.Children.Add(content);
-            //        item.Items.Add(panel);
-
-
-            //        panel = new StackPanel
-            //        {
-            //            Orientation = Orientation.Horizontal
-            //        };
-
-            //        title = new TextBlock
-            //        {
-            //            Text = "Height : "
-            //        };
-            //        content = new TextBox
-            //        {
-            //            UndoLimit = 0
-            //        };
-            //        content.KeyDown += TextBox_KeyDown;
-            //        binding = new Binding("PatternHeight")
-            //        {
-            //            Source = c,
-            //            Mode = BindingMode.TwoWay,
-            //            UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-            //        };
-            //        content.SetBinding(TextBox.TextProperty, binding);
-            //        content.KeyDown += CellTextBoxKeyDown;
-            //        panel.Children.Add(title);
-            //        panel.Children.Add(content);
-            //        item.Items.Add(panel);
-
-
-            //        panel = new StackPanel
-            //        {
-            //            Orientation = Orientation.Horizontal
-            //        };
-
-            //        title = new TextBlock
-            //        {
-            //            Text = "Repetition in X : "
-            //        };
-            //        content = new TextBox
-            //        {
-            //            UndoLimit = 0
-            //        };
-            //        content.KeyDown += TextBox_KeyDown;
-            //        binding = new Binding("PatternCols")
-            //        {
-            //            Source = c,
-            //            Mode = BindingMode.TwoWay,
-            //            UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-            //        };
-            //        content.SetBinding(TextBox.TextProperty, binding);
-            //        content.KeyDown += CellTextBoxKeyDown;
-            //        panel.Children.Add(title);
-            //        panel.Children.Add(content);
-            //        item.Items.Add(panel);
-
-
-            //        panel = new StackPanel
-            //        {
-            //            Orientation = Orientation.Horizontal
-            //        };
-
-            //        title = new TextBlock
-            //        {
-            //            Text = "Repetition in Y : "
-            //        };
-            //        content = new TextBox
-            //        {
-            //            UndoLimit = 0
-            //        };
-            //        content.KeyDown += TextBox_KeyDown;
-            //        binding = new Binding("PatternRows")
-            //        {
-            //            Source = c,
-            //            Mode = BindingMode.TwoWay,
-            //            UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-            //        };
-            //        content.SetBinding(TextBox.TextProperty, binding);
-            //        content.KeyDown += CellTextBoxKeyDown;
-            //        panel.Children.Add(title);
-            //        panel.Children.Add(content);
-            //        item.Items.Add(panel);
-
-            //        cellDictionary.Add(c, item);
-            //    }
-            //    TreeViewItem cellViewItem = cellDictionary[c];
-            //    CellTreeView.Items.Add(cellViewItem);
-            //}
+            
         }
 
 
@@ -262,25 +84,6 @@ namespace SEMES_Pixel_Designer
             ShowCells(null);
             EntityDetailComboBox.ItemsSource = null;
             EntityDetailComboBox.ItemsSource = selectedEntities;
-
-            //EntityDetailComboBox.Items.Clear();
-
-            //foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
-            //{
-            //    if (entity.Selected == false) continue;
-
-
-            //    ComboBoxItem item = new ComboBoxItem(
-
-            //    );
-            //    item.Content = entity.GetEntityObject().Handle;
-
-
-            //    propertyEntityObject = entity.GetEntityObject();
-
-            //    EntityDetailComboBox.Items.Add(item);
-            //    EntityDetailComboBox.SelectedItem = item;
-            //}
 
             EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
 
@@ -318,55 +121,7 @@ namespace SEMES_Pixel_Designer
         }
         public void ShowEntityProperties(object obj)
         {
-            ////PropertyStackPanel.Children.Clear();
-
-            //if (EntityDetailComboBox.SelectedItem != null)
-            //{
-            //    string selectedItem = (string)obj;
-
-
-            //    foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
-            //    {
-            //        if (entity.GetEntityObject().Handle != selectedItem) continue;
-
-            //        propertyEntity = entity;
-            //        propertyEntityObject = entity.GetEntityObject();
-
-            //    }
-
-            //    //Color.Text = "R:" + propertyEntityObject.Color.R.ToString() + " G:" + propertyEntityObject.Color.G.ToString() + " B:"
-            //    //    + propertyEntityObject.Color.B.ToString();
-
-            //    if (propertyEntityObject.Color.R == 255)
-            //    {
-            //        ColorComboBox.SelectedItem = typeof(Colors).GetProperty("Red");
-            //        propertyEntity.path.Fill = Brushes.Red;
-            //    }
-            //    else if (propertyEntityObject.Color.G == 255)
-            //    {
-            //        ColorComboBox.SelectedItem = typeof(Colors).GetProperty("Green");
-            //        propertyEntity.path.Fill = Brushes.Green;
-            //    }
-            //    else if (propertyEntityObject.Color.B == 255)
-            //    {
-            //        ColorComboBox.SelectedItem = typeof(Colors).GetProperty("Blue");
-            //        propertyEntity.path.Fill = Brushes.Blue;
-            //    }
-
-
-            //    Color_type.Text = propertyEntityObject.Color.ToString();
-
-            //    Handle.Text = propertyEntityObject.Handle;
-
-            //    Layer.Text = propertyEntityObject.Layer.Name;
-
-            //    Line_type.Text = propertyEntityObject.Linetype.Name;
-
-            //    Line_weight.Text = propertyEntityObject.Lineweight.ToString();
-
-            //    Line_Type_scale.Text = propertyEntityObject.LinetypeScale.ToString();
-
-            //    Name.Text = propertyEntityObject.CodeName;
+           
 
             if(propertyEntity == null)
             {
@@ -381,24 +136,6 @@ namespace SEMES_Pixel_Designer
             }
 
             VertexesListView.ItemsSource = dxfCoordsInfo;
-            //    //VertexesIndexListView.ItemsSource = indexdxfCoords;
-            //    // VertexesListView.ItemsSource = propertyEntity.dxfCoords;
-
-            //    /*
-            //    TextBlock textBlock = new TextBlock();
-            //    textBlock.Text = "Name";
-            //    textBlock.Background = Brushes.White;
-            //    textBlock.Margin = new Thickness(1);
-
-            //    TextBlock textBlock2  = new TextBlock();
-            //    textBlock2.Text = "Color";
-            //    textBlock2.Background = Brushes.White;
-            //    //PropertyStackPanel.Children.Add();
-            //    //textBlock.Text = "Color";
-            //    //PropertyStackPanel.Children.Add(textBlock);
-            //    //PropertyStackPanel.Children.Add(textBlock2);
-            //    //entityDictionary[selectedItem];*/
-            //}
         }
 
 
@@ -411,12 +148,9 @@ namespace SEMES_Pixel_Designer
 
         private void SelectEntityProperties(object sender, SelectionChangedEventArgs e)
         {
-            //if (EntityDetailComboBox.SelectedItem == null)
-            //    return;
             CommonValueStackPanel.DataContext = propertyEntity = (PolygonEntity)(sender as ComboBox).SelectedItem;
 
 
-            //string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
             ShowEntityProperties(null);
         }
         
@@ -565,9 +299,10 @@ namespace SEMES_Pixel_Designer
                 return null;
         }
 
-        private void Color_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SetCellClick(object sender, RoutedEventArgs e)
         {
-
+            MessageBox.Show(sender.ToString());
+            Mediator.NotifyColleagues("MainWindow.SetCell", null);
         }
     }
 }
