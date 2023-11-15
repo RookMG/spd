@@ -169,9 +169,9 @@ namespace SEMES_Pixel_Designer
 
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
-            if (tt.iniData["default_path"] != null)
+            if (TcpIp.iniData["default_path"] != null)
             {
-                dlgOpenFile.InitialDirectory = tt.iniData["default_path"];
+                dlgOpenFile.InitialDirectory = TcpIp.iniData["default_path"];
             }            
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
@@ -215,9 +215,9 @@ namespace SEMES_Pixel_Designer
         {
             SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
             dlgSaveAsFile.Title = "파일 저장";
-            if (tt.iniData["default_path"] != null)
+            if (TcpIp.iniData["default_path"] != null)
             {
-                dlgSaveAsFile.InitialDirectory = tt.iniData["default_path"];
+                dlgSaveAsFile.InitialDirectory = TcpIp.iniData["default_path"];
             }
             dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
 
