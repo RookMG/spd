@@ -27,7 +27,7 @@
                 <ListView x:Name="CellListView" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Expander Header="{Binding Name}">
+                            <Expander Header="{Binding Name}" IsExpanded="{Binding Expanded}">
                                 <TreeView ItemsSource="{Binding Children}" >
                                     <TreeView.ItemTemplate>
                                         <DataTemplate>

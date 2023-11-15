@@ -21,6 +21,7 @@ namespace SEMES_Pixel_Designer.Utils
         public int patternRows, patternCols;
         public string name;
         public List<PolygonEntity> children;
+        public bool expanded;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -35,6 +36,7 @@ namespace SEMES_Pixel_Designer.Utils
             this.patternRows = patternRows;
             this.patternCols = patternCols;
             children = new List<PolygonEntity>();
+            expanded = false;
         }
 
         public string Name
@@ -49,6 +51,11 @@ namespace SEMES_Pixel_Designer.Utils
             set { }
         }
 
+        public bool Expanded
+        {
+            get { return expanded; }
+            set { expanded = value; }
+        }
 
         public double PatternLeft
         {
