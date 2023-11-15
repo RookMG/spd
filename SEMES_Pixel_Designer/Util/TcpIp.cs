@@ -39,7 +39,7 @@ namespace SEMES_Pixel_Designer
 
         // system.ini 데이터 추출
         private static string iniFilePath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "system.ini"));
-        public Dictionary<string, string> iniData = ReadIniFile(iniFilePath);
+        public static Dictionary<string, string> iniData = ReadIniFile(iniFilePath);
 
         public TcpIp()
         {
