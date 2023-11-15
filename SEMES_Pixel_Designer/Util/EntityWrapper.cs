@@ -301,12 +301,12 @@ namespace SEMES_Pixel_Designer.Utils
         public static Action<UIElement, int> SetZIndexAction;
         public static Action<UIElement, double> SetLeftAction, SetTopAction;
 
-        public static readonly double 
+        public static readonly double
             //MINIMUM_VISIBLE_SIZE = 5, 
-            MIN_GRID_SIZE = 15, 
+            MIN_GRID_SIZE = 15,
             MAX_PATTERN_VIEW = 25,
              CANVAS_MARGIN = 200,
-            DEFAULT_PATTERN_SIZE = 372;
+            DEFAULT_PATTERN_SIZE = TcpIp.iniData["DEFAULT_PATTERN_SIZE"] == null ? 372 : Double.Parse(TcpIp.iniData["DEFAULT_PATTERN_SIZE"]); // 372;
 
         public static void UpdateRange(DrawingEntities entities)
         {
