@@ -562,7 +562,7 @@ namespace SEMES_Pixel_Designer
                 }
             ));
 
-            //Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
         private void DrawLine(object obj)
@@ -924,7 +924,7 @@ namespace SEMES_Pixel_Designer
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
-            //Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
         private void DrawLine_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -1034,7 +1034,7 @@ namespace SEMES_Pixel_Designer
                 MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
 
-            //Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
         private void DrawRectangle_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -1144,7 +1144,7 @@ namespace SEMES_Pixel_Designer
             }
             UpdateLayout();
 
-            // Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
 
