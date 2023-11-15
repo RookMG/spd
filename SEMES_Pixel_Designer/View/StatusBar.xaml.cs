@@ -39,6 +39,7 @@ namespace SEMES_Pixel_Designer
         {
             string path = (string)obj;
             filePathText.Text = path == null ? "새 파일" : path;
+            filePathText.ToolTip = path == null ? "새 파일" : path;
         }
 
             /*public void PrintEntityPosition(object obj)
