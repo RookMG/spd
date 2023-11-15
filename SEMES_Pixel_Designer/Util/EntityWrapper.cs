@@ -527,6 +527,8 @@ namespace SEMES_Pixel_Designer.Utils
             //MovePosition(dxfX, dxfY);
             parent.UpdatePoint(dxfX, dxfY, idx, true);
             parent.ReDraw();
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityProperties", null);
         }
 
         public void Delete()
@@ -670,13 +672,19 @@ namespace SEMES_Pixel_Designer.Utils
             }
             set { }
         }
-        public string Color_type
+        public AciColor Color_type
         {
             get
             {
-                return entityObject.Color.ToString();
+                return entityObject.Color;
             }
-            set { }
+            set 
+            {
+                if(entityObject.Color != value)
+                {
+                    entityObject.Color = value;
+                }
+            }
         }
         public string Handle
         {
@@ -1021,6 +1029,8 @@ namespace SEMES_Pixel_Designer.Utils
             if (!updateDxf) return;
             setDxfCoordAction[idx](dxfX, dxfY);
             dxfCoords[idx] = new System.Windows.Point(dxfX, dxfY);
+
+            Mediator.NotifyColleagues("EntityDetails.ShowEntityProperties", null);
         }
 
         public void ToggleSelected(bool status)

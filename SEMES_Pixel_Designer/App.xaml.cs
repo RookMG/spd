@@ -16,8 +16,8 @@ namespace SEMES_Pixel_Designer
     {
         App()
         {
-            // Pause to show the splash screen for 3 seconds
-            System.Threading.Thread.Sleep(1500);
+            // Pause to show the splash screen for x seconds
+            // System.Threading.Thread.Sleep(1500);
         }
     }
 }

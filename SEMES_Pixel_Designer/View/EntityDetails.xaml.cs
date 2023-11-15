@@ -55,6 +55,7 @@ namespace SEMES_Pixel_Designer
 
             Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
             Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
+            Utils.Mediator.Register("EntityDetails.ShowCells", ShowCells);
 
             ColorComboBox.Items.Clear();
             ColorComboBox.ItemsSource = typeof(Colors).GetProperties().Where(p => p.PropertyType == typeof(Color) && (p.Name == "Red" || p.Name == "Blue" || p.Name == "Green")).ToList();
@@ -283,11 +284,12 @@ namespace SEMES_Pixel_Designer
 
             EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
 
+            ShowEntityProperties(null);
         }
 
         private void ColorChange(object obj, SelectionChangedEventArgs e)
         {
-            if (propertyEntityObject != null && propertyEntity != null && ColorComboBox.SelectedItem != null)
+            if (propertyEntity != null && ColorComboBox.SelectedItem != null)
             {
                 if (ColorComboBox.SelectedItem is PropertyInfo selectedColor)
                 {
@@ -296,19 +298,19 @@ namespace SEMES_Pixel_Designer
                     if(selectedColorName == "Red")
                     {
                         AciColor myColor = new AciColor(255, 0, 0);
-                        propertyEntityObject.Color = myColor;
+                        propertyEntity.Color_type = myColor;
                         propertyEntity.path.Fill = Brushes.Red;
                     }
                     else if (selectedColorName == "Green")
                     {
                         AciColor myColor = new AciColor(0, 255, 0);
-                        propertyEntityObject.Color = myColor;
+                        propertyEntity.Color_type = myColor;
                         propertyEntity.path.Fill = Brushes.Green;
                     }
                     else if (selectedColorName == "Blue")
                     {
                         AciColor myColor = new AciColor(0, 0, 255);
-                        propertyEntityObject.Color = myColor;
+                        propertyEntity.Color_type = myColor;
                         propertyEntity.path.Fill = Brushes.Blue;
                     }
                 }
@@ -366,6 +368,11 @@ namespace SEMES_Pixel_Designer
 
             //    Name.Text = propertyEntityObject.CodeName;
 
+            if(propertyEntity == null)
+            {
+                VertexesListView.ItemsSource = null;
+                return;
+            }
 
             List<CoordInfo> dxfCoordsInfo = new List<CoordInfo>();
             for (int i = 0; i < propertyEntity.dxfCoords.Count; i++)
@@ -404,8 +411,8 @@ namespace SEMES_Pixel_Designer
 
         private void SelectEntityProperties(object sender, SelectionChangedEventArgs e)
         {
-            if (EntityDetailComboBox.SelectedItem == null)
-                return;
+            //if (EntityDetailComboBox.SelectedItem == null)
+            //    return;
             CommonValueStackPanel.DataContext = propertyEntity = (PolygonEntity)(sender as ComboBox).SelectedItem;
 
 
