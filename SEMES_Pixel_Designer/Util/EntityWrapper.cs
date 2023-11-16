@@ -1141,16 +1141,32 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             List<Action> forward = new List<Action>(), backward = new List<Action>();
+            bool patternOut = false;
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
                 PointCollection from = selectedEntity.dxfOffsets.Clone();
                 List<double[]> to = new List<double[]>();
                 for (int i = 0; i < selectedEntity.dxfCoords.Count; i++)
                 {
-                    to.Add(new double[] { Coordinates.ToDxfX(selectedEntity.mouseOffsets[i].X + e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(selectedEntity.mouseOffsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y) });
+                    double newX = Coordinates.ToDxfX(selectedEntity.mouseOffsets[i].X + e.GetPosition(Coordinates.CanvasRef).X),
+                        newY = Coordinates.ToDxfY(selectedEntity.mouseOffsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y);
+                    to.Add(new double[] { newX, newY });
+                    patternOut |= (selectedEntity.cell.patternLeft + selectedEntity.cell.patternWidth < newX)
+                        || (selectedEntity.cell.patternLeft > newX)
+                        || (selectedEntity.cell.patternBottom + selectedEntity.cell.patternHeight < newY)
+                        || (selectedEntity.cell.patternBottom > newY);
                 }
                 forward.Add(() => { selectedEntity.UpdatePoint(to); selectedEntity.ReDraw(); });
                 backward.Add(() => { selectedEntity.UpdatePoint(from); selectedEntity.ReDraw(); });
+            }
+            if (patternOut)
+            {
+                MessageBoxResult res = MessageBox.Show("패턴 밖으로 도형을 이동하게 됩니다. 정말 이동하시겠습니까? (과도하게 벗어날 경우 오류가 날 수 있습니다)", "패턴 벗어남 감지", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.No)
+                {
+                    foreach (Action action in backward) action();
+                    return;
+                }
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (

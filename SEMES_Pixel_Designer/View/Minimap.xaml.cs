@@ -30,6 +30,7 @@ namespace SEMES_Pixel_Designer.View
         }
         public void ExitHandler(object sender, CancelEventArgs e)
         {
+            Coordinates.MinimapRef.Children.Clear();
             Coordinates.MinimapRef = null;
         }
     }
