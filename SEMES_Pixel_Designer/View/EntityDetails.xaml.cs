@@ -310,15 +310,21 @@ namespace SEMES_Pixel_Designer
 
         private void DeleteCellClick(object sender, RoutedEventArgs e)
         {
+
             Button button = (Button)sender;
             StackPanel stackPanel = (StackPanel)button.Parent;
             Cell cell = (Cell)stackPanel.DataContext;
             int idx = Coordinates.CanvasRef.cells.IndexOf(cell);
             Layer layer = MainWindow.doc.Layers[cell.Name];
             List<PolygonEntity> childrenEntities = new List<PolygonEntity>();
-            foreach(PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+            foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
             {
                 if (entity.cell == cell) childrenEntities.Add(entity);
+            }
+            if (childrenEntities.Count > 0)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("셀 삭제시 셀 안의 도형이 같이 삭제됩니다. 정말 삭제하시겠습니까?", "셀 삭제", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.No) return;
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
