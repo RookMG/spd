@@ -173,6 +173,46 @@ namespace SEMES_Pixel_Designer.Utils
             // TODO: 구현
         }
 
+        public bool Collide(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            StreamGeometry c1 = new StreamGeometry(), c2 = new StreamGeometry();
+            using (StreamGeometryContext ctx = c1.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(this.patternLeft, this.patternBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(this.patternLeft, GetPatternTop()), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(GetPatternRight(), GetPatternTop()), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(GetPatternRight(), this.patternBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            using (StreamGeometryContext ctx = c2.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(patternLeft, patternBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(patternLeft, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            return c1.FillContainsWithDetail(c2) != IntersectionDetail.Empty;
+        }
+
+        public static bool IsInGlass(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            StreamGeometry c1 = new StreamGeometry(), c2 = new StreamGeometry();
+            using (StreamGeometryContext ctx = c1.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(Coordinates.glassLeft, Coordinates.glassBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(Coordinates.glassLeft, Coordinates.glassTop), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(Coordinates.glassRight, Coordinates.glassTop), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(Coordinates.glassRight, Coordinates.glassBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            using (StreamGeometryContext ctx = c2.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(patternLeft, patternBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(patternLeft, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            return c1.FillContainsWithDetail(c2) == IntersectionDetail.FullyContains;
+        }
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)

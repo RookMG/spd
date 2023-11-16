@@ -183,6 +183,27 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
+            if (!int.TryParse(MakeCell_Test.row_info.Text, out rows))
+            {
+                MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            if (FindCellByName(MakeCell_Test.cell_name.Text) != null)
+            {
+                MessageBox.Show(MakeCell_Test.cell_name.Text+"는 이미 존재하는 셀 이름입니다.");
+                return;
+            }
+            Cell collidingCell;
+            if ((collidingCell = CheckCellCollision(left, bottom, width, height, rows, cols))!=null)
+            {
+                MessageBox.Show("다른 셀("+ collidingCell.name+ ")과 영역이 겹칩니다.");
+                return;
+            }
+            if (!Cell.IsInGlass(left, bottom, width, height, rows, cols))
+            {
+                MessageBox.Show("셀 영역이 글라스 바깥으로 넘어갑니다.");
+                return;
+            }
             Cell c = new Cell(MakeCell_Test.cell_name.Text, left, bottom, width, height, rows, cols);
             netDxf.Tables.Layer layer = new netDxf.Tables.Layer(c.name);
             layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", c.patternLeft, c.patternBottom, c.patternWidth, c.patternHeight, c.patternRows, c.patternCols);
@@ -331,38 +352,23 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
-            //selectedCell.PatternLeft = left;
-            //selectedCell.PatternBottom = bottom;
-            //selectedCell.PatternWidth = width;
-            //selectedCell.PatternHeight = height;
-            //selectedCell.PatternRows = rows;
-            //selectedCell.PatternCols = cols;
 
-            //seletedCell = new Cell(SetCell_Test.cell_name_info.Text, left, bottom, width, height, rows, cols);
-            //netDxf.Tables.Layer layer = new netDxf.Tables.Layer(seletedCell.name);
-            //layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", seletedCell.patternLeft,
-            //    seletedCell.patternBottom, seletedCell.patternWidth, seletedCell.patternHeight, seletedCell.patternRows, seletedCell.patternCols);
-
-
-            //Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            //(
-            //    () => {
-            //        MainWindow.doc.Layers.Remove(layer);
-            //        cells.Remove(seletedCell);
-            //        Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
-            //        UpdateCanvas();
-            //    },
-            //    () => {
-            //        MainWindow.doc.Layers.Add(layer);
-            //        cells.Add(seletedCell);
-            //        Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
-            //        UpdateCanvas();
-            //    },
-            //    () =>
-            //    {
-            //    }
-            //));
-
+            if (FindCellByName(selectedCell, SetCell_Test.cell_name_info.Text) != null)
+            {
+                MessageBox.Show(SetCell_Test.cell_name_info.Text + "는 이미 존재하는 셀 이름입니다.");
+                return;
+            }
+            Cell collidingCell;
+            if ((collidingCell = CheckCellCollision(selectedCell, toLeft, toBottom, toWidth, toHeight, toRows, toCols)) != null)
+            {
+                MessageBox.Show("다른 셀(" + collidingCell.name + ")과 영역이 겹칩니다.");
+                return;
+            }
+            if (!Cell.IsInGlass(toLeft, toBottom, toWidth, toHeight, toRows, toCols))
+            {
+                MessageBox.Show("셀 영역이 글라스 바깥으로 넘어갑니다.");
+                return;
+            }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
                 () => {
@@ -386,12 +392,18 @@ namespace SEMES_Pixel_Designer
 
         public Cell FindCellByName(string name)
         {
-            foreach(Cell c in cells)
+            return FindCellByName(null, name);
+        }
+        public Cell FindCellByName(Cell self, string name)
+        {
+            foreach (Cell c in cells)
             {
+                // Console.WriteLine(c.name);
+                if (c == self) continue;
                 if (c.name.Equals(name)) return c;
             }
-            Console.WriteLine("Alert : cannot find cell by name");
-            return cells[0];
+            // Console.WriteLine("Alert : cannot find cell by name");
+            return null;
         }
 
         public void UpdateCanvas()
@@ -461,6 +473,20 @@ namespace SEMES_Pixel_Designer
             }
             UpdateCanvas();
             Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+        }
+
+        public Cell CheckCellCollision(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            return CheckCellCollision(null,patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols);
+        }
+        public Cell CheckCellCollision(Cell self, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            foreach (Cell c in cells)
+            {
+                if (c == self) continue;
+                if (c.Collide(patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols)) return c;
+            }
+            return null;
         }
 
         public void ColorBackground(object obj)
