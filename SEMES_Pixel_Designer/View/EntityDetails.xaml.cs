@@ -90,8 +90,13 @@ namespace SEMES_Pixel_Designer
             if (selectedEntities.Count > 0)
             {
                 string colorStr = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString();
-                if("1".Equals(colorStr)|| "3".Equals(colorStr)|| "5".Equals(colorStr))
-                ColorComboBox.SelectedIndex = 2 - int.Parse(colorStr) / 2;
+                if ("1".Equals(colorStr) || "3".Equals(colorStr) || "5".Equals(colorStr))
+                    ColorComboBox.SelectedIndex = 2 - int.Parse(colorStr) / 2;
+                else ColorComboBox.SelectedIndex = -1;
+            }
+            else
+            {
+                ColorComboBox.SelectedIndex = -1;
             }
             ShowEntityProperties(null);
         }
