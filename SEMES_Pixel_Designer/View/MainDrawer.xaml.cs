@@ -222,16 +222,21 @@ namespace SEMES_Pixel_Designer
                     MessageBox.Show("글라스 높이를 숫자로 입력해주세요");
                     return;
                 }
+
+                Coordinates.glassRight = width * 1000;
+                Coordinates.glassTop = height * 1000;
             }
             else
             {
                 string[] xy = SetGlass.glass_size.Text.Split('x');
                 width = (Double.Parse(xy[0]));
                 height = (Double.Parse(xy[1]));
+
+                Coordinates.glassRight = width * 1000;
+                Coordinates.glassTop = height * 1000;
             }
 
-            Coordinates.glassRight = width*1000;
-            Coordinates.glassTop = height*1000;
+            
    
             SetGlass.Close();
         }
