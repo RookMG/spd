@@ -314,48 +314,22 @@ namespace SEMES_Pixel_Designer.Utils
 
         public static void UpdateRange(DrawingEntities entities)
         {
-            minX = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternLeft : glassLeft;
-            minY = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternBottom : glassBottom;
+
+            foreach(Cell c in CanvasRef.cells)
+            {
+                if (!(c.patternLeft <= maxX && c.GetPatternRight() >= minX && c.patternBottom <= maxY && c.GetPatternTop() >= minY)) continue;
+                minX = c.patternLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW*0.05;
+                minY = c.patternBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
+                maxX = minX + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
+                maxY = minY + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
+                AdjustRatio();
+                return;
+            }
+
+            minX = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05 : glassLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
+            minY = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05 : glassBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
             maxX = minX + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
             maxY = minY + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
-            //gridSpacing = 0.5;
-            //minX = minY = double.MaxValue;
-            //maxX = maxY = double.MinValue;
-            //foreach (netDxf.Entities.Line line in entities.Lines)
-            //{
-            //    minX = Math.Min(minX, line.StartPoint.X);
-            //    maxX = Math.Max(maxX, line.StartPoint.X);
-            //    minY = Math.Min(minY, line.StartPoint.Y);
-            //    maxY = Math.Max(maxY, line.StartPoint.Y);
-            //    minX = Math.Min(minX, line.EndPoint.X);
-            //    maxX = Math.Max(maxX, line.EndPoint.X);
-            //    minY = Math.Min(minY, line.EndPoint.Y);
-            //    maxY = Math.Max(maxY, line.EndPoint.Y);
-            //}
-            //foreach (netDxf.Entities.Polyline2D polyline in entities.Polylines2D)
-            //{
-            //    foreach (netDxf.Entities.Polyline2DVertex point in polyline.Vertexes)
-            //    {
-            //        minX = Math.Min(minX, point.Position.X);
-            //        maxX = Math.Max(maxX, point.Position.X);
-            //        minY = Math.Min(minY, point.Position.Y);
-            //        maxY = Math.Max(maxY, point.Position.Y);
-            //    }
-            //}
-            //if (entities.Lines.Count() + entities.Polylines2D.Count() == 0)
-            //{
-            //    minX = 0.0;
-            //    minY = 0.0;
-            //    maxX = 1000.0;
-            //    maxY = 1000.0;
-            //}
-
-            //patternLeft = minX;
-            //patternBottom = minY;
-            //patternWidth = maxX - minX;
-            //patternHeight = maxY - minY;
-            //maxX = minX + Math.Min(MAX_PATTERN_VIEW,patternCols) * patternWidth;
-            //maxY = minY + Math.Min(MAX_PATTERN_VIEW,patternRows) * patternHeight;
             AdjustRatio();
         }
 

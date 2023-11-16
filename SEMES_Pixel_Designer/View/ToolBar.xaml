@@ -42,7 +42,7 @@
             <Button CommandParameter="MainWindow.ZoomOut" Style="{StaticResource ImgBtnStyle}" ToolTip="화면 축소">
                 <Image Source="../Asset/icon/ZoomOut_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}" ToolTip="화면 위치 조정">
+            <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}" ToolTip="현재 셀의 시작 위치로 이동">
                 <Image Source="../Asset/icon/FitToScreen_16x.png" />
             </Button>
             <Button CommandParameter="MainWindow.OpenMinimap" Style="{StaticResource ImgBtnStyle}" ToolTip="미니맵 열기">
