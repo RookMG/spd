@@ -42,14 +42,14 @@
             <Button CommandParameter="MainWindow.ZoomOut" Style="{StaticResource ImgBtnStyle}" ToolTip="화면 축소">
                 <Image Source="../Asset/icon/ZoomOut_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}" ToolTip="현재 셀의 시작 위치로 이동">
+            <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}" ToolTip="화면 위치 조정">
                 <Image Source="../Asset/icon/FitToScreen_16x.png" />
             </Button>
             <Button CommandParameter="MainWindow.OpenMinimap" Style="{StaticResource ImgBtnStyle}" ToolTip="미니맵 열기">
                 <Image Source="../Asset/icon/OpenMinimap.png" />
             </Button>
             <Separator/>
-            <Button CommandParameter="MainWindow.SetGlass" Style="{StaticResource ImgBtnStyle}" ToolTip="글라스 크기 설정" Click="Button_Click">
+            <Button CommandParameter="MainWindow.SetGlass" Style="{StaticResource ImgBtnStyle}" ToolTip="글라스 크기 설정">
                 <Image Source="../Asset/icon/SetGlass_32x.png" />
             </Button>
             <Button CommandParameter="MainWindow.MakeNewcell" Style="{StaticResource ImgBtnStyle}" ToolTip="새 셀 추가">
