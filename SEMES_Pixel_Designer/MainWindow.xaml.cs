@@ -100,6 +100,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ColorScreen", ColorScreen);
             Utils.Mediator.Register("MainWindow.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainWindow.ToggleGrid", ToggleGrid);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(ToggleGrid), new KeyGesture(Key.G, ModifierKeys.Control)));
             Utils.Mediator.Register("MainWindow.ToggleLineWidth", ToggleLineWidth);
             Utils.Mediator.Register("MainWindow.ShowLayers", ShowLayers);
             Utils.Mediator.Register("MainWindow.ChangeLayer", ChangeLayer);
@@ -428,6 +429,8 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
+            Coordinates.drawGrid = !Coordinates.drawGrid;
+            Coordinates.CanvasRef.UpdateCanvas();
 
         }
 

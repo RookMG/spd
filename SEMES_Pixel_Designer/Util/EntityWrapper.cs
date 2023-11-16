@@ -299,7 +299,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static Dictionary<Color, SolidColorBrush> BrushDict = new Dictionary<Color, SolidColorBrush>();
         public static Path borderPath;
         public static StreamGeometry borderGeometry;
-        public static bool mouseCaptured = false;
+        public static bool mouseCaptured = false, drawGrid = true;
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
@@ -368,46 +368,49 @@ namespace SEMES_Pixel_Designer.Utils
             double sX = Math.Floor(minX / gridSpacing) * gridSpacing, eX = (1 + Math.Floor(maxX / gridSpacing)) * gridSpacing,
                  sY = Math.Floor(minY / gridSpacing) * gridSpacing, eY = (1 + Math.Floor(maxY / gridSpacing)) * gridSpacing;
             foreach (System.Windows.Shapes.Line line in gridLines) UnbindCanvasAction(line);
-            gridLines.Clear();
-            for (double mx = sX; mx <= eX; mx += gridSpacing)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    double x = mx + i * gridSpacing / 10;
-                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
-                    {
-                        Stroke = gridBrush,
-                        X1 = ToScreenX(x),
-                        Y1 = ToScreenY(sY),
-                        X2 = ToScreenX(x),
-                        Y2 = ToScreenY(eY),
-                        StrokeThickness = i == 0 ? 3 : 1
-                    };
-                    gridLines.Add(line);
-                    BindCanvasAction(line);
-                    SetZIndexAction(line, -1);
-                }
-            }
-            for (double my = sY; my <= eY; my += gridSpacing)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    double y = my + i * gridSpacing * 0.1;
-                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
-                    {
-                        Stroke = gridBrush,
-                        X1 = ToScreenX(sX),
-                        Y1 = ToScreenY(y),
-                        X2 = ToScreenX(eX),
-                        Y2 = ToScreenY(y),
-                        StrokeThickness = i == 0 ? 3 : 1
-                    };
-                    gridLines.Add(line);
-                    BindCanvasAction(line);
-                    SetZIndexAction(line, -1);
-                }
-            }
 
+            gridLines.Clear();
+
+            if (drawGrid) { 
+                for (double mx = sX; mx <= eX; mx += gridSpacing)
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        double x = mx + i * gridSpacing / 10;
+                        System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
+                        {
+                            Stroke = gridBrush,
+                            X1 = ToScreenX(x),
+                            Y1 = ToScreenY(sY),
+                            X2 = ToScreenX(x),
+                            Y2 = ToScreenY(eY),
+                            StrokeThickness = i == 0 ? 3 : 1
+                        };
+                        gridLines.Add(line);
+                        BindCanvasAction(line);
+                        SetZIndexAction(line, -1);
+                    }
+                }
+                for (double my = sY; my <= eY; my += gridSpacing)
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        double y = my + i * gridSpacing * 0.1;
+                        System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
+                        {
+                            Stroke = gridBrush,
+                            X1 = ToScreenX(sX),
+                            Y1 = ToScreenY(y),
+                            X2 = ToScreenX(eX),
+                            Y2 = ToScreenY(y),
+                            StrokeThickness = i == 0 ? 3 : 1
+                        };
+                        gridLines.Add(line);
+                        BindCanvasAction(line);
+                        SetZIndexAction(line, -1);
+                    }
+                }
+            }
             System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
             {
                 Stroke = defaultColorBrush,
