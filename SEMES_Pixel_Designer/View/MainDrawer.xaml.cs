@@ -218,38 +218,52 @@ namespace SEMES_Pixel_Designer
         public void SetGlass_Clicked(object obj)
         {
             string glass_size = SetGlass.glass_size.Text;
-            double width, height;
+            double toWidth, toHeight, fromWidth = Coordinates.glassRight, fromHeight = Coordinates.glassTop;
 
             if (glass_size=="사용자 지정" || (SetGlass.glass_width.Text!="" && SetGlass.glass_height.Text!=""))
             {
-                if (!double.TryParse(SetGlass.glass_width.Text, out width))
+                if (!double.TryParse(SetGlass.glass_width.Text, out toWidth))
                 {
                     MessageBox.Show("글라스 너비를 숫자로 입력해주세요");
                     return;
                 }
-                if (!double.TryParse(SetGlass.glass_height.Text, out height))
+                if (!double.TryParse(SetGlass.glass_height.Text, out toHeight))
                 {
                     MessageBox.Show("글라스 높이를 숫자로 입력해주세요");
                     return;
                 }
 
-                Coordinates.glassRight = width * 1000;
-                Coordinates.glassTop = height * 1000;
             }
             else
             {
                 string[] xy = SetGlass.glass_size.Text.Split('x');
-                width = (Double.Parse(xy[0]));
-                height = (Double.Parse(xy[1]));
+                toWidth = double.Parse(xy[0]);
+                toHeight = double.Parse(xy[1]);
 
-                Coordinates.glassRight = width * 1000;
-                Coordinates.glassTop = height * 1000;
             }
+            toWidth *= 1000;
+            toHeight *= 1000;
 
-            
-   
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    MainWindow.doc.Layers["0"].Description = fromWidth + "," + fromHeight;
+                    Coordinates.glassRight = fromWidth;
+                    Coordinates.glassTop = fromHeight;
+                    UpdateCanvas();
+                },
+                () => {
+                    MainWindow.doc.Layers["0"].Description = toWidth + "," + toHeight;
+                    Coordinates.glassRight = toWidth;
+                    Coordinates.glassTop = toHeight;
+                    UpdateCanvas();
+                },
+                () =>
+                {
+                }
+            ));
             SetGlass.Close();
-            UpdateCanvas();
+
         }
 
         public void SetCell_Input(object obj)
@@ -424,8 +438,12 @@ namespace SEMES_Pixel_Designer
             foreach (var layer in MainWindow.doc.Layers)
             {
                 string[] args = layer.Description.Split(',');
-                if (args.Length != 6) continue;
-                cells.Add(new Cell(layer.Name, double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5])));
+                if (args.Length == 2)
+                {
+                    Coordinates.glassRight = double.Parse(args[0]);
+                    Coordinates.glassTop = double.Parse(args[1]);
+                }
+                else if (args.Length == 6) cells.Add(new Cell(layer.Name, double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5])));
             }
             Coordinates.UpdateRange(MainWindow.doc.Entities);
             Coordinates.DrawGrid();
