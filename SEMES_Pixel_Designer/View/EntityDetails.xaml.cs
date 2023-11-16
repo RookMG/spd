@@ -160,24 +160,23 @@ namespace SEMES_Pixel_Designer
         
         private void XTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            Keyboard.ClearFocus();
             EditCoordi(sender, true);
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
-            Keyboard.ClearFocus();
         }
 
         private void YTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            Keyboard.ClearFocus();
             EditCoordi(sender, false);
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
-            Keyboard.ClearFocus();
         }
 
         private void XTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                EditCoordi(sender, true);
-                e.Handled = true;
+                e.Handled = EditCoordi(sender, true);
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
                 Keyboard.ClearFocus();
             }
@@ -187,15 +186,14 @@ namespace SEMES_Pixel_Designer
         {
             if (e.Key == Key.Enter)
             {
-                EditCoordi(sender, false);
-                e.Handled = true;
+                e.Handled = EditCoordi(sender, false);
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
                 Keyboard.ClearFocus();
             }
         }
 
 
-        private void EditCoordi(object sender, bool isX)
+        private bool EditCoordi(object sender, bool isX)
         {
             if (sender is TextBox textBox && textBox.DataContext is CoordInfo coord)
             {
@@ -211,13 +209,16 @@ namespace SEMES_Pixel_Designer
                         EditCoordiX(coord.idx, coordiReal);
                     else
                         EditCoordiY(coord.idx, coordiReal);
+                    return true;
                 }
                 else
                 {
-                    MessageBox.Show("WRONG VALUE!!");
+                    MessageBox.Show("소수 형태의 좌표를 입력하세요");
+                    return false;
                 }
 
             }
+            return false;
         }
 
 
