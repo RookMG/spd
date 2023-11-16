@@ -75,6 +75,9 @@ namespace SEMES_Pixel_Designer.View
             MouseLeftButtonDown += Drag_MouseLeftButtonDown;
             MouseWheel += Zoom_MouseWheel;
 
+            Loaded += (obj, e) => { AdjustRatio(); };
+            
+
         }
         public void ResizeWindow(object sender, SizeChangedEventArgs e)
         {

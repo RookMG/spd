@@ -312,8 +312,47 @@ namespace SEMES_Pixel_Designer
         {
             Button button = (Button)sender;
             StackPanel stackPanel = (StackPanel)button.Parent;
-            Cell dataContext = (Cell)stackPanel.DataContext;
-            dataContext.Delete();
+            Cell cell = (Cell)stackPanel.DataContext;
+            int idx = Coordinates.CanvasRef.cells.IndexOf(cell);
+            Layer layer = MainWindow.doc.Layers[cell.Name];
+            List<PolygonEntity> childrenEntities = new List<PolygonEntity>();
+            foreach(PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+            {
+                if (entity.cell == cell) childrenEntities.Add(entity);
+            }
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    MainWindow.doc.Layers.Add(layer);
+                    cell.Restore();
+                    foreach (PolygonEntity entity in childrenEntities)
+                    {
+                        entity.Restore();
+                        Coordinates.CanvasRef.DrawingEntities.Add(entity);
+                    }
+                    Coordinates.CanvasRef.cells.Insert(idx, cell);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    Coordinates.CanvasRef.UpdateCanvas();
+                },
+                () => {
+                    Console.WriteLine(MainWindow.doc.Layers.Count);
+                    cell.Delete();
+                    foreach (PolygonEntity entity in childrenEntities)
+                    {
+                        entity.Delete();
+                        Coordinates.CanvasRef.DrawingEntities.Remove(entity);
+                    }
+                    Coordinates.CanvasRef.cells.Remove(cell);
+                    MainWindow.doc.Layers.Remove(layer);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    Console.WriteLine(MainWindow.doc.Layers.Count);
+                },
+                () =>
+                {
+                    cell.Remove();
+                }
+            ));
         }
 
     }

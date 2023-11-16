@@ -132,7 +132,6 @@ namespace SEMES_Pixel_Designer
 
         }
         public void OpenMinimap(object obj)
-
         {
             if (Coordinates.MinimapRef != null) return;
             new Minimap().Show();

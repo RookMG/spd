@@ -164,6 +164,14 @@ namespace SEMES_Pixel_Designer.Utils
         {
             // TODO: 구현
         }
+        public void Restore()
+        {
+            // TODO: 구현
+        }
+        public void Remove()
+        {
+            // TODO: 구현
+        }
 
         protected void OnPropertyChanged(string propertyName)
         {
