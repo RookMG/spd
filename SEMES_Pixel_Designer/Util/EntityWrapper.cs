@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -22,6 +23,7 @@ namespace SEMES_Pixel_Designer.Utils
         public string name;
         public List<PolygonEntity> children;
         public bool expanded;
+        public TextBlock textBlock;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -37,6 +39,8 @@ namespace SEMES_Pixel_Designer.Utils
             this.patternCols = patternCols;
             children = new List<PolygonEntity>();
             expanded = false;
+            textBlock = new TextBlock();
+            textBlock.Text = Name;
         }
 
         public string Name

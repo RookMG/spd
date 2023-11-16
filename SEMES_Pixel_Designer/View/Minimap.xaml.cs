@@ -64,7 +64,7 @@ namespace SEMES_Pixel_Designer.View
             CanvasXPosition.StrokeDashArray = CanvasYPosition.StrokeDashArray = new DoubleCollection(new double[] { 5, 2 });
             CellPath = new Path
             {
-                Fill = Brushes.Aqua,
+                Fill = Brushes.LightGreen,
             };
             CellPath.Data = geometry = new StreamGeometry();
             geometry.FillRule = FillRule.Nonzero;
@@ -83,38 +83,48 @@ namespace SEMES_Pixel_Designer.View
 
         public void UpdatePosition()
         {
-            double x = 0.5 * (Coordinates.minX + Coordinates.maxX - 2 * Coordinates.glassLeft) * ActualWidth / (Coordinates.glassRight - Coordinates.glassLeft),
-                y = 0.5 * (2 * Coordinates.glassTop - Coordinates.minY - Coordinates.maxY) * ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom);
+            UpdatePosition(ActualWidth, ActualHeight);
+        }
+
+        public void UpdatePosition(double width, double height)
+        {
+            Children.Clear();
+            double x = 0.5 * (Coordinates.minX + Coordinates.maxX - 2 * Coordinates.glassLeft) * width / (Coordinates.glassRight - Coordinates.glassLeft),
+                y = 0.5 * (2 * Coordinates.glassTop - Coordinates.minY - Coordinates.maxY) * height / (Coordinates.glassTop - Coordinates.glassBottom);
             CanvasXPosition.X1 = CanvasXPosition.X2 = x;
             CanvasYPosition.Y1 = CanvasYPosition.Y2 = y;
-            CanvasYPosition.X2 = ActualWidth + 1;
-            CanvasXPosition.Y2 = ActualHeight + 1;
-            double xRatio = ActualWidth/(Coordinates.glassRight - Coordinates.glassLeft), yRatio = ActualHeight / (Coordinates.glassTop - Coordinates.glassBottom);
+            CanvasYPosition.X2 = width + 1;
+            CanvasXPosition.Y2 = height + 1;
+            double xRatio = width / (Coordinates.glassRight - Coordinates.glassLeft), yRatio = height / (Coordinates.glassTop - Coordinates.glassBottom);
+
+            Children.Add(CellPath);
             using (StreamGeometryContext ctx = geometry.Open())
             {
                 foreach (var cell in Coordinates.CanvasRef.cells)
                 {
-                    ctx.BeginFigure(new Point((cell.patternLeft-Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.patternBottom) * yRatio), true /* is filled */, true /* is closed */);
+                    Children.Add(cell.textBlock);
+                    cell.textBlock.RenderTransform = new MatrixTransform(1, 0, 0, 1, (cell.patternLeft - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.GetPatternTop()) * yRatio);
+
+                    ctx.BeginFigure(new Point((cell.patternLeft - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.patternBottom) * yRatio), true /* is filled */, true /* is closed */);
                     ctx.LineTo(new Point((cell.patternLeft - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.GetPatternTop()) * yRatio), true /* is stroked */, false /* is smooth join */);
                     ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.GetPatternTop()) * yRatio), true /* is stroked */, false /* is smooth join */);
                     ctx.LineTo(new Point((cell.GetPatternRight() - Coordinates.glassLeft) * xRatio, (Coordinates.glassTop - cell.patternBottom) * yRatio), true /* is stroked */, false /* is smooth join */);
                 }
             }
+            Children.Add(CanvasXPosition);
+            Children.Add(CanvasYPosition);
         }
 
         public void AdjustRatio()
         {
             if((Coordinates.glassTop - Coordinates.glassBottom) / (Coordinates.glassRight - Coordinates.glassLeft) > Window.GetWindow(this).ActualHeight / Window.GetWindow(this).ActualWidth)
             {
-                Height = Window.GetWindow(this).ActualHeight - 40;
-                Width = ActualHeight * (Coordinates.glassRight - Coordinates.glassLeft) / (Coordinates.glassTop - Coordinates.glassBottom);
+                UpdatePosition(Width = (Window.GetWindow(this).ActualHeight - 40) * (Coordinates.glassRight - Coordinates.glassLeft) / (Coordinates.glassTop - Coordinates.glassBottom), Height = Window.GetWindow(this).ActualHeight - 40);
             }
             else
             {
-                Width = Window.GetWindow(this).ActualWidth - 40;
-                Height = ActualWidth * (Coordinates.glassTop - Coordinates.glassBottom) / (Coordinates.glassRight - Coordinates.glassLeft);
+                UpdatePosition(Width = Window.GetWindow(this).ActualWidth - 40, Height = (Window.GetWindow(this).ActualWidth - 40) * (Coordinates.glassTop - Coordinates.glassBottom) / (Coordinates.glassRight - Coordinates.glassLeft));
             }
-            UpdatePosition();
         }
 
         private void Drag_MouseLeftButtonDown(object sender, MouseEventArgs e)
