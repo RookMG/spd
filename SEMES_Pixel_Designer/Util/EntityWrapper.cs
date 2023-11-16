@@ -300,7 +300,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static Dictionary<Color, SolidColorBrush> BrushDict = new Dictionary<Color, SolidColorBrush>();
         public static Path glassBorderPath, cellBorderPath;
         public static StreamGeometry glassBorderGeometry, cellBorderGeometry;
-        public static bool mouseCaptured = false, drawGrid = false;
+        public static bool mouseCaptured = false, mouseActionDone = false, drawGrid = false;
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
@@ -471,7 +471,10 @@ namespace SEMES_Pixel_Designer.Utils
             }
             else
             {
-                cellBorderGeometry.Open();
+                using (StreamGeometryContext ctx = cellBorderGeometry.Open())
+                {
+                    ctx.BeginFigure(new System.Windows.Point(0,0), false /* is filled */, false /* is closed */);
+                }
             }
 
             System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
@@ -827,7 +830,7 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.BindCanvasAction(path);
             Coordinates.BindCanvasAction(selectArea);
             Coordinates.SetZIndexAction(path, 1);
-            Coordinates.SetZIndexAction(selectArea, 3);
+            Coordinates.SetZIndexAction(selectArea, 2);
             selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             cell.children.Add(this);
         }
@@ -951,7 +954,6 @@ namespace SEMES_Pixel_Designer.Utils
                 points.Add(new PointEntity(cell, dxfCoords[idx].X, dxfCoords[idx].Y, this, idx));
             }
             ReDraw();
-            ReColor();
         }
 
         public void ReDraw()
@@ -986,6 +988,8 @@ namespace SEMES_Pixel_Designer.Utils
 
 
             }
+            ReColor();
+
             if (!selected) return;
             foreach (PointEntity p in points) p.ReDraw();
 
@@ -1000,15 +1004,21 @@ namespace SEMES_Pixel_Designer.Utils
             if (selected)
             {
                 path.Stroke = Coordinates.selectedColorBrush;
+                selectArea.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.transparentBrush;
             }
             else if(entityObject.Color.R % 0xFF == 0 && entityObject.Color.G == entityObject.Color.R && entityObject.Color.B == entityObject.Color.R)
             {
                 path.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.transparentBrush;
             }
             else
             {
                 path.Stroke = Coordinates.GetSolidColorBrush(Color.FromRgb(entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
                 path.Fill = Coordinates.GetSolidColorBrush(Color.FromArgb(0x33,entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
+                selectArea.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.transparentBrush;
             }
         }
 
@@ -1116,13 +1126,13 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-            MessageBox.Show("Click");
             Coordinates.mouseCaptured = true;
             Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ToggleSelected(!selected);
                 Coordinates.mouseCaptured = false;
+                Coordinates.mouseActionDone = true;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -1130,6 +1140,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ToggleSelected(true);
                 Coordinates.mouseCaptured = false;
+                Coordinates.mouseActionDone = true;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -1138,6 +1149,7 @@ namespace SEMES_Pixel_Designer.Utils
                 ClearSelected();
                 ToggleSelected(true);
                 Coordinates.mouseCaptured = false;
+                Coordinates.mouseActionDone = true;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }

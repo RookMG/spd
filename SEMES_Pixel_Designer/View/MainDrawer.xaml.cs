@@ -51,7 +51,7 @@ namespace SEMES_Pixel_Designer
         public double[] offset = null;
         public Polygon drawingPolygon = null;
         public Ellipse drawingEllipse = null;
-        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = 10;
+        public readonly double PASTE_OFFSET = 5, MIN_SELECT_LENGTH = -1;
         public int pasteCount = 0;
 
         public int zoomCount = 0;
@@ -353,6 +353,7 @@ namespace SEMES_Pixel_Designer
             }
             if(Coordinates.MinimapRef!= null)
             Coordinates.MinimapRef.AdjustRatio();
+            UpdateLayout();
         }
 
         public void ResizeWindow(object sender, SizeChangedEventArgs e)
@@ -785,39 +786,45 @@ namespace SEMES_Pixel_Designer
         }
         private void Select_MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
-            if (!Coordinates.mouseCaptured) { 
-            double minSelX = Math.Min(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
-                   maxSelX = Math.Max(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
-                   minSelY = Math.Min(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y),
-                   maxSelY = Math.Max(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y);
-            if (maxSelX + maxSelY - minSelX - minSelY >= MIN_SELECT_LENGTH && !Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            if (!Coordinates.mouseActionDone)
             {
-                ClearSelected();
-            }
-            // TODO: 영역 안의 폴리곤 선택
-            StreamGeometry selectedAreaGeometry = new StreamGeometry();
-            using (StreamGeometryContext ctx = selectedAreaGeometry.Open())
-            {
-                ctx.BeginFigure(drawingPolygon.Points[0], true /* is filled */, true /* is closed */);
-                ctx.LineTo(drawingPolygon.Points[1], true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(drawingPolygon.Points[2], true /* is stroked */, false /* is smooth join */);
-                ctx.LineTo(drawingPolygon.Points[3], true /* is stroked */, false /* is smooth join */);
-            }
+                double minSelX = Math.Min(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
+                       maxSelX = Math.Max(drawingPolygon.Points[2].X, drawingPolygon.Points[0].X),
+                       minSelY = Math.Min(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y),
+                       maxSelY = Math.Max(drawingPolygon.Points[2].Y, drawingPolygon.Points[0].Y);
+                if (maxSelX + maxSelY - minSelX - minSelY >= MIN_SELECT_LENGTH && !Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    ClearSelected();
+                }
+                // TODO: 영역 안의 폴리곤 선택
+                StreamGeometry selectedAreaGeometry = new StreamGeometry();
+                using (StreamGeometryContext ctx = selectedAreaGeometry.Open())
+                {
+                    ctx.BeginFigure(drawingPolygon.Points[0], true /* is filled */, true /* is closed */);
+                    ctx.LineTo(drawingPolygon.Points[1], true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(drawingPolygon.Points[2], true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(drawingPolygon.Points[3], true /* is stroked */, false /* is smooth join */);
+                }
 
                 //List<double> x = new List<double>(), y = new List<double>();
-            foreach (PolygonEntity entity in DrawingEntities)
-            {
-                if (selectedAreaGeometry.FillContainsWithDetail(entity.geometry, 1, ToleranceType.Relative) == IntersectionDetail.Empty) continue;
+                foreach (PolygonEntity entity in DrawingEntities)
+                {
+                    if (selectedAreaGeometry.FillContainsWithDetail(entity.geometry, 1, ToleranceType.Relative) == IntersectionDetail.Empty) continue;
 
-                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                {
-                    entity.ToggleSelected(!entity.selected);
-                }
-                else
-                {
-                    entity.ToggleSelected(true);
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                    {
+                        entity.ToggleSelected(!entity.selected);
+                    }
+                    else
+                    {
+                        entity.ToggleSelected(true);
+                    }
                 }
             }
+            else
+            {
+
+                Coordinates.mouseActionDone = false;
             }
             Children.Remove(drawingPolygon);
 
