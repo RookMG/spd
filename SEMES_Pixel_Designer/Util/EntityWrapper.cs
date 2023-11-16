@@ -1141,7 +1141,7 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             List<Action> forward = new List<Action>(), backward = new List<Action>();
-            bool patternOut = false;
+            bool patternOut = false, glassOut = false;
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
                 PointCollection from = selectedEntity.dxfOffsets.Clone();
@@ -1155,9 +1155,20 @@ namespace SEMES_Pixel_Designer.Utils
                         || (selectedEntity.cell.patternLeft > newX)
                         || (selectedEntity.cell.patternBottom + selectedEntity.cell.patternHeight < newY)
                         || (selectedEntity.cell.patternBottom > newY);
+                    glassOut |= (Coordinates.glassRight < newX)
+                        || (Coordinates.glassLeft > newX)
+                        || (Coordinates.glassTop < newY)
+                        || (Coordinates.glassBottom > newY);
+                    Console.WriteLine(string.Format("{0},{1}",newX, newY));
                 }
                 forward.Add(() => { selectedEntity.UpdatePoint(to); selectedEntity.ReDraw(); });
                 backward.Add(() => { selectedEntity.UpdatePoint(from); selectedEntity.ReDraw(); });
+            }
+            if (glassOut)
+            {
+                MessageBox.Show("글라스 바깥으로는 도형을 이동시킬 수 없습니다.");
+                foreach (Action action in backward) action();
+                return;
             }
             if (patternOut)
             {
