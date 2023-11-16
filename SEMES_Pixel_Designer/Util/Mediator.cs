@@ -22,7 +22,7 @@ namespace SEMES_Pixel_Designer.Utils
         {
             if (callback_dict.ContainsKey(token))
             {
-                MessageBox.Show("Debug : " + token + " 이미 등록됨");
+                // MessageBox.Show("Debug : " + token + " 이미 등록됨");
                 callback_dict.Remove(token);
             }
             callback_dict.Add(token, callback);

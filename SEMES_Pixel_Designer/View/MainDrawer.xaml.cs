@@ -132,7 +132,6 @@ namespace SEMES_Pixel_Designer
 
         }
         public void OpenMinimap(object obj)
-
         {
             if (Coordinates.MinimapRef != null) return;
             new Minimap().Show();
@@ -149,6 +148,11 @@ namespace SEMES_Pixel_Designer
             double left, bottom, width, height;
             int rows, cols;
 
+            if (MakeCell_Test.cell_name.Text.Length == 0)
+            {
+                MessageBox.Show("셀 이름을 입력해주세요");
+                return;
+            }
             if (!double.TryParse(MakeCell_Test.left_info.Text, out left))
             {
                 MessageBox.Show("시작 좌표 왼쪽 값으로 숫자를 입력해주세요");
@@ -246,6 +250,7 @@ namespace SEMES_Pixel_Designer
             UpdateCanvas();
 
             SetGlass.Close();
+            UpdateCanvas();
         }
 
         public void SetCell_Input(object obj)
@@ -260,48 +265,54 @@ namespace SEMES_Pixel_Designer
                 return;
             }
 
-            SetCell_Test.cell_name_init.Text = selectedCell.Name;
-            SetCell_Test.left_init.Text = selectedCell.PatternLeft.ToString();
-            SetCell_Test.bottom_init.Text = selectedCell.PatternBottom.ToString();
-            SetCell_Test.width_init.Text = selectedCell.PatternWidth.ToString();
-            SetCell_Test.height_init.Text = selectedCell.PatternHeight.ToString();
-            SetCell_Test.col_init.Text = selectedCell.PatternCols.ToString();
-            SetCell_Test.row_init.Text = selectedCell.PatternRows.ToString();
+            SetCell_Test.cell_name_init.Text = (SetCell_Test.cell_name_info.Text = selectedCell.Name) +" → ";
+            SetCell_Test.left_init.Text = (SetCell_Test.left_info.Text = selectedCell.PatternLeft.ToString()) + " → ";
+            SetCell_Test.bottom_init.Text = (SetCell_Test.bottom_info.Text = selectedCell.PatternBottom.ToString()) + " → ";
+            SetCell_Test.width_init.Text = (SetCell_Test.width_info.Text = selectedCell.PatternWidth.ToString()) + " → ";
+            SetCell_Test.height_init.Text = (SetCell_Test.height_info.Text = selectedCell.PatternHeight.ToString()) + " → ";
+            SetCell_Test.col_init.Text = (SetCell_Test.col_info.Text = selectedCell.PatternCols.ToString()) + " → ";
+            SetCell_Test.row_init.Text = (SetCell_Test.row_info.Text = selectedCell.PatternRows.ToString()) + " → ";
 
             SetCell_Test.ShowDialog();
         }
 
         public void SetCell_Clicked(object obj)
         {
-            double left, bottom, width, height;
-            int rows, cols;
+            string fromName = selectedCell.name, toName = SetCell_Test.cell_name_info.Text;
+            double fromLeft = selectedCell.PatternLeft, fromBottom = selectedCell.patternBottom, fromWidth = selectedCell.patternWidth, fromHeight = selectedCell.patternHeight, toLeft, toBottom, toWidth, toHeight;
+            int fromRows = selectedCell.patternRows, fromCols = selectedCell.patternCols, toRows, toCols;
 
-            if (!double.TryParse(SetCell_Test.left_info.Text, out left))
+            if (toName.Length == 0)
+            {
+                MessageBox.Show("셀 이름을 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(SetCell_Test.left_info.Text, out toLeft))
             {
                 MessageBox.Show("시작 좌표 왼쪽 값으로 숫자를 입력해주세요");
                 return;
             }
-            if (!double.TryParse(SetCell_Test.bottom_info.Text, out bottom))
+            if (!double.TryParse(SetCell_Test.bottom_info.Text, out toBottom))
             {
                 MessageBox.Show("시작 좌표 아랫쪽 값으로 숫자를 입력해주세요");
                 return;
             }
-            if (!double.TryParse(SetCell_Test.width_info.Text, out width))
+            if (!double.TryParse(SetCell_Test.width_info.Text, out toWidth))
             {
                 MessageBox.Show("패턴 가로 크기 값으로 숫자를 입력해주세요");
                 return;
             }
-            if (!double.TryParse(SetCell_Test.height_info.Text, out height))
+            if (!double.TryParse(SetCell_Test.height_info.Text, out toHeight))
             {
                 MessageBox.Show("패턴 세로 크기 값으로 숫자를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(SetCell_Test.col_info.Text, out rows))
+            if (!int.TryParse(SetCell_Test.col_info.Text, out toRows))
             {
                 MessageBox.Show("패턴 가로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(SetCell_Test.row_info.Text, out cols))
+            if (!int.TryParse(SetCell_Test.row_info.Text, out toCols))
             {
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
@@ -337,6 +348,23 @@ namespace SEMES_Pixel_Designer
             //    {
             //    }
             //));
+
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    FindCellByName(toName).changeCell(fromName, fromLeft, fromBottom, fromWidth, fromHeight,fromRows, fromCols);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () => {
+                    FindCellByName(fromName).changeCell(toName, toLeft, toBottom, toWidth, toHeight, toRows, toCols);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () =>
+                {
+                }
+            ));
 
             selectedCell = null;
             SetCell_Test.Close();
