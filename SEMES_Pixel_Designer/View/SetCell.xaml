@@ -29,7 +29,7 @@
         <TextBlock x:Name="textBlock_Copy5" HorizontalAlignment="Left" TextWrapping="Wrap" Text="시작 좌표" VerticalAlignment="Top" Margin="11,63,0,0" Height="14"/>
         <TextBlock x:Name="textBlock_Copy6" HorizontalAlignment="Left" TextWrapping="Wrap" Text="패턴 크기" VerticalAlignment="Top" Margin="11,139,0,0" Height="14"/>
         <TextBlock x:Name="textBlock_Copy7" HorizontalAlignment="Left" TextWrapping="Wrap" Text="반복 횟수" VerticalAlignment="Top" Margin="11,212,0,0" Height="14"/>
-        <Button x:Name="button" IsDefault="True" Content="추가" HorizontalAlignment="Left" Margin="306,119,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="button" IsDefault="True" Content="수정" HorizontalAlignment="Left" Margin="306,119,0,0" VerticalAlignment="Top" Width="75" Click="CellModify"/>
         <Button x:Name="button_Copy" IsCancel="True" Content="취소" HorizontalAlignment="Left" Margin="306,150,0,0" VerticalAlignment="Top" Width="75"/>
         <TextBox x:Name="cell_name_init" HorizontalAlignment="Left" Height="20" Margin="123,8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
         <TextBox x:Name="cell_name_info" HorizontalAlignment="Left" Height="20" Margin="232,8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>

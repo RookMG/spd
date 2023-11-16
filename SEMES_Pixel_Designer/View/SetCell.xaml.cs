@@ -24,7 +24,7 @@ namespace SEMES_Pixel_Designer.View
         {
             InitializeComponent();
         }
-        private void cng_bool(object sender, RoutedEventArgs e)
+        private void CellModify(object sender, RoutedEventArgs e)
         {
             Mediator.NotifyColleagues("MainDrawer.SetCell_Clicked", null);
         }

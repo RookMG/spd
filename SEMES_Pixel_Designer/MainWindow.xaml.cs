@@ -362,7 +362,7 @@ namespace SEMES_Pixel_Designer
         }
         public void SetCell(object obj)
         {
-            Mediator.NotifyColleagues("MainDrawer.SetCell", null);
+            Mediator.NotifyColleagues("MainDrawer.SetCell", obj);
         }
 
         #endregion

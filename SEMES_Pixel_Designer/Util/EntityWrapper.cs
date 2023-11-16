@@ -291,20 +291,21 @@ namespace SEMES_Pixel_Designer.Utils
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
         public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
         public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x99, 0x99, 0x99)),
+            patternBrush = new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0xFF)),
             defaultColorBrush = Brushes.Black,
             backgroundColorBrush = Brushes.White,
             transparentBrush = Brushes.Transparent,
             selectedColorBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0x69, 0xB4)),
             highlightBrush = new SolidColorBrush(Color.FromArgb(0x70, 0xFF, 0xFF, 0x00));
         public static Dictionary<Color, SolidColorBrush> BrushDict = new Dictionary<Color, SolidColorBrush>();
-        public static Path borderPath;
-        public static StreamGeometry borderGeometry;
-        public static bool mouseCaptured = false, drawGrid = true;
+        public static Path glassBorderPath, cellBorderPath;
+        public static StreamGeometry glassBorderGeometry, cellBorderGeometry;
+        public static bool mouseCaptured = false, mouseActionDone = false, drawGrid = false;
         public static Func<UIElement, int> BindCanvasAction;
         public static Action<UIElement> UnbindCanvasAction;
         public static Action<UIElement, int> SetZIndexAction;
         public static Action<UIElement, double> SetLeftAction, SetTopAction;
-
+        public static DoubleCollection DashData = new DoubleCollection(new double[] { 5, 1 });
         public static readonly double
             //MINIMUM_VISIBLE_SIZE = 5, 
             MIN_GRID_SIZE = 15,
@@ -314,23 +315,29 @@ namespace SEMES_Pixel_Designer.Utils
 
         public static void UpdateRange(DrawingEntities entities)
         {
-
-            foreach(Cell c in CanvasRef.cells)
-            {
-                if (!(c.patternLeft <= maxX && c.GetPatternRight() >= minX && c.patternBottom <= maxY && c.GetPatternTop() >= minY)) continue;
+            Cell c = GetCurrentCell();
+            if(c!= null) { 
                 minX = c.patternLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW*0.05;
                 minY = c.patternBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
-                maxX = minX + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
-                maxY = minY + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
-                AdjustRatio();
-                return;
             }
-
-            minX = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05 : glassLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
-            minY = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05 : glassBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
+            else
+            {
+                minX = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05 : glassLeft - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
+                minY = CanvasRef.cells.Count > 0 ? CanvasRef.cells[0].patternBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05 : glassBottom - DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW * 0.05;
+            }
             maxX = minX + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
             maxY = minY + DEFAULT_PATTERN_SIZE * MAX_PATTERN_VIEW;
             AdjustRatio();
+        }
+
+        public static Cell GetCurrentCell()
+        {
+            foreach (Cell c in CanvasRef.cells)
+            {
+                if (!(c.patternLeft <= maxX && c.GetPatternRight() >= minX && c.patternBottom <= maxY && c.GetPatternTop() >= minY)) continue;
+                return c;
+            }
+            return null;
         }
 
         public static void AdjustRatio()
@@ -351,17 +358,18 @@ namespace SEMES_Pixel_Designer.Utils
         }
         public static void DrawGrid()
         {
-            using (StreamGeometryContext ctx = borderGeometry.Open())
+            using (StreamGeometryContext ctx = glassBorderGeometry.Open())
             {
                 ctx.BeginFigure(new System.Windows.Point(ToScreenX(glassLeft), ToScreenY(glassBottom)), true /* is filled */, true /* is closed */);
                 ctx.LineTo(new System.Windows.Point(ToScreenX(glassLeft), ToScreenY(glassTop)), true /* is stroked */, false /* is smooth join */);
                 ctx.LineTo(new System.Windows.Point(ToScreenX(glassRight), ToScreenY(glassTop)), true /* is stroked */, false /* is smooth join */);
                 ctx.LineTo(new System.Windows.Point(ToScreenX(glassRight), ToScreenY(glassBottom)), true /* is stroked */, false /* is smooth join */);
-                ctx.BeginFigure(new System.Windows.Point(-1,-1), true /* is filled */, true /* is closed */);
+                ctx.BeginFigure(new System.Windows.Point(-1, -1), true /* is filled */, true /* is closed */);
                 ctx.LineTo(new System.Windows.Point(-1, CanvasRef.ActualHeight + 1), true /* is stroked */, false /* is smooth join */);
                 ctx.LineTo(new System.Windows.Point(CanvasRef.ActualWidth + 1, CanvasRef.ActualHeight + 1), true /* is stroked */, false /* is smooth join */);
                 ctx.LineTo(new System.Windows.Point(CanvasRef.ActualWidth + 1, -1), true /* is stroked */, false /* is smooth join */);
             }
+
 
             gridSpacing = Math.Pow(10, Math.Floor(Math.Log10(Math.Max(maxY - minY, maxX - minX))));
             if (ToScreenX(minX + gridSpacing * 0.1) < MIN_GRID_SIZE) gridSpacing *= 10;
@@ -411,6 +419,64 @@ namespace SEMES_Pixel_Designer.Utils
                     }
                 }
             }
+
+            Cell cell = GetCurrentCell();
+            if(cell!= null)
+            {
+                using (StreamGeometryContext ctx = cellBorderGeometry.Open())
+                {
+                    ctx.BeginFigure(new System.Windows.Point(ToScreenX(cell.patternLeft), ToScreenY(cell.patternBottom)), true /* is filled */, true /* is closed */);
+                    ctx.LineTo(new System.Windows.Point(ToScreenX(cell.patternLeft), ToScreenY(cell.GetPatternTop())), true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(new System.Windows.Point(ToScreenX(cell.GetPatternRight()), ToScreenY(cell.GetPatternTop())), true /* is stroked */, false /* is smooth join */);
+                    ctx.LineTo(new System.Windows.Point(ToScreenX(cell.GetPatternRight()), ToScreenY(cell.patternBottom)), true /* is stroked */, false /* is smooth join */);
+                }
+                int rStart = 0, cStart = 0;
+                while (cell.getPatternOffsetY(rStart + 2) < minY - cell.patternBottom) rStart++;
+                while (cell.getPatternOffsetX(cStart + 2) < minX - cell.patternLeft) cStart++;
+                for (int r = rStart; cell.getPatternOffsetY(r) <= maxY - cell.patternBottom && r < cell.patternRows; r++)
+                {
+                    double y = cell.patternBottom + cell.getPatternOffsetY(r);
+                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
+                    {
+                        Stroke = patternBrush,
+                        X1 = ToScreenX(Math.Max(sX, cell.patternLeft)),
+                        Y1 = ToScreenY(y),
+                        X2 = ToScreenX(Math.Min(eX, cell.GetPatternRight())),
+                        Y2 = ToScreenY(y),
+                        StrokeThickness = 1,
+                        StrokeDashArray = DashData,
+                    };
+                    gridLines.Add(line);
+                    BindCanvasAction(line);
+                    SetZIndexAction(line, -1);
+                }
+
+                for (int c = cStart; cell.getPatternOffsetX(c) <= maxX - cell.patternLeft && c < cell.patternCols; c++)
+                {
+                    double x = cell.patternLeft + cell.getPatternOffsetX(c);
+                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
+                    {
+                        Stroke = patternBrush,
+                        X1 = ToScreenX(x),
+                        Y1 = ToScreenY(Math.Max(sY, cell.patternBottom)),
+                        X2 = ToScreenX(x),
+                        Y2 = ToScreenY(Math.Min(eY, cell.GetPatternTop())),
+                        StrokeThickness = 1,
+                        StrokeDashArray = DashData,
+                    };
+                    gridLines.Add(line);
+                    BindCanvasAction(line);
+                    SetZIndexAction(line, -1);
+                }
+            }
+            else
+            {
+                using (StreamGeometryContext ctx = cellBorderGeometry.Open())
+                {
+                    ctx.BeginFigure(new System.Windows.Point(0,0), false /* is filled */, false /* is closed */);
+                }
+            }
+
             System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
             {
                 Stroke = defaultColorBrush,
@@ -452,11 +518,6 @@ namespace SEMES_Pixel_Designer.Utils
             return (CanvasRef.ActualHeight - screenY) * (maxY - minY) / CanvasRef.ActualHeight + minY;
         }
 
-
-        public static string ToolTip(double dxfX, double dxfY)
-        {
-            return string.Format("x : {0}, y : {1}", dxfX, dxfY);
-        }
 
         public static SolidColorBrush GetSolidColorBrush(Color color)
         {
@@ -769,7 +830,7 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.BindCanvasAction(path);
             Coordinates.BindCanvasAction(selectArea);
             Coordinates.SetZIndexAction(path, 1);
-            Coordinates.SetZIndexAction(selectArea, 3);
+            Coordinates.SetZIndexAction(selectArea, 2);
             selectArea.MouseLeftButtonDown += MouseLeftButtonDown;
             cell.children.Add(this);
         }
@@ -846,7 +907,7 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     dxfCoords = entity.dxfCoords.Clone(),
                     type = entity.entityType,
-                    offset = new Vector3(Coordinates.minX, Coordinates.minY, 0)
+                    offset = new Vector3(entity.cell.patternLeft, entity.cell.patternBottom, 0)
                 });
             }
         }
@@ -887,12 +948,12 @@ namespace SEMES_Pixel_Designer.Utils
             geometry.FillRule = FillRule.EvenOdd;
             path.Data = geometry;
             selectArea.Data = geometry;
+
             for (int idx = 0; idx < dxfCoords.Count; idx++)
             {
                 points.Add(new PointEntity(cell, dxfCoords[idx].X, dxfCoords[idx].Y, this, idx));
             }
             ReDraw();
-            ReColor();
         }
 
         public void ReDraw()
@@ -927,9 +988,7 @@ namespace SEMES_Pixel_Designer.Utils
 
 
             }
-            geometry.FillRule = FillRule.EvenOdd;
-            path.Data = geometry;
-            selectArea.Data = geometry;
+            ReColor();
 
             if (!selected) return;
             foreach (PointEntity p in points) p.ReDraw();
@@ -945,15 +1004,21 @@ namespace SEMES_Pixel_Designer.Utils
             if (selected)
             {
                 path.Stroke = Coordinates.selectedColorBrush;
+                selectArea.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.transparentBrush;
             }
             else if(entityObject.Color.R % 0xFF == 0 && entityObject.Color.G == entityObject.Color.R && entityObject.Color.B == entityObject.Color.R)
             {
                 path.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.transparentBrush;
             }
             else
             {
                 path.Stroke = Coordinates.GetSolidColorBrush(Color.FromRgb(entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
                 path.Fill = Coordinates.GetSolidColorBrush(Color.FromArgb(0x33,entityObject.Color.R, entityObject.Color.G, entityObject.Color.B));
+                selectArea.Stroke = Coordinates.defaultColorBrush;
+                selectArea.Stroke = Coordinates.transparentBrush;
             }
         }
 
@@ -1034,6 +1099,12 @@ namespace SEMES_Pixel_Designer.Utils
                     Coordinates.BindCanvasAction(p.path);
                     Coordinates.SetZIndexAction(p.path, 3);
                 }
+                if (cell != Coordinates.GetCurrentCell())
+                {
+                    Coordinates.minX = Coordinates.maxX = cell.patternLeft;
+                    Coordinates.minY = Coordinates.maxY = cell.patternBottom;
+                    Coordinates.UpdateRange(null);
+                }
             }
             else
             {
@@ -1061,6 +1132,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ToggleSelected(!selected);
                 Coordinates.mouseCaptured = false;
+                Coordinates.mouseActionDone = true;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -1068,6 +1140,7 @@ namespace SEMES_Pixel_Designer.Utils
             {
                 ToggleSelected(true);
                 Coordinates.mouseCaptured = false;
+                Coordinates.mouseActionDone = true;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
@@ -1076,6 +1149,7 @@ namespace SEMES_Pixel_Designer.Utils
                 ClearSelected();
                 ToggleSelected(true);
                 Coordinates.mouseCaptured = false;
+                Coordinates.mouseActionDone = true;
                 Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
                 return;
             }
