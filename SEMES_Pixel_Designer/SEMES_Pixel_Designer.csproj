@@ -282,7 +282,9 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Asset\icon\SplashScreen_small.png" />
+    <SplashScreen Include="Asset\icon\SplashScreen_small.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </SplashScreen>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Asset\icon\AddClause_16x.png">
@@ -295,13 +297,19 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\SetGlass_32x.png" />
+    <Resource Include="Asset\icon\SetGlass_32x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\ExeIcon.ico" />
+    <Resource Include="Asset\icon\ExeIcon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\SPD_icon.ico" />
+    <Resource Include="Asset\icon\SPD_icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
