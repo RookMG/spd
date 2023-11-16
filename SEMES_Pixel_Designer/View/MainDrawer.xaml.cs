@@ -210,6 +210,7 @@ namespace SEMES_Pixel_Designer
             
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "셀 생성",
                 () => {
                     MainWindow.doc.Layers.Remove(layer);
                     cells.Remove(c);
@@ -282,6 +283,7 @@ namespace SEMES_Pixel_Designer
 
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "글라스 크기 변경",
                 () => {
                     MainWindow.doc.Layers["0"].Description = fromWidth + "," + fromHeight;
                     Coordinates.glassRight = fromWidth;
@@ -385,6 +387,7 @@ namespace SEMES_Pixel_Designer
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "셀 수정",
                 () => {
                     FindCellByName(toName).changeCell(fromName, fromLeft, fromBottom, fromWidth, fromHeight,fromRows, fromCols);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
@@ -562,6 +565,7 @@ namespace SEMES_Pixel_Designer
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "붙여넣기",
                 () => {
                     foreach (PolygonEntity entity in pasted)
                     {
@@ -691,6 +695,7 @@ namespace SEMES_Pixel_Designer
             if (target.Count == 0) return;
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 삭제",
                 () => {
                     foreach (PolygonEntity entity in target) entity.Restore();
                 },
@@ -1037,6 +1042,7 @@ namespace SEMES_Pixel_Designer
                 PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.LINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
+                "선 그리기",
                     () => {
                         DrawingEntities.Add(polygonEntity);
                     },
@@ -1145,6 +1151,7 @@ namespace SEMES_Pixel_Designer
                 PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.POLYLINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
+                "직사각형 그리기",
                     () => {
                         DrawingEntities.Add(polygonEntity);
                     },
@@ -1260,6 +1267,7 @@ namespace SEMES_Pixel_Designer
                 PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.POLYLINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
+                    "폴리곤 그리기",
                     () => {
                         DrawingEntities.Add(polygonEntity);
                     },

@@ -224,6 +224,7 @@ namespace SEMES_Pixel_Designer
             if (from == to) return;
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 모양 변경",
                 () => {
                     propertyEntity.UpdatePoint(from, propertyEntity.dxfCoords[index].Y, index, true);
                     propertyEntity.ReDraw();
@@ -244,6 +245,7 @@ namespace SEMES_Pixel_Designer
             if (from == to) return;
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 모양 변경",
                 () => {
                     propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, from, index, true);
                     propertyEntity.ReDraw();
@@ -328,6 +330,7 @@ namespace SEMES_Pixel_Designer
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "셀 삭제",
                 () => {
                     MainWindow.doc.Layers.Add(layer);
                     cell.Restore();

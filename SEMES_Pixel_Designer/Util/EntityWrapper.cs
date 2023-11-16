@@ -626,6 +626,7 @@ namespace SEMES_Pixel_Designer.Utils
                 to = new System.Windows.Point(parent.dxfCoords[idx].X, parent.dxfCoords[idx].Y);
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 모양 변경",
                 () =>
                 {
                     UpdatePosition(from.X, from.Y);
@@ -1205,6 +1206,7 @@ namespace SEMES_Pixel_Designer.Utils
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 이동",
                 () => {
                     foreach (Action action in backward) action();
                 },
