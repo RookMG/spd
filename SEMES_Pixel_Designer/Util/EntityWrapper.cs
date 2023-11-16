@@ -469,6 +469,10 @@ namespace SEMES_Pixel_Designer.Utils
                     SetZIndexAction(line, -1);
                 }
             }
+            else
+            {
+                cellBorderGeometry.Open();
+            }
 
             System.Windows.Shapes.Line infoLine = new System.Windows.Shapes.Line
             {
@@ -1112,6 +1116,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            MessageBox.Show("Click");
             Coordinates.mouseCaptured = true;
             Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
