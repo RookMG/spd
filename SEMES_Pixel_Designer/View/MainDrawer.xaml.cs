@@ -121,8 +121,8 @@ namespace SEMES_Pixel_Designer
             //selectedCell = cells[0];
             //cells.Add(new Cell("cell 0", 0, 0, 372, 372, 1000, 1000));
             //selectedCell = cells[0];
-
-            OpenMinimap(null);
+            Loaded += (obj, e) => { OpenMinimap(null); };
+            
             // Test();
 
         }
