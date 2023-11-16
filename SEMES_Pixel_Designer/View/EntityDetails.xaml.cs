@@ -72,6 +72,7 @@ namespace SEMES_Pixel_Designer
 
         public void ShowCells(object obj)
         {
+            CellListView.ItemsSource = null;
             CellListView.ItemsSource = Coordinates.CanvasRef.cells;
             //CellTreeView.Items.Clear();
             //for(int i=0;i< Coordinates.CanvasRef.cells.Count;i++)
