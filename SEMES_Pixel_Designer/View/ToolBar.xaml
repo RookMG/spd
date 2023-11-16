@@ -9,7 +9,7 @@
       Title="ToolBar">
 
     <ToolBarTray Background="WhiteSmoke">
-        <ToolBar Band="1" BandIndex="1">
+        <ToolBar Band="1" BandIndex="1" Background="WhiteSmoke">
             <ToolBar.Resources>
                 <Style TargetType="{x:Type Button}" x:Key="ImgBtnStyle">
                     <Setter Property="Width" Value="23"/>
@@ -75,12 +75,10 @@
             </Button>
         </ToolBar>
 
-        <ToolBar Band="1" BandIndex="2">
-            <StackPanel Orientation="Horizontal" Height="20" Margin="2">
-                <TextBlock Text="Layouts" VerticalAlignment="Center" Margin="10,0,80,0" />
-                <ComboBox Width="150">
-                    <ComboBoxItem Content="Model" IsSelected="True"/>
-                </ComboBox>
+        <ToolBar Band="1" BandIndex="2" Background="WhiteSmoke">
+            <StackPanel Orientation="Horizontal" Height="25">
+                <TextBlock Text="현재 셀" VerticalAlignment="Center" Margin="10,0,10,0" />
+                <Label x:Name="CurrentCellInfo" Background="White" Width="200" Content="0"/>
             </StackPanel>
         </ToolBar>
     </ToolBarTray>

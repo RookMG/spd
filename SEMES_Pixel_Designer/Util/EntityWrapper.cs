@@ -258,6 +258,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static MinimapCanvas MinimapRef = null;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
         public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
+        public static Label CurrentCellInfo = null;
         public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x99, 0x99, 0x99)),
             patternBrush = new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0xFF)),
             defaultColorBrush = Brushes.Black,
@@ -303,6 +304,7 @@ namespace SEMES_Pixel_Designer.Utils
             foreach (Cell c in CanvasRef.cells)
             {
                 if (!(c.patternLeft <= maxX && c.GetPatternRight() >= minX && c.patternBottom <= maxY && c.GetPatternTop() >= minY)) continue;
+                if(CurrentCellInfo!=null) CurrentCellInfo.Content = c.Name;
                 return c;
             }
             return null;
