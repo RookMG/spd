@@ -70,9 +70,6 @@
             <Button CommandParameter="MainWindow.DeleteEntities" Style="{StaticResource ImgBtnStyle}" ToolTip="선택한 도형 삭제">
                 <Image Source="../Asset/icon/Trash_16x.png" />
             </Button>
-            <!--<Button Click="Clone_Button_Click" Style="{StaticResource ImgBtnStyle}">
-                <Image Source="../Asset/icon/EditLayoutTable_16x.png" />
-            </Button>-->
         </ToolBar>
 
         <ToolBar Band="1" BandIndex="2">
