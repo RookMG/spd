@@ -304,9 +304,9 @@ namespace SEMES_Pixel_Designer.Utils
         public static readonly double
             //MINIMUM_VISIBLE_SIZE = 5, 
             MIN_GRID_SIZE = 15,
-            MAX_PATTERN_VIEW = 25,
-             CANVAS_MARGIN = 200,
-            DEFAULT_PATTERN_SIZE = TcpIp.iniData["DEFAULT_PATTERN_SIZE"] == null ? 372 : Double.Parse(TcpIp.iniData["DEFAULT_PATTERN_SIZE"]); // 372;
+            CANVAS_MARGIN = 200,
+            MAX_PATTERN_VIEW = TcpIp.iniData.TryGetValue("MAX_PATTERN_VIEW", out string value) ? double.Parse(value) : 25,
+            DEFAULT_PATTERN_SIZE = TcpIp.iniData.TryGetValue("DEFAULT_PATTERN_SIZE", out string value) ? double.Parse(value) : 372; // 372;
 
         public static void UpdateRange(DrawingEntities entities)
         {
