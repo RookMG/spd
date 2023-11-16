@@ -746,6 +746,22 @@ namespace SEMES_Pixel_Designer.Utils
             }
             set { }
         }
+
+        public Brush ColorBrush
+        {
+            get
+            {
+                if (entityObject.Color.Equals(AciColor.Red)) return Brushes.Red;
+                if (entityObject.Color.Equals(AciColor.Green)) return Brushes.Green;
+                if (entityObject.Color.Equals(AciColor.Blue)) return Brushes.Blue;
+                return Brushes.Black;
+            }
+            set
+            {
+
+            }
+        }
+
         private List<Action<double, double>> setDxfCoordAction;
 
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();

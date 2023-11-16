@@ -87,7 +87,10 @@ namespace SEMES_Pixel_Designer
             EntityDetailComboBox.ItemsSource = selectedEntities;
 
             EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
-
+            if (selectedEntities.Count > 0)
+            {
+                ColorComboBox.SelectedIndex = 2 - int.Parse(selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString()) / 2;
+            }
             ShowEntityProperties(null);
         }
 
