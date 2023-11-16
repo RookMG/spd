@@ -37,17 +37,19 @@
             <MenuItem Header="축소(_-)" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ZoomOut" InputGestureText="" />
             <MenuItem Header="도면을 창 크기에 맞추기" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.FitScreen" InputGestureText="" />
             <MenuItem Header="미니맵 보기" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.OpenMinimap" InputGestureText="" />
-        </MenuItem>
-
-        <MenuItem Header="CAD 파일(_C)">
-            <MenuItem Header="컬러 도면 보기"  Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorScreen" InputGestureText="" />
-            <MenuItem Header="흑백 도면 보기" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorScreen" InputGestureText="" />
+            <Separator />
             <MenuItem Header="배경 색 변경" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorBackground" InputGestureText="" />
             <Separator />
-            <MenuItem Header="선 굵기 보기" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ToggleLineWidth" InputGestureText="" />
+            <MenuItem Header="그리드 선 토글" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ToggleGrid" InputGestureText="" />
+        </MenuItem>
+
+        <!--<MenuItem Header="CAD 파일(_C)">
+            <MenuItem Header="배경 색 변경" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ColorBackground" InputGestureText="" />
+            <Separator />
+            <MenuItem Header="그리드 선 토글" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ToggleLineWidth" InputGestureText="" />
             <Separator />
             <MenuItem Header="레이어 보기" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ShowLayers" InputGestureText="" />
-        </MenuItem>
+        </MenuItem>-->
 
         <MenuItem Header="설정(_O)">
             <MenuItem Header="프로그램 정보"  Style="{StaticResource MenuItemStyle}" CommandParameter="" InputGestureText="" />
