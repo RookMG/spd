@@ -54,6 +54,9 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Asset\icon\ExeIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="netDxf, Version=2022.11.2.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
       <HintPath>packages\netDxf.2022.11.2\lib\net45\netDxf.dll</HintPath>
@@ -275,11 +278,6 @@
     <SplashScreen Include="Asset\icon\SplashScreen_small.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\SPD_icon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Asset\icon\AddClause_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -291,6 +289,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Asset\icon\SetGlass_32x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\ExeIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\SPD_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
