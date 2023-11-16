@@ -285,7 +285,7 @@ namespace SEMES_Pixel_Designer.Utils
     public static class Coordinates
     {
         public static double minX = 0.0, minY = 0.0, maxX = 1000.0, maxY = 1000.0, ratio = 1.0, gridSpacing = 0.5,
-            glassBottom = 0, glassLeft = 0, glassTop = 2500000, glassRight = 2200000;
+            glassBottom = 0, glassLeft = 0, glassTop = 2940000, glassRight = 3370000;
         public static MainCanvas CanvasRef;
         public static MinimapCanvas MinimapRef = null;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
