@@ -97,14 +97,10 @@ namespace SEMES_Pixel_Designer
             // 특정 포트에서 모든 주소로부터 들어오는 연결을 받기 위해 포트를 바인딩합니다.
             if (iniData.Count != 0)
             {
-                if(iniData["IP"] == null || iniData["port"] == null)
+                if(iniData.TryGetValue("IP", out string IP)&&iniData.TryGetValue("port", out string port))
                 {
-                    AsyncCallback m_wait_ip_port_set = new AsyncCallback(wait_ip_port_set);
-                    IAsyncResult result = m_wait_ip_port_set.BeginInvoke(null, null, null);
-                }
-                else
-                {
-                    m_ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(iniData["IP"]), int.Parse(iniData["port"])));
+
+                    m_ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(IP), int.Parse(port)));
 
                     // 연결 요청을 받기 시작합니다.
                     m_ServerSocket.Listen(5);
@@ -121,7 +117,12 @@ namespace SEMES_Pixel_Designer
                     // BeginAccept 메서드를 이용해 들어오는 연결 요청을 비동기적으로 처리합니다.
                     // 연결 요청을 처리하는 함수는 handleClientConnectionRequest 입니다.
                     m_ServerSocket.BeginAccept(m_fnAcceptHandler, null);
-                }                
+                }
+                else
+                {
+                    AsyncCallback m_wait_ip_port_set = new AsyncCallback(wait_ip_port_set);
+                    IAsyncResult result = m_wait_ip_port_set.BeginInvoke(null, null, null);
+                }
             }
             else
             {
@@ -136,10 +137,8 @@ namespace SEMES_Pixel_Designer
             while (true)
             {
                 iniData = ReadIniFile(iniFilePath);
-                if (iniData["IP"] != null || iniData["port"] != null)
-                {
-                    break;
-                }
+                if (iniData.TryGetValue("IP", out _) && iniData.TryGetValue("port", out _)) continue;
+                break;
             }
             TcpConnection(null);
         }
@@ -165,7 +164,7 @@ namespace SEMES_Pixel_Designer
             {
                 if(messageQueue.Count > 0)
                 {
-                    if (iniData["default_path"] == null)
+                    if(!iniData.TryGetValue("default_path", out _))
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
@@ -187,7 +186,8 @@ namespace SEMES_Pixel_Designer
                     if (parts[0].Trim() == "GetCADFile")
                     {
                         // default 경로 관리
-                        string default_Path = iniData["default_path"];
+                        string default_Path;
+                        iniData.TryGetValue("default_path", out default_Path);
                         string[] pathParts = Directory.GetDirectories(default_Path);
                         Application.Current.Dispatcher.Invoke(() => TcpIpLogViewModel.Instance.LogMessageList.Add($"Receive Message : {now_data}"));
 

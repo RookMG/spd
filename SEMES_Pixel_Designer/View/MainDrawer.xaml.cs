@@ -164,12 +164,12 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 크기 값으로 숫자를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(MakeCell_Test.col_info.Text, out rows))
+            if (!int.TryParse(MakeCell_Test.col_info.Text, out cols))
             {
                 MessageBox.Show("패턴 가로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(MakeCell_Test.row_info.Text, out cols))
+            if (!int.TryParse(MakeCell_Test.row_info.Text, out rows))
             {
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
@@ -469,8 +469,8 @@ namespace SEMES_Pixel_Designer
             //Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
             //Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
             Coordinates.AdjustRatio();
-            if (Coordinates.MinimapRef != null)
-                Coordinates.MinimapRef.AdjustRatio();
+            if(Coordinates.MinimapRef!= null)
+            Coordinates.MinimapRef.AdjustRatio();
             UpdateCanvas();
         }
 
@@ -483,6 +483,7 @@ namespace SEMES_Pixel_Designer
         public void DrawCanvas(object obj)
         {
             Children.Clear();
+            cells.Clear();
             Children.Add(Coordinates.gridInfoText);
             Children.Add(Coordinates.borderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
@@ -896,36 +897,27 @@ namespace SEMES_Pixel_Designer
                 ClearSelected();
             }
             // TODO: 영역 안의 폴리곤 선택
+            StreamGeometry selectedAreaGeometry = new StreamGeometry();
+            using (StreamGeometryContext ctx = selectedAreaGeometry.Open())
+            {
+                ctx.BeginFigure(drawingPolygon.Points[0], true /* is filled */, true /* is closed */);
+                ctx.LineTo(drawingPolygon.Points[1], true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(drawingPolygon.Points[2], true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(drawingPolygon.Points[3], true /* is stroked */, false /* is smooth join */);
+            }
 
-            List<double> x = new List<double>(), y = new List<double>();
+                //List<double> x = new List<double>(), y = new List<double>();
             foreach (PolygonEntity entity in DrawingEntities)
             {
+                if (selectedAreaGeometry.FillContainsWithDetail(entity.geometry, 1, ToleranceType.Relative) == IntersectionDetail.Empty) continue;
 
-                x.Clear();
-                y.Clear();
-                foreach(var point in entity.dxfCoords)
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
-                    x.Add(Coordinates.ToScreenX(point.X));
-                    y.Add(Coordinates.ToScreenY(point.Y));
+                    entity.ToggleSelected(!entity.selected);
                 }
-                double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
-                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY)
+                else
                 {
-                    if(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                    {
-                        if (entity.selected)
-                        {
-                            entity.ToggleSelected(false);
-                        }
-                        else
-                        {
-                            entity.ToggleSelected(true);
-                        }
-                    }
-                    else
-                    {
-                        entity.ToggleSelected(true);
-                    }
+                    entity.ToggleSelected(true);
                 }
             }
             }
