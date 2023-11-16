@@ -76,13 +76,19 @@ namespace SEMES_Pixel_Designer
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MainCanvas), new FrameworkPropertyMetadata(typeof(MainCanvas)));
             ClipToBounds = true;
             Background = Coordinates.backgroundColorBrush;
-            Coordinates.borderPath = new Path();
-            Coordinates.borderPath.Data = Coordinates.borderGeometry = new StreamGeometry();
-            Coordinates.borderPath.Fill = Brushes.Gray;
-            Coordinates.borderGeometry.FillRule = FillRule.Nonzero;
+            Coordinates.glassBorderPath = new Path();
+            Coordinates.glassBorderPath.Data = Coordinates.glassBorderGeometry = new StreamGeometry();
+            Coordinates.glassBorderPath.Fill = Brushes.Gray;
+            Coordinates.glassBorderGeometry.FillRule = FillRule.Nonzero;
+            Coordinates.cellBorderPath = new Path();
+            Coordinates.cellBorderPath.Data = Coordinates.cellBorderGeometry = new StreamGeometry();
+            Coordinates.cellBorderPath.Fill = Brushes.White; 
+            Coordinates.cellBorderGeometry.FillRule = FillRule.Nonzero;
             Children.Add(Coordinates.gridInfoText);
-            Children.Add(Coordinates.borderPath);
+            Children.Add(Coordinates.glassBorderPath);
+            Children.Add(Coordinates.cellBorderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
+            SetZIndex(Coordinates.cellBorderPath, -2);
             //SetZIndex(this, -1);
 
             Utils.Mediator.Register("MainDrawer.DrawCanvas", DrawCanvas);
@@ -485,7 +491,8 @@ namespace SEMES_Pixel_Designer
             Children.Clear();
             cells.Clear();
             Children.Add(Coordinates.gridInfoText);
-            Children.Add(Coordinates.borderPath);
+            Children.Add(Coordinates.glassBorderPath);
+            Children.Add(Coordinates.cellBorderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
             UpdateLayout();
 
@@ -525,11 +532,9 @@ namespace SEMES_Pixel_Designer
             {
                 Coordinates.defaultColorBrush = Brushes.White;
                 Coordinates.backgroundColorBrush = Brushes.Black;
-                Background = Coordinates.backgroundColorBrush;
                 darkMode = true;
             }
-
-            Background = Coordinates.backgroundColorBrush;
+            Coordinates.cellBorderPath.Fill = Coordinates.backgroundColorBrush;
             foreach (PolygonEntity child in DrawingEntities)
             {
                 child.ReColor();
