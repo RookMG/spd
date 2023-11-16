@@ -58,6 +58,8 @@ namespace SEMES_Pixel_Designer
 
         SEMES_Pixel_Designer.View.MakeCell MakeCell_Test;
         SEMES_Pixel_Designer.View.GlassSetting SetGlass_Test;
+        SEMES_Pixel_Designer.View.SetCell SetCell_Test;
+        private Cell seletedCell;
 
         public MainCanvas()
         {
@@ -100,6 +102,8 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.MakeNewcell_click", MakeNewcell_Clicked);
             Utils.Mediator.Register("MainDrawer.SetGlass", SetGlass_Input);
             Utils.Mediator.Register("MainDrawer.SetGlass_click", SetGlass_Clicked);
+            Utils.Mediator.Register("MainDrawer.SetCell", SetCell_Input);
+            Utils.Mediator.Register("MainDrawer.SetCell_Clicked", SetCell_Clicked);
 
             MouseMove += Info_MouseMove;
 
@@ -160,12 +164,12 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 크기 값으로 숫자를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(MakeCell_Test.col_info.Text, out rows))
+            if (!int.TryParse(MakeCell_Test.col_info.Text, out cols))
             {
                 MessageBox.Show("패턴 가로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
-            if (!int.TryParse(MakeCell_Test.row_info.Text, out cols))
+            if (!int.TryParse(MakeCell_Test.row_info.Text, out rows))
             {
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
@@ -231,6 +235,93 @@ namespace SEMES_Pixel_Designer
             
 
             SetGlass_Test.Close();
+        }
+
+        public void SetCell_Input(object obj)
+        {
+            SetCell_Test = new SEMES_Pixel_Designer.View.SetCell();
+            seletedCell = (Cell)obj;
+
+            if(seletedCell == null)
+            {
+                MessageBox.Show("해당 셀이 존재 하지 않습니다");
+                return;
+            }
+       
+
+            SetCell_Test.cell_name_init.Text = seletedCell.Name;
+            SetCell_Test.left_init.Text = seletedCell.PatternLeft.ToString();
+            SetCell_Test.bottom_init.Text = seletedCell.PatternBottom.ToString();
+            SetCell_Test.width_init.Text = seletedCell.PatternWidth.ToString();
+            SetCell_Test.height_init.Text = seletedCell.PatternHeight.ToString();
+            SetCell_Test.col_init.Text = seletedCell.PatternCols.ToString();
+            SetCell_Test.row_init.Text = seletedCell.PatternRows.ToString();
+
+            SetCell_Test.ShowDialog();
+        }
+
+        public void SetCell_Clicked(object obj)
+        {
+            double left, bottom, width, height;
+            int rows, cols;
+
+            if (!double.TryParse(SetCell_Test.left_info.Text, out left))
+            {
+                MessageBox.Show("시작 좌표 왼쪽 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(SetCell_Test.bottom_info.Text, out bottom))
+            {
+                MessageBox.Show("시작 좌표 아랫쪽 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(SetCell_Test.width_info.Text, out width))
+            {
+                MessageBox.Show("패턴 가로 크기 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(SetCell_Test.height_info.Text, out height))
+            {
+                MessageBox.Show("패턴 세로 크기 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!int.TryParse(SetCell_Test.col_info.Text, out rows))
+            {
+                MessageBox.Show("패턴 가로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            if (!int.TryParse(SetCell_Test.row_info.Text, out cols))
+            {
+                MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            seletedCell = new Cell(SetCell_Test.cell_name_info.Text, left, bottom, width, height, rows, cols);
+            netDxf.Tables.Layer layer = new netDxf.Tables.Layer(seletedCell.name);
+            layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", seletedCell.patternLeft, 
+                seletedCell.patternBottom, seletedCell.patternWidth, seletedCell.patternHeight, seletedCell.patternRows, seletedCell.patternCols);
+
+            /*
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    MainWindow.doc.Layers.Remove(layer);
+                    cells.Remove(seletedCell);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () => {
+                    MainWindow.doc.Layers.Add(layer);
+                    cells.Add(seletedCell);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () =>
+                {
+                }
+            ));*/
+
+            seletedCell = null;
+            MakeCell_Test.Close();
         }
 
         public Cell FindCellByName(string name)
@@ -378,8 +469,8 @@ namespace SEMES_Pixel_Designer
             //Coordinates.maxX = Coordinates.minX + e.NewSize.Width / Coordinates.ratio;
             //Coordinates.minY = Coordinates.maxY - e.NewSize.Height / Coordinates.ratio;
             Coordinates.AdjustRatio();
-            if (Coordinates.MinimapRef != null)
-                Coordinates.MinimapRef.AdjustRatio();
+            if(Coordinates.MinimapRef!= null)
+            Coordinates.MinimapRef.AdjustRatio();
             UpdateCanvas();
         }
 
@@ -392,6 +483,7 @@ namespace SEMES_Pixel_Designer
         public void DrawCanvas(object obj)
         {
             Children.Clear();
+            cells.Clear();
             Children.Add(Coordinates.gridInfoText);
             Children.Add(Coordinates.borderPath);
             SetZIndex(Coordinates.gridInfoText, -1);
@@ -603,7 +695,7 @@ namespace SEMES_Pixel_Designer
                 }
             ));
 
-            //Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
         private void DrawLine(object obj)
@@ -805,36 +897,27 @@ namespace SEMES_Pixel_Designer
                 ClearSelected();
             }
             // TODO: 영역 안의 폴리곤 선택
+            StreamGeometry selectedAreaGeometry = new StreamGeometry();
+            using (StreamGeometryContext ctx = selectedAreaGeometry.Open())
+            {
+                ctx.BeginFigure(drawingPolygon.Points[0], true /* is filled */, true /* is closed */);
+                ctx.LineTo(drawingPolygon.Points[1], true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(drawingPolygon.Points[2], true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(drawingPolygon.Points[3], true /* is stroked */, false /* is smooth join */);
+            }
 
-            List<double> x = new List<double>(), y = new List<double>();
+                //List<double> x = new List<double>(), y = new List<double>();
             foreach (PolygonEntity entity in DrawingEntities)
             {
+                if (selectedAreaGeometry.FillContainsWithDetail(entity.geometry, 1, ToleranceType.Relative) == IntersectionDetail.Empty) continue;
 
-                x.Clear();
-                y.Clear();
-                foreach(var point in entity.dxfCoords)
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
-                    x.Add(Coordinates.ToScreenX(point.X));
-                    y.Add(Coordinates.ToScreenY(point.Y));
+                    entity.ToggleSelected(!entity.selected);
                 }
-                double minX = x.Min(), minY = y.Min(), maxX = x.Max(), maxY = y.Max();
-                if (maxX >= minSelX && minX <= maxSelX && maxY >= minSelY && minY <= maxSelY)
+                else
                 {
-                    if(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                    {
-                        if (entity.selected)
-                        {
-                            entity.ToggleSelected(false);
-                        }
-                        else
-                        {
-                            entity.ToggleSelected(true);
-                        }
-                    }
-                    else
-                    {
-                        entity.ToggleSelected(true);
-                    }
+                    entity.ToggleSelected(true);
                 }
             }
             }
@@ -965,7 +1048,7 @@ namespace SEMES_Pixel_Designer
             MouseLeftButtonDown += Select_MouseLeftButtonDown;
             MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
 
-            //Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
         private void DrawLine_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -1075,7 +1158,7 @@ namespace SEMES_Pixel_Designer
                 MouseRightButtonDown += MoveCanvas_MouseRightButtonDown;
             }
 
-            //Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
         private void DrawRectangle_MouseRightButtonUp(object sender, MouseEventArgs e)
@@ -1185,7 +1268,7 @@ namespace SEMES_Pixel_Designer
             }
             UpdateLayout();
 
-            // Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
+            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
         }
 
 

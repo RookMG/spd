@@ -100,6 +100,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ColorScreen", ColorScreen);
             Utils.Mediator.Register("MainWindow.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainWindow.ToggleGrid", ToggleGrid);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(ToggleGrid), new KeyGesture(Key.G, ModifierKeys.Control)));
             Utils.Mediator.Register("MainWindow.ToggleLineWidth", ToggleLineWidth);
             Utils.Mediator.Register("MainWindow.ShowLayers", ShowLayers);
             Utils.Mediator.Register("MainWindow.ChangeLayer", ChangeLayer);
@@ -112,6 +113,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.Exit", Exit);
             Utils.Mediator.Register("MainWindow.MakeNewcell", MakeNewcell);
             Utils.Mediator.Register("MainWindow.SetGlass", SetGlass);
+            Utils.Mediator.Register("MainWindow.SetCell", SetCell);
 
             // TcpIp 연결 항시 대기
             tt = new TcpIp();
@@ -168,9 +170,9 @@ namespace SEMES_Pixel_Designer
 
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
-            if (TcpIp.iniData["default_path"] != null)
+            if (TcpIp.iniData.TryGetValue("default_path", out string value))
             {
-                dlgOpenFile.InitialDirectory = TcpIp.iniData["default_path"];
+                dlgOpenFile.InitialDirectory = value;
             }            
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
@@ -214,9 +216,9 @@ namespace SEMES_Pixel_Designer
         {
             SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
             dlgSaveAsFile.Title = "파일 저장";
-            if (TcpIp.iniData["default_path"] != null)
+            if (TcpIp.iniData.TryGetValue("default_path", out string value))
             {
-                dlgSaveAsFile.InitialDirectory = TcpIp.iniData["default_path"];
+                dlgSaveAsFile.InitialDirectory = value;
             }
             dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
 
@@ -356,6 +358,10 @@ namespace SEMES_Pixel_Designer
         {
             Mediator.NotifyColleagues("MainDrawer.SetGlass", null);
         }
+        public void SetCell(object obj)
+        {
+            Mediator.NotifyColleagues("MainDrawer.SetCell", null);
+        }
 
         #endregion
 
@@ -428,6 +434,8 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
+            Coordinates.drawGrid = !Coordinates.drawGrid;
+            Coordinates.CanvasRef.UpdateCanvas();
 
         }
 
