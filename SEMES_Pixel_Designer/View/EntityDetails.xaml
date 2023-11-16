@@ -28,7 +28,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
 							<StackPanel Orientation="Horizontal">
-								<Expander Header="{Binding Name}">
+                                <Expander Header="{Binding Name}" IsExpanded="{Binding Expanded}">
 
 									<TreeView ItemsSource="{Binding Children}" >
 									
