@@ -234,6 +234,7 @@ namespace SEMES_Pixel_Designer
             }
             else
             {
+                if (glass_size == "") return;
                 string[] xy = SetGlass.glass_size.Text.Split('x');
                 width = (Double.Parse(xy[0]));
                 height = (Double.Parse(xy[1]));
