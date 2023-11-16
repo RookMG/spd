@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +29,11 @@ namespace SEMES_Pixel_Designer.View
         private void cng_bool(object sender, RoutedEventArgs e)
         {
             Mediator.NotifyColleagues("MainDrawer.MakeNewcell_click", null);
+        }
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex _regex = new Regex("/^[0-9]+(.[0-9]+)?$/");
+            e.Handled = _regex.IsMatch(e.Text);
         }
     }
 }

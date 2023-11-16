@@ -5,28 +5,116 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SEMES_Pixel_Designer.View"
         mc:Ignorable="d"
-        Title="MakeCell" Height="300" Width="400">
-    <Grid>
-        <TextBox x:Name="left_info" HorizontalAlignment="Left" Height="20" Margin="132,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="bottom_info" HorizontalAlignment="Left" Height="20" Margin="132,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="width_info" HorizontalAlignment="Left" Height="20" Margin="132,118,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="height_info" HorizontalAlignment="Left" Height="20" Margin="132,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="col_info" HorizontalAlignment="Left" Height="20" Margin="132,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="row_info" HorizontalAlignment="Left" Height="20" Margin="132,228,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="왼쪽" VerticalAlignment="Top" Margin="74,44,0,0" Height="14"/>
-        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="아래쪽" VerticalAlignment="Top" Margin="74,84,0,0" Height="14"/>
-        <TextBlock x:Name="textBlock_Copy1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="가로" VerticalAlignment="Top" Margin="74,124,0,0" Height="14"/>
-        <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="세로" VerticalAlignment="Top" Margin="74,158,0,0" Height="14"/>
-        <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" TextWrapping="Wrap" Text="가로" VerticalAlignment="Top" Margin="74,195,0,0" Height="14"/>
-        <TextBlock x:Name="textBlock_Copy4" HorizontalAlignment="Left" TextWrapping="Wrap" Text="세로" VerticalAlignment="Top" Margin="75,232,0,0" Height="13"/>
-        <TextBlock x:Name="textBlock_Copy5" HorizontalAlignment="Left" TextWrapping="Wrap" Text="시작 좌표" VerticalAlignment="Top" Margin="11,63,0,0" Height="14"/>
-        <TextBlock x:Name="textBlock_Copy6" HorizontalAlignment="Left" TextWrapping="Wrap" Text="패턴 크기" VerticalAlignment="Top" Margin="11,139,0,0" Height="14"/>
-        <TextBlock x:Name="textBlock_Copy7" HorizontalAlignment="Left" TextWrapping="Wrap" Text="반복 횟수" VerticalAlignment="Top" Margin="11,212,0,0" Height="14"/>
-        <Button x:Name="button" IsDefault="True" Click="cng_bool" Content="추가" HorizontalAlignment="Left" Margin="296,119,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button x:Name="button_Copy" IsCancel="True" Content="취소" HorizontalAlignment="Left" Margin="296,150,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox x:Name="cell_name" HorizontalAlignment="Left" Height="20" Margin="133,8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock x:Name="textBlock_Copy8" HorizontalAlignment="Left" TextWrapping="Wrap" Text="셀 이름" VerticalAlignment="Top" Margin="33,10,0,0" Height="14" Width="66"/>
+        Title="셀 추가" Height="400" Width="300"
+        Background="LightGray"
+        ResizeMode="NoResize"
+        Icon="../Asset/icon/SPD_icon.ico">
 
-
-    </Grid>
+    <DockPanel Background="LightGray">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0,3,0,3">
+            <Button IsDefault="True" Click="cng_bool" Content="추가" Width="65" Margin="5,5,5,5" BorderBrush="#0078d7" />
+            <Button IsCancel="True" Content="취소" Width="65" Margin="5,5,5,5" />
+        </StackPanel>
+        <Grid Margin="6,6,6,0" Background="White" >
+            <Border BorderBrush="Gray" BorderThickness="0.7"/>
+            <Grid Margin="3,3,3,3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0,2,3,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="셀 이름"/>
+                    <Separator Grid.Column="1" Background="LightGray"/>
+                </Grid>
+                <Grid Grid.Row="1" Margin="15,0,0,0">
+                    <TextBox x:Name="cell_name" Grid.Row="1" Grid.Column="1" Height="22" Width="173" Margin="0,0,0,0" HorizontalAlignment="Left"/>
+                </Grid >
+                <Grid Grid.Row="2" Margin="0,2,3,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="시작 좌표"/>
+                    <Separator Grid.Column="1" Background="LightGray"/>
+                </Grid>
+                <Grid Grid.Row="3" Margin="10,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0"  Content="X(왼쪽 기준): " VerticalAlignment="Center"/>
+                    <Label Grid.Row="1" Grid.Column="0"  Content="Y(하단 기준): " VerticalAlignment="Center"/>
+                    <TextBox x:Name="left_info" Grid.Row="0" Grid.Column="1" Height="22" Width="94" Margin="0,0,0,0" HorizontalAlignment="Left" PreviewTextInput="NumberValidationTextBox" />
+                    <TextBox x:Name="bottom_info" Grid.Row="1" Grid.Column="1" Height="22" Width="94" Margin="0,0,0,0" HorizontalAlignment="Left" PreviewTextInput="NumberValidationTextBox" />
+                    <Label Grid.Row="0" Grid.Column="2"  Content="μm" VerticalAlignment="Center"/>
+                    <Label Grid.Row="1" Grid.Column="2"  Content="μm" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Row="4" Margin="0,2,3,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="패턴 크기"/>
+                    <Separator Grid.Column="1" Background="LightGray"/>
+                </Grid>
+                <Grid Grid.Row="5" Margin="10,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0"  Content="가로: " VerticalAlignment="Center"/>
+                    <Label Grid.Row="1" Grid.Column="0"  Content="세로: " VerticalAlignment="Center"/>
+                    <TextBox x:Name="width_info" Grid.Row="0" Grid.Column="1" Height="22" Width="94" Margin="0,0,0,0" HorizontalAlignment="Left" PreviewTextInput="NumberValidationTextBox" />
+                    <TextBox x:Name="height_info" Grid.Row="1" Grid.Column="1" Height="22" Width="94" Margin="0,0,0,0" HorizontalAlignment="Left" PreviewTextInput="NumberValidationTextBox" />
+                    <Label Grid.Row="0" Grid.Column="2"  Content="μm" VerticalAlignment="Center"/>
+                    <Label Grid.Row="1" Grid.Column="2"  Content="μm" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Row="6" Margin="0,2,3,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="패턴 반복"/>
+                    <Separator Grid.Column="1" Background="LightGray"/>
+                </Grid>
+                <Grid Grid.Row="7" Margin="10,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0"  Content="가로: " VerticalAlignment="Center"/>
+                    <Label Grid.Row="1" Grid.Column="0"  Content="세로: " VerticalAlignment="Center"/>
+                    <TextBox x:Name="col_info" Grid.Row="0" Grid.Column="1" Height="22" Width="94" Margin="0,0,0,0" HorizontalAlignment="Left" PreviewTextInput="NumberValidationTextBox" />
+                    <TextBox x:Name="row_info" Grid.Row="1" Grid.Column="1" Height="22" Width="94" Margin="0,0,0,0" HorizontalAlignment="Left" PreviewTextInput="NumberValidationTextBox" />
+                    <Label Grid.Row="0" Grid.Column="2"  Content="번" VerticalAlignment="Center"/>
+                    <Label Grid.Row="1" Grid.Column="2"  Content="번" VerticalAlignment="Center"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </DockPanel>
 </Window>
