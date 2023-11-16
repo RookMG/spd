@@ -124,7 +124,8 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.forCall_SaveDxf_on_MainWindow", forCall_SaveDxf_on_MainWindow);*/
 
             #endregion
-
+            doc = new DxfDocument();
+            doc.Layers["0"].Description = Coordinates.glassRight + "," + Coordinates.glassTop;
         }
 
         // 현재 편집 중인 문서
@@ -132,7 +133,7 @@ namespace SEMES_Pixel_Designer
         // MainWindow.doc
         // 예시)
         // foreach (var line in MainWindow.doc.Entities.Lines) {...}
-        public static DxfDocument doc = new DxfDocument();
+        public static DxfDocument doc;
         public static string fileName = null;
 
         public static bool chk_file = false;
