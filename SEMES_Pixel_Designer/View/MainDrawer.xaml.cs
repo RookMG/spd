@@ -266,6 +266,20 @@ namespace SEMES_Pixel_Designer
             toWidth *= 1000;
             toHeight *= 1000;
 
+            Coordinates.glassRight = toWidth;
+            Coordinates.glassTop = toHeight;
+
+            foreach(Cell c in cells)
+            {
+                if (c.IsInGlass()) continue;
+                Coordinates.glassRight = fromWidth;
+                Coordinates.glassTop = fromHeight;
+
+                MessageBox.Show(c.name+"셀이 글라스 바깥으로 벗어납니다.\n더 큰 범위를 지정하거나 "+c.name+"셀을 삭제한 후 다시 시도해주세요.");
+                return;
+            }
+
+
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
                 () => {

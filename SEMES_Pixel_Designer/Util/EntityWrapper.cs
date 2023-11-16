@@ -213,6 +213,11 @@ namespace SEMES_Pixel_Designer.Utils
             return c1.FillContainsWithDetail(c2) == IntersectionDetail.FullyContains;
         }
 
+        public bool IsInGlass()
+        {
+            return IsInGlass(patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols);
+        }
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
