@@ -87,7 +87,17 @@ namespace SEMES_Pixel_Designer
             EntityDetailComboBox.ItemsSource = selectedEntities;
 
             EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
-
+            if (selectedEntities.Count > 0)
+            {
+                string colorStr = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString();
+                if ("1".Equals(colorStr) || "3".Equals(colorStr) || "5".Equals(colorStr))
+                    ColorComboBox.SelectedIndex = 2 - int.Parse(colorStr) / 2;
+                else ColorComboBox.SelectedIndex = -1;
+            }
+            else
+            {
+                ColorComboBox.SelectedIndex = -1;
+            }
             ShowEntityProperties(null);
         }
 
@@ -157,24 +167,23 @@ namespace SEMES_Pixel_Designer
         
         private void XTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            Keyboard.ClearFocus();
             EditCoordi(sender, true);
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
-            Keyboard.ClearFocus();
         }
 
         private void YTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            Keyboard.ClearFocus();
             EditCoordi(sender, false);
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
-            Keyboard.ClearFocus();
         }
 
         private void XTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                EditCoordi(sender, true);
-                e.Handled = true;
+                e.Handled = EditCoordi(sender, true);
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
                 Keyboard.ClearFocus();
             }
@@ -184,15 +193,14 @@ namespace SEMES_Pixel_Designer
         {
             if (e.Key == Key.Enter)
             {
-                EditCoordi(sender, false);
-                e.Handled = true;
+                e.Handled = EditCoordi(sender, false);
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
                 Keyboard.ClearFocus();
             }
         }
 
 
-        private void EditCoordi(object sender, bool isX)
+        private bool EditCoordi(object sender, bool isX)
         {
             if (sender is TextBox textBox && textBox.DataContext is CoordInfo coord)
             {
@@ -208,13 +216,16 @@ namespace SEMES_Pixel_Designer
                         EditCoordiX(coord.idx, coordiReal);
                     else
                         EditCoordiY(coord.idx, coordiReal);
+                    return true;
                 }
                 else
                 {
-                    MessageBox.Show("WRONG VALUE!!");
+                    MessageBox.Show("소수 형태의 좌표를 입력하세요");
+                    return false;
                 }
 
             }
+            return false;
         }
 
 
@@ -224,13 +235,16 @@ namespace SEMES_Pixel_Designer
             if (from == to) return;
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 모양 변경",
                 () => {
                     propertyEntity.UpdatePoint(from, propertyEntity.dxfCoords[index].Y, index, true);
-                    propertyEntity.ReDraw();
+                    propertyEntity.ReDraw(); 
+                    propertyEntity.cell.CountChange(false);
                 },
                 () => {
                     propertyEntity.UpdatePoint(to, propertyEntity.dxfCoords[index].Y, index, true);
                     propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(true);
                 },
                 () =>
                 {
@@ -244,13 +258,16 @@ namespace SEMES_Pixel_Designer
             if (from == to) return;
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 모양 변경",
                 () => {
                     propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, from, index, true);
                     propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(false);
                 },
                 () => {
                     propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, to, index, true);
                     propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(true);
                 },
                 () =>
                 {
@@ -328,6 +345,7 @@ namespace SEMES_Pixel_Designer
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "셀 삭제",
                 () => {
                     MainWindow.doc.Layers.Add(layer);
                     cell.Restore();

@@ -99,7 +99,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
             Utils.Mediator.Register("MainDrawer.Paste", Paste);
-            Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
+            //Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj) => {
                 DeleteEntities(selectedEntities);
             });
@@ -183,23 +183,47 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
+            if (!int.TryParse(MakeCell_Test.row_info.Text, out rows))
+            {
+                MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            if (FindCellByName(MakeCell_Test.cell_name.Text) != null)
+            {
+                MessageBox.Show(MakeCell_Test.cell_name.Text+"는 이미 존재하는 셀 이름입니다.");
+                return;
+            }
+            Cell collidingCell;
+            if ((collidingCell = CheckCellCollision(left, bottom, width, height, rows, cols))!=null)
+            {
+                MessageBox.Show("다른 셀("+ collidingCell.name+ ")과 영역이 겹칩니다.");
+                return;
+            }
+            if (!Cell.IsInGlass(left, bottom, width, height, rows, cols))
+            {
+                MessageBox.Show("셀 영역이 글라스 바깥으로 넘어갑니다.");
+                return;
+            }
             Cell c = new Cell(MakeCell_Test.cell_name.Text, left, bottom, width, height, rows, cols);
             netDxf.Tables.Layer layer = new netDxf.Tables.Layer(c.name);
             layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", c.patternLeft, c.patternBottom, c.patternWidth, c.patternHeight, c.patternRows, c.patternCols);
             
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "셀 생성",
                 () => {
                     MainWindow.doc.Layers.Remove(layer);
                     cells.Remove(c);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
+                    c.CountChange(false);
                 },
                 () => {
                     MainWindow.doc.Layers.Add(layer);
                     cells.Add(c);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
+                    c.CountChange(true);
                 },
                 () =>
                 {
@@ -218,39 +242,68 @@ namespace SEMES_Pixel_Designer
         public void SetGlass_Clicked(object obj)
         {
             string glass_size = SetGlass.glass_size.Text;
-            double width, height;
+            double toWidth, toHeight, fromWidth = Coordinates.glassRight, fromHeight = Coordinates.glassTop;
 
             if (glass_size=="사용자 지정" || (SetGlass.glass_width.Text!="" && SetGlass.glass_height.Text!=""))
             {
-                if (!double.TryParse(SetGlass.glass_width.Text, out width))
+                if (!double.TryParse(SetGlass.glass_width.Text, out toWidth))
                 {
                     MessageBox.Show("글라스 너비를 숫자로 입력해주세요");
                     return;
                 }
-                if (!double.TryParse(SetGlass.glass_height.Text, out height))
+                if (!double.TryParse(SetGlass.glass_height.Text, out toHeight))
                 {
                     MessageBox.Show("글라스 높이를 숫자로 입력해주세요");
                     return;
                 }
 
-                Coordinates.glassRight = width * 1000;
-                Coordinates.glassTop = height * 1000;
             }
             else
             {
                 if (glass_size == "") return;
                 string[] xy = SetGlass.glass_size.Text.Split('x');
-                width = (Double.Parse(xy[0]));
-                height = (Double.Parse(xy[1]));
+                toWidth = double.Parse(xy[0]);
+                toHeight = double.Parse(xy[1]);
 
-                Coordinates.glassRight = width * 1000;
-                Coordinates.glassTop = height * 1000;
+            }
+            toWidth *= 1000;
+            toHeight *= 1000;
+
+            Coordinates.glassRight = toWidth;
+            Coordinates.glassTop = toHeight;
+
+            foreach(Cell c in cells)
+            {
+                if (c.IsInGlass()) continue;
+                Coordinates.glassRight = fromWidth;
+                Coordinates.glassTop = fromHeight;
+
+                MessageBox.Show(c.name+"셀이 글라스 바깥으로 벗어납니다.\n더 큰 범위를 지정하거나 "+c.name+"셀을 삭제한 후 다시 시도해주세요.");
+                return;
             }
 
-            UpdateCanvas();
 
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                "글라스 크기 변경",
+                () => {
+                    MainWindow.doc.Layers["0"].Description = fromWidth + "," + fromHeight;
+                    Coordinates.glassRight = fromWidth;
+                    Coordinates.glassTop = fromHeight;
+                    UpdateCanvas();
+                },
+                () => {
+                    MainWindow.doc.Layers["0"].Description = toWidth + "," + toHeight;
+                    Coordinates.glassRight = toWidth;
+                    Coordinates.glassTop = toHeight;
+                    UpdateCanvas();
+                },
+                () =>
+                {
+                }
+            ));
             SetGlass.Close();
-            UpdateCanvas();
+
         }
 
         public void SetCell_Input(object obj)
@@ -317,46 +370,34 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
-            //selectedCell.PatternLeft = left;
-            //selectedCell.PatternBottom = bottom;
-            //selectedCell.PatternWidth = width;
-            //selectedCell.PatternHeight = height;
-            //selectedCell.PatternRows = rows;
-            //selectedCell.PatternCols = cols;
 
-            //seletedCell = new Cell(SetCell_Test.cell_name_info.Text, left, bottom, width, height, rows, cols);
-            //netDxf.Tables.Layer layer = new netDxf.Tables.Layer(seletedCell.name);
-            //layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", seletedCell.patternLeft,
-            //    seletedCell.patternBottom, seletedCell.patternWidth, seletedCell.patternHeight, seletedCell.patternRows, seletedCell.patternCols);
-
-
-            //Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            //(
-            //    () => {
-            //        MainWindow.doc.Layers.Remove(layer);
-            //        cells.Remove(seletedCell);
-            //        Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
-            //        UpdateCanvas();
-            //    },
-            //    () => {
-            //        MainWindow.doc.Layers.Add(layer);
-            //        cells.Add(seletedCell);
-            //        Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
-            //        UpdateCanvas();
-            //    },
-            //    () =>
-            //    {
-            //    }
-            //));
-
+            if (FindCellByName(selectedCell, SetCell_Test.cell_name_info.Text) != null)
+            {
+                MessageBox.Show(SetCell_Test.cell_name_info.Text + "는 이미 존재하는 셀 이름입니다.");
+                return;
+            }
+            Cell collidingCell;
+            if ((collidingCell = CheckCellCollision(selectedCell, toLeft, toBottom, toWidth, toHeight, toRows, toCols)) != null)
+            {
+                MessageBox.Show("다른 셀(" + collidingCell.name + ")과 영역이 겹칩니다.");
+                return;
+            }
+            if (!Cell.IsInGlass(toLeft, toBottom, toWidth, toHeight, toRows, toCols))
+            {
+                MessageBox.Show("셀 영역이 글라스 바깥으로 넘어갑니다.");
+                return;
+            }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "셀 수정",
                 () => {
+                    FindCellByName(toName).CountChange(false);
                     FindCellByName(toName).changeCell(fromName, fromLeft, fromBottom, fromWidth, fromHeight,fromRows, fromCols);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
                 },
                 () => {
+                    FindCellByName(fromName).CountChange(true);
                     FindCellByName(fromName).changeCell(toName, toLeft, toBottom, toWidth, toHeight, toRows, toCols);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
@@ -372,12 +413,18 @@ namespace SEMES_Pixel_Designer
 
         public Cell FindCellByName(string name)
         {
-            foreach(Cell c in cells)
+            return FindCellByName(null, name);
+        }
+        public Cell FindCellByName(Cell self, string name)
+        {
+            foreach (Cell c in cells)
             {
+                // Console.WriteLine(c.name);
+                if (c == self) continue;
                 if (c.name.Equals(name)) return c;
             }
-            Console.WriteLine("Alert : cannot find cell by name");
-            return cells[0];
+            // Console.WriteLine("Alert : cannot find cell by name");
+            return null;
         }
 
         public void UpdateCanvas()
@@ -425,24 +472,52 @@ namespace SEMES_Pixel_Designer
             foreach (var layer in MainWindow.doc.Layers)
             {
                 string[] args = layer.Description.Split(',');
-                if (args.Length != 6) continue;
-                cells.Add(new Cell(layer.Name, double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5])));
+                if (layer.Name.Equals("0"))
+                {
+                    if(args.Length == 2) {
+                        Coordinates.glassRight = double.Parse(args[0]);
+                        Coordinates.glassTop = double.Parse(args[1]);
+                    }
+                    else
+                    {
+                        cells.Add(new Cell("0",0,0,Coordinates.glassRight, Coordinates.glassTop, 1, 1));
+                    }
+                }
+                else if (args.Length == 6) cells.Add(new Cell(layer.Name, double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5])));
             }
             Coordinates.UpdateRange(MainWindow.doc.Entities);
             Coordinates.DrawGrid();
             DrawingEntities.Clear();
 
-            foreach (var line in MainWindow.doc.Entities.Lines)
+            foreach (netDxf.Entities.Line line in MainWindow.doc.Entities.Lines)
             {
-                DrawingEntities.Add(new PolygonEntity(FindCellByName(line.Layer.Name), line));
+                Cell c = FindCellByName(line.Layer.Name);
+                if (!c.Contains(line)) continue;
+                DrawingEntities.Add(new PolygonEntity(c, line));
             }
 
-            foreach (var polyline in MainWindow.doc.Entities.Polylines2D)
+            foreach (Polyline2D polyline in MainWindow.doc.Entities.Polylines2D)
             {
-                DrawingEntities.Add(new PolygonEntity(FindCellByName(polyline.Layer.Name), polyline));
+                Cell c = FindCellByName(polyline.Layer.Name);
+                if (!c.Contains(polyline)) continue;
+                DrawingEntities.Add(new PolygonEntity(c, polyline));
             }
             UpdateCanvas();
             Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+        }
+
+        public Cell CheckCellCollision(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            return CheckCellCollision(null,patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols);
+        }
+        public Cell CheckCellCollision(Cell self, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            foreach (Cell c in cells)
+            {
+                if (c == self) continue;
+                if (c.Collide(patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols)) return c;
+            }
+            return null;
         }
 
         public void ColorBackground(object obj)
@@ -480,7 +555,7 @@ namespace SEMES_Pixel_Designer
             List<PolygonEntity> pasted = new List<PolygonEntity>();
             foreach (CopyData data in clipboard)
             {
-                EntityObject entity = data.GetEntityObject();
+                EntityObject entity = data.CreateEntityObject();
                 entity.TransformBy(Matrix3.Identity, new Vector3(c.patternLeft, c.patternBottom, 0) - data.offset);
                 if (data.type == PolygonEntityType.LINE)
                 {
@@ -494,6 +569,7 @@ namespace SEMES_Pixel_Designer
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "붙여넣기",
                 () => {
                     foreach (PolygonEntity entity in pasted)
                     {
@@ -526,75 +602,75 @@ namespace SEMES_Pixel_Designer
             pasteCount++;
         }
 
-        public void CloneEntities(object obj)
-        {
-            //Window.GetWindow(this).Close();
-            var param = (Tuple<int, int, double, double>)obj;
-            int R = param.Item1;
-            int C = param.Item2;
-            double intervalX = param.Item4;
-            double intervalY = -param.Item3;
+        //public void CloneEntities(object obj)
+        //{
+        //    //Window.GetWindow(this).Close();
+        //    var param = (Tuple<int, int, double, double>)obj;
+        //    int R = param.Item1;
+        //    int C = param.Item2;
+        //    double intervalX = param.Item4;
+        //    double intervalY = -param.Item3;
 
-            //int R = 30, C = 30;
-            //double intervalX = 100, intervalY = -100;
+        //    //int R = 30, C = 30;
+        //    //double intervalX = 100, intervalY = -100;
 
-            List<CopyData> clipboardBackup = new List<CopyData>();
-            foreach (CopyData copyData in clipboard) clipboardBackup.Add(copyData);
-            CopySelected();
+        //    List<CopyData> clipboardBackup = new List<CopyData>();
+        //    foreach (CopyData copyData in clipboard) clipboardBackup.Add(copyData);
+        //    CopySelected();
 
-            List<PolygonEntity> cloned = new List<PolygonEntity>();
-            foreach (CopyData data in clipboard)
-            {
-                for (int r = 0; r < R; r++)
-                {
-                    for (int c = 0; c < C; c++)
-                    {
-                        if (r == 0 && c == 0) continue;
+        //    List<PolygonEntity> cloned = new List<PolygonEntity>();
+        //    foreach (CopyData data in clipboard)
+        //    {
+        //        for (int r = 0; r < R; r++)
+        //        {
+        //            for (int c = 0; c < C; c++)
+        //            {
+        //                if (r == 0 && c == 0) continue;
 
-                        EntityObject entity = data.GetEntityObject(); ;
-                        entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
-                        MainWindow.doc.Entities.Add(entity);
-                        if (data.type == PolygonEntityType.LINE)
-                        {
-                            cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as netDxf.Entities.Line));
-                        }
-                        else if (data.type == PolygonEntityType.POLYLINE)
-                        {
-                            cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as Polyline2D));
-                        }
-                    }
-                }
-            }
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    foreach (PolygonEntity entity in cloned)
-                    {
-                        DrawingEntities.Add(entity);
-                    }
-                },
-                () => {
-                    foreach (PolygonEntity entity in cloned)
-                    {
-                        DrawingEntities.Remove(entity);
-                        entity.Delete();
-                    }
-                },
-                () =>
-                {
-                    foreach (PolygonEntity entity in cloned)
-                    {
-                        DrawingEntities.Add(entity);
-                        entity.Restore();
-                    }
-                },
-                () =>
-                {
-                    foreach (PolygonEntity entity in cloned) entity.Remove();
-                }
-            ));
-            clipboard = clipboardBackup;
-        }
+        //                EntityObject entity = data.CreateEntityObject(); ;
+        //                entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
+        //                MainWindow.doc.Entities.Add(entity);
+        //                if (data.type == PolygonEntityType.LINE)
+        //                {
+        //                    cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as netDxf.Entities.Line));
+        //                }
+        //                else if (data.type == PolygonEntityType.POLYLINE)
+        //                {
+        //                    cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as Polyline2D));
+        //                }
+        //            }
+        //        }
+        //    }
+        //    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+        //    (
+        //        () => {
+        //            foreach (PolygonEntity entity in cloned)
+        //            {
+        //                DrawingEntities.Add(entity);
+        //            }
+        //        },
+        //        () => {
+        //            foreach (PolygonEntity entity in cloned)
+        //            {
+        //                DrawingEntities.Remove(entity);
+        //                entity.Delete();
+        //            }
+        //        },
+        //        () =>
+        //        {
+        //            foreach (PolygonEntity entity in cloned)
+        //            {
+        //                DrawingEntities.Add(entity);
+        //                entity.Restore();
+        //            }
+        //        },
+        //        () =>
+        //        {
+        //            foreach (PolygonEntity entity in cloned) entity.Remove();
+        //        }
+        //    ));
+        //    clipboard = clipboardBackup;
+        //}
 
         public void Zoom(object scaleFactor)
         {
@@ -623,11 +699,20 @@ namespace SEMES_Pixel_Designer
             if (target.Count == 0) return;
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 삭제",
                 () => {
-                    foreach (PolygonEntity entity in target) entity.Restore();
+                    foreach (PolygonEntity entity in target)
+                    {
+                        entity.cell.CountChange(false);
+                        entity.Restore();
+                    }
                 },
                 () => {
-                    foreach (PolygonEntity entity in target) entity.Delete();
+                    foreach (PolygonEntity entity in target)
+                    {
+                        entity.cell.CountChange(true);
+                        entity.Delete();
+                    }
                 },
                 () => {
                     foreach (PolygonEntity entity in target) entity.Remove();
@@ -969,15 +1054,19 @@ namespace SEMES_Pixel_Designer
                 PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.LINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
+                "선 그리기",
                     () => {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                     },
                     () => {
+                        matchingCell.CountChange(false);
                         DrawingEntities.Remove(polygonEntity);
                         polygonEntity.Delete();
                     },
                     () =>
                     {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                         polygonEntity.Restore();
                     },
@@ -1077,15 +1166,19 @@ namespace SEMES_Pixel_Designer
                 PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.POLYLINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
+                "직사각형 그리기",
                     () => {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                     },
                     () => {
+                        matchingCell.CountChange(false);
                         DrawingEntities.Remove(polygonEntity);
                         polygonEntity.Delete();
                     },
                     () =>
                     {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                         polygonEntity.Restore();
                     },
@@ -1192,15 +1285,19 @@ namespace SEMES_Pixel_Designer
                 PolygonEntity polygonEntity = new PolygonEntity(matchingCell, drawingPolygon, PolygonEntityType.POLYLINE);
                 Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
                 (
+                    "폴리곤 그리기",
                     () => {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                     },
                     () => {
+                        matchingCell.CountChange(false);
                         DrawingEntities.Remove(polygonEntity);
                         polygonEntity.Delete();
                     },
                     () =>
                     {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                         polygonEntity.Restore();
                     },

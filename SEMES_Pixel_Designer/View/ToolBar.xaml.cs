@@ -26,6 +26,7 @@ namespace SEMES_Pixel_Designer
         {
             InitializeComponent();
             DataContext = new CommandDataContext();
+            Coordinates.CurrentCellInfo = CurrentCellInfo;
         }
     }
 }
