@@ -340,121 +340,6 @@ namespace SEMES_Pixel_Designer
             return cells[0];
         }
 
-        public void Test()
-        {
-            for(int r = 0; r < 5; r++)
-            {
-                for(int c = 0; c < 4; c++)
-                {
-                    cells.Add(new Cell("cell "+(r*5+c),500000 * c + 160000, 500000 * r + 60000, 372, 372, 1000, 1000));
-                }
-            }
-            Polyline2D p;
-            List<Vector2> points = new List<Vector2>();
-            foreach (Cell c in cells) {
-                if (!MainWindow.doc.Layers.Contains(c.name))
-                {
-                    netDxf.Tables.Layer layer = new netDxf.Tables.Layer(c.name);
-                    layer.Description = string.Format("{0},{1},{2},{3},{4},{5}",c.patternLeft, c.patternBottom, c.patternWidth, c.patternHeight, c.patternRows, c.patternCols);
-                    MainWindow.doc.Layers.Add(layer);
-                }
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 0));
-                points.Add(new Vector2(c.patternLeft + 0, c.patternBottom + 50));
-                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 100));
-                points.Add(new Vector2(c.patternLeft + 100, c.patternBottom + 50));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Blue;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-
-
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 186));
-                points.Add(new Vector2(c.patternLeft + 186, c.patternBottom + 236));
-                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 286));
-                points.Add(new Vector2(c.patternLeft + 286, c.patternBottom + 236));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Blue;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-
-
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 196));
-                points.Add(new Vector2(c.patternLeft + 10, c.patternBottom + 236));
-                points.Add(new Vector2(c.patternLeft + 50, c.patternBottom + 276));
-                points.Add(new Vector2(c.patternLeft + 90, c.patternBottom + 236));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Red;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-
-
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 10));
-                points.Add(new Vector2(c.patternLeft + 196, c.patternBottom + 50));
-                points.Add(new Vector2(c.patternLeft + 236, c.patternBottom + 90));
-                points.Add(new Vector2(c.patternLeft + 276, c.patternBottom + 50));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Red;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-
-
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 143 + 5, c.patternBottom + 143 - 30));
-                points.Add(new Vector2(c.patternLeft + 143 + 30, c.patternBottom + 143 - 5));
-                points.Add(new Vector2(c.patternLeft + 143 - 5, c.patternBottom + 143 + 30));
-                points.Add(new Vector2(c.patternLeft + 143 - 30, c.patternBottom + 143 + 5));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Green;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 329 + 5, c.patternBottom + 143 - 30));
-                points.Add(new Vector2(c.patternLeft + 329 + 30, c.patternBottom + 143 - 5));
-                points.Add(new Vector2(c.patternLeft + 329 - 5, c.patternBottom + 143 + 30));
-                points.Add(new Vector2(c.patternLeft + 329 - 30, c.patternBottom + 143 + 5));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Green;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 143 - 5, c.patternBottom + 329 - 30));
-                points.Add(new Vector2(c.patternLeft + 143 - 30, c.patternBottom + 329 - 5));
-                points.Add(new Vector2(c.patternLeft + 143 + 5, c.patternBottom + 329 + 30));
-                points.Add(new Vector2(c.patternLeft + 143 + 30, c.patternBottom + 329 + 5));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Green;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-
-                points.Clear();
-                points.Add(new Vector2(c.patternLeft + 329 - 5, c.patternBottom + 329 - 30));
-                points.Add(new Vector2(c.patternLeft + 329 - 30, c.patternBottom + 329 - 5));
-                points.Add(new Vector2(c.patternLeft + 329 + 5, c.patternBottom + 329 + 30));
-                points.Add(new Vector2(c.patternLeft + 329 + 30, c.patternBottom + 329 + 5));
-                p = new Polyline2D(points);
-                p.Color = AciColor.Green;
-                MainWindow.doc.Entities.Add(p);
-                p.Layer = MainWindow.doc.Layers[c.name];
-                DrawingEntities.Add(new PolygonEntity(c, p));
-            }
-            Mediator.NotifyColleagues("EntityDetails.ShowCells", null);
-            //UpdateCanvas();
-
-        }
-
         public void UpdateCanvas()
         {
             pasteCount = 0;
@@ -515,7 +400,6 @@ namespace SEMES_Pixel_Designer
             {
                 DrawingEntities.Add(new PolygonEntity(FindCellByName(polyline.Layer.Name), polyline));
             }
-            //Test();
             UpdateCanvas();
             Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
         }
@@ -557,7 +441,6 @@ namespace SEMES_Pixel_Designer
             {
                 EntityObject entity = data.GetEntityObject();
                 entity.TransformBy(Matrix3.Identity, new Vector3(c.patternLeft, c.patternBottom, 0) - data.offset);
-                MainWindow.doc.Entities.Add(entity);
                 if (data.type == PolygonEntityType.LINE)
                 {
                     pasted.Add(new PolygonEntity(c, entity as netDxf.Entities.Line));
@@ -574,12 +457,14 @@ namespace SEMES_Pixel_Designer
                     foreach (PolygonEntity entity in pasted)
                     {
                         DrawingEntities.Add(entity);
+                        MainWindow.doc.Entities.Add(entity.GetEntityObject());
                     }
                 },
                 () => {
                     foreach (PolygonEntity entity in pasted)
                     {
                         DrawingEntities.Remove(entity);
+                        MainWindow.doc.Entities.Remove(entity.GetEntityObject());
                         entity.Delete();
                     }
                 },
@@ -588,6 +473,7 @@ namespace SEMES_Pixel_Designer
                     foreach (PolygonEntity entity in pasted)
                     {
                         DrawingEntities.Add(entity);
+                        MainWindow.doc.Entities.Add(entity.GetEntityObject());
                         entity.Restore();
                     }
                 },
