@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SEMES_Pixel_Designer.View"
         mc:Ignorable="d"
-        Title="Minimap" Background="DimGray" Width ="500" Height="500" WindowStyle="SingleBorderWindow">
+        Title="Minimap" Background="DimGray" Width ="500" Height="500" WindowStyle="SingleBorderWindow"
+        Icon="../Asset/icon/SPD_icon.ico">
     <local:MinimapCanvas x:Name="minimapCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White"/>
 </Window>

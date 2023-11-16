@@ -236,8 +236,8 @@ namespace SEMES_Pixel_Designer
                 Coordinates.glassTop = height * 1000;
             }
 
-            
-   
+            UpdateCanvas();
+
             SetGlass.Close();
         }
 
