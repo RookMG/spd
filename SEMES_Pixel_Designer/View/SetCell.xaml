@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SEMES_Pixel_Designer.View"
         mc:Ignorable="d"
-        Title="SetCell" Height="300" Width="400">
+        Title="셀 편집" Height="300" Width="400">
     <Grid>
         <TextBlock x:Name="left_init" HorizontalAlignment="Left" Height="20" Margin="124,42,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
         <TextBlock x:Name="bottom_init" HorizontalAlignment="Left" Height="20" Margin="124,80,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
