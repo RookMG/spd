@@ -102,9 +102,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Util\TcpIp.cs" />
-    <Compile Include="CloneEntity.xaml.cs">
-      <DependentUpon>CloneEntity.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\TcpIpLogViewModel.cs" />
     <Compile Include="View\EntityDetails.xaml.cs">
       <DependentUpon>EntityDetails.xaml</DependentUpon>
@@ -139,10 +136,6 @@
     <Compile Include="Util\DelegateCommand.cs" />
     <Compile Include="Util\EntityWrapper.cs" />
     <Compile Include="Util\Mediator.cs" />
-    <Page Include="CloneEntity.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\EntityDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
