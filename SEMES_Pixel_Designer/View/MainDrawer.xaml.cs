@@ -58,6 +58,8 @@ namespace SEMES_Pixel_Designer
 
         SEMES_Pixel_Designer.View.MakeCell MakeCell_Test;
         SEMES_Pixel_Designer.View.GlassSetting SetGlass_Test;
+        SEMES_Pixel_Designer.View.SetCell SetCell_Test;
+        private Cell seletedCell;
 
         public MainCanvas()
         {
@@ -100,6 +102,8 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.MakeNewcell_click", MakeNewcell_Clicked);
             Utils.Mediator.Register("MainDrawer.SetGlass", SetGlass_Input);
             Utils.Mediator.Register("MainDrawer.SetGlass_click", SetGlass_Clicked);
+            Utils.Mediator.Register("MainDrawer.SetCell", SetCell_Input);
+            Utils.Mediator.Register("MainDrawer.SetCell_Clicked", SetCell_Clicked);
 
             MouseMove += Info_MouseMove;
 
@@ -231,6 +235,93 @@ namespace SEMES_Pixel_Designer
             
 
             SetGlass_Test.Close();
+        }
+
+        public void SetCell_Input(object obj)
+        {
+            SetCell_Test = new SEMES_Pixel_Designer.View.SetCell();
+            seletedCell = (Cell)obj;
+
+            if(seletedCell == null)
+            {
+                MessageBox.Show("해당 셀이 존재 하지 않습니다");
+                return;
+            }
+       
+
+            SetCell_Test.cell_name_init.Text = seletedCell.Name;
+            SetCell_Test.left_init.Text = seletedCell.PatternLeft.ToString();
+            SetCell_Test.bottom_init.Text = seletedCell.PatternBottom.ToString();
+            SetCell_Test.width_init.Text = seletedCell.PatternWidth.ToString();
+            SetCell_Test.height_init.Text = seletedCell.PatternHeight.ToString();
+            SetCell_Test.col_init.Text = seletedCell.PatternCols.ToString();
+            SetCell_Test.row_init.Text = seletedCell.PatternRows.ToString();
+
+            SetCell_Test.ShowDialog();
+        }
+
+        public void SetCell_Clicked(object obj)
+        {
+            double left, bottom, width, height;
+            int rows, cols;
+
+            if (!double.TryParse(SetCell_Test.left_info.Text, out left))
+            {
+                MessageBox.Show("시작 좌표 왼쪽 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(SetCell_Test.bottom_info.Text, out bottom))
+            {
+                MessageBox.Show("시작 좌표 아랫쪽 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(SetCell_Test.width_info.Text, out width))
+            {
+                MessageBox.Show("패턴 가로 크기 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!double.TryParse(SetCell_Test.height_info.Text, out height))
+            {
+                MessageBox.Show("패턴 세로 크기 값으로 숫자를 입력해주세요");
+                return;
+            }
+            if (!int.TryParse(SetCell_Test.col_info.Text, out rows))
+            {
+                MessageBox.Show("패턴 가로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            if (!int.TryParse(SetCell_Test.row_info.Text, out cols))
+            {
+                MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
+                return;
+            }
+            seletedCell = new Cell(SetCell_Test.cell_name_info.Text, left, bottom, width, height, rows, cols);
+            netDxf.Tables.Layer layer = new netDxf.Tables.Layer(seletedCell.name);
+            layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", seletedCell.patternLeft, 
+                seletedCell.patternBottom, seletedCell.patternWidth, seletedCell.patternHeight, seletedCell.patternRows, seletedCell.patternCols);
+
+            /*
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                () => {
+                    MainWindow.doc.Layers.Remove(layer);
+                    cells.Remove(seletedCell);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () => {
+                    MainWindow.doc.Layers.Add(layer);
+                    cells.Add(seletedCell);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    UpdateCanvas();
+                },
+                () =>
+                {
+                }
+            ));*/
+
+            seletedCell = null;
+            MakeCell_Test.Close();
         }
 
         public Cell FindCellByName(string name)

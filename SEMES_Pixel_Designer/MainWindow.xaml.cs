@@ -112,6 +112,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.Exit", Exit);
             Utils.Mediator.Register("MainWindow.MakeNewcell", MakeNewcell);
             Utils.Mediator.Register("MainWindow.SetGlass", SetGlass);
+            Utils.Mediator.Register("MainWindow.SetCell", SetCell);
 
             // TcpIp 연결 항시 대기
             tt = new TcpIp();
@@ -355,6 +356,10 @@ namespace SEMES_Pixel_Designer
         public void SetGlass(object obj)
         {
             Mediator.NotifyColleagues("MainDrawer.SetGlass", null);
+        }
+        public void SetCell(object obj)
+        {
+            Mediator.NotifyColleagues("MainDrawer.SetCell", null);
         }
 
         #endregion
