@@ -218,6 +218,30 @@ namespace SEMES_Pixel_Designer.Utils
             return IsInGlass(patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols);
         }
 
+        public bool Contains(netDxf.Entities.Line line)
+        {
+            if ((patternLeft + patternWidth < line.StartPoint.X)
+                    || (patternLeft > line.StartPoint.X)
+                    || (patternBottom + patternHeight < line.StartPoint.Y)
+                    || (patternBottom > line.StartPoint.Y)) return false;
+            if ((patternLeft + patternWidth < line.EndPoint.X)
+                    || (patternLeft > line.EndPoint.X)
+                    || (patternBottom + patternHeight < line.EndPoint.Y)
+                    || (patternBottom > line.EndPoint.Y)) return false;
+            return true;
+        }
+        public bool Contains(Polyline2D polyline)
+        {
+            foreach(Polyline2DVertex vertex in polyline.Vertexes)
+            {
+                if ((patternLeft + patternWidth < vertex.Position.X)
+                        || (patternLeft > vertex.Position.X)
+                        || (patternBottom + patternHeight < vertex.Position.Y)
+                        || (patternBottom > vertex.Position.Y)) return false;
+            }
+            return true;
+        }
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)

@@ -465,10 +465,16 @@ namespace SEMES_Pixel_Designer
             foreach (var layer in MainWindow.doc.Layers)
             {
                 string[] args = layer.Description.Split(',');
-                if (args.Length == 2)
+                if (layer.Name.Equals("0"))
                 {
-                    Coordinates.glassRight = double.Parse(args[0]);
-                    Coordinates.glassTop = double.Parse(args[1]);
+                    if(args.Length == 2) {
+                        Coordinates.glassRight = double.Parse(args[0]);
+                        Coordinates.glassTop = double.Parse(args[1]);
+                    }
+                    else
+                    {
+                        cells.Add(new Cell("0",0,0,Coordinates.glassRight, Coordinates.glassTop, 1, 1));
+                    }
                 }
                 else if (args.Length == 6) cells.Add(new Cell(layer.Name, double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5])));
             }
@@ -476,14 +482,18 @@ namespace SEMES_Pixel_Designer
             Coordinates.DrawGrid();
             DrawingEntities.Clear();
 
-            foreach (var line in MainWindow.doc.Entities.Lines)
+            foreach (netDxf.Entities.Line line in MainWindow.doc.Entities.Lines)
             {
-                DrawingEntities.Add(new PolygonEntity(FindCellByName(line.Layer.Name), line));
+                Cell c = FindCellByName(line.Layer.Name);
+                if (!c.Contains(line)) continue;
+                DrawingEntities.Add(new PolygonEntity(c, line));
             }
 
-            foreach (var polyline in MainWindow.doc.Entities.Polylines2D)
+            foreach (Polyline2D polyline in MainWindow.doc.Entities.Polylines2D)
             {
-                DrawingEntities.Add(new PolygonEntity(FindCellByName(polyline.Layer.Name), polyline));
+                Cell c = FindCellByName(polyline.Layer.Name);
+                if (!c.Contains(polyline)) continue;
+                DrawingEntities.Add(new PolygonEntity(c, polyline));
             }
             UpdateCanvas();
             Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);

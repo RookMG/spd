@@ -69,6 +69,9 @@ namespace SEMES_Pixel_Designer
 
             Utils.Mediator.Register("MainWindow.SaveAsDxf", SaveAsDxf);
             Utils.Mediator.Register("MainWindow.SaveBackupDxf", SaveBackupDxf);
+            Utils.Mediator.Register("MainWindow.ExportDxf", ExportDxf);
+
+            
             Utils.Mediator.Register("MainWindow.Undo", Undo);
             InputBindings.Add(new KeyBinding(new DelegateCommand(Undo), new KeyGesture(Key.Z, ModifierKeys.Control)));
 
@@ -226,7 +229,7 @@ namespace SEMES_Pixel_Designer
             {
                 dlgSaveAsFile.InitialDirectory = value;
             }
-            dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
+            dlgSaveAsFile.Filter = "dxf file (*.dxf) | *.dxf";
 
             // 파일 번호 관리
             dlgSaveAsFile.FileName = DateTime.Now.ToString("yyMMdd_HHmmss");
@@ -250,7 +253,10 @@ namespace SEMES_Pixel_Designer
             backupName = backupName.Substring(0, backupName.Length - 3) + "bak";
             doc.Save(backupName);
         }
-
+        public void ExportDxf(object obj)
+        {
+            new ExportFile().ShowDialog();
+        }
         #endregion
 
 
