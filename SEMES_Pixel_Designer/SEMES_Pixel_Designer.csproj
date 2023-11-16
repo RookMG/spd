@@ -124,6 +124,9 @@
     <Compile Include="View\Minimap.xaml.cs">
       <DependentUpon>Minimap.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ProgramInfo.xaml.cs">
+      <DependentUpon>ProgramInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SetCell.xaml.cs">
       <DependentUpon>SetCell.xaml</DependentUpon>
     </Compile>
@@ -172,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Minimap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ProgramInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -52,7 +52,7 @@
         </MenuItem>-->
 
         <MenuItem Header="설정(_O)">
-            <MenuItem Header="프로그램 정보"  Style="{StaticResource MenuItemStyle}" CommandParameter="" InputGestureText="" />
+            <MenuItem Header="프로그램 정보"  Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.OpenInfo" InputGestureText="" />
         </MenuItem>
     </Menu>
 </Page>
