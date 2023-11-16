@@ -308,5 +308,13 @@ namespace SEMES_Pixel_Designer
             Mediator.NotifyColleagues("MainWindow.SetCell", dataContext);
         }
 
+        private void DeleteCellClick(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            StackPanel stackPanel = (StackPanel)button.Parent;
+            Cell dataContext = (Cell)stackPanel.DataContext;
+            dataContext.Delete();
+        }
+
     }
 }
