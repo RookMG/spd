@@ -59,7 +59,7 @@ namespace SEMES_Pixel_Designer
         SEMES_Pixel_Designer.View.MakeCell MakeCell_Test;
         SEMES_Pixel_Designer.View.GlassSetting SetGlass_Test;
         SEMES_Pixel_Designer.View.SetCell SetCell_Test;
-        private Cell seletedCell;
+        private Cell selectedCell;
 
         public MainCanvas()
         {
@@ -239,23 +239,23 @@ namespace SEMES_Pixel_Designer
 
         public void SetCell_Input(object obj)
         {
+            selectedCell = (Cell)obj;
             SetCell_Test = new SEMES_Pixel_Designer.View.SetCell();
-            seletedCell = (Cell)obj;
 
-            if(seletedCell == null)
+
+            if(selectedCell == null)
             {
                 MessageBox.Show("해당 셀이 존재 하지 않습니다");
                 return;
             }
-       
 
-            SetCell_Test.cell_name_init.Text = seletedCell.Name;
-            SetCell_Test.left_init.Text = seletedCell.PatternLeft.ToString();
-            SetCell_Test.bottom_init.Text = seletedCell.PatternBottom.ToString();
-            SetCell_Test.width_init.Text = seletedCell.PatternWidth.ToString();
-            SetCell_Test.height_init.Text = seletedCell.PatternHeight.ToString();
-            SetCell_Test.col_init.Text = seletedCell.PatternCols.ToString();
-            SetCell_Test.row_init.Text = seletedCell.PatternRows.ToString();
+            SetCell_Test.cell_name_init.Text = selectedCell.Name;
+            SetCell_Test.left_init.Text = selectedCell.PatternLeft.ToString();
+            SetCell_Test.bottom_init.Text = selectedCell.PatternBottom.ToString();
+            SetCell_Test.width_init.Text = selectedCell.PatternWidth.ToString();
+            SetCell_Test.height_init.Text = selectedCell.PatternHeight.ToString();
+            SetCell_Test.col_init.Text = selectedCell.PatternCols.ToString();
+            SetCell_Test.row_init.Text = selectedCell.PatternRows.ToString();
 
             SetCell_Test.ShowDialog();
         }
@@ -295,33 +295,40 @@ namespace SEMES_Pixel_Designer
                 MessageBox.Show("패턴 세로 반복 횟수 값으로 정수를 입력해주세요");
                 return;
             }
-            seletedCell = new Cell(SetCell_Test.cell_name_info.Text, left, bottom, width, height, rows, cols);
-            netDxf.Tables.Layer layer = new netDxf.Tables.Layer(seletedCell.name);
-            layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", seletedCell.patternLeft, 
-                seletedCell.patternBottom, seletedCell.patternWidth, seletedCell.patternHeight, seletedCell.patternRows, seletedCell.patternCols);
+            //selectedCell.PatternLeft = left;
+            //selectedCell.PatternBottom = bottom;
+            //selectedCell.PatternWidth = width;
+            //selectedCell.PatternHeight = height;
+            //selectedCell.PatternRows = rows;
+            //selectedCell.PatternCols = cols;
 
-            /*
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    MainWindow.doc.Layers.Remove(layer);
-                    cells.Remove(seletedCell);
-                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
-                    UpdateCanvas();
-                },
-                () => {
-                    MainWindow.doc.Layers.Add(layer);
-                    cells.Add(seletedCell);
-                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
-                    UpdateCanvas();
-                },
-                () =>
-                {
-                }
-            ));*/
+            //seletedCell = new Cell(SetCell_Test.cell_name_info.Text, left, bottom, width, height, rows, cols);
+            //netDxf.Tables.Layer layer = new netDxf.Tables.Layer(seletedCell.name);
+            //layer.Description = string.Format("{0},{1},{2},{3},{4},{5}", seletedCell.patternLeft,
+            //    seletedCell.patternBottom, seletedCell.patternWidth, seletedCell.patternHeight, seletedCell.patternRows, seletedCell.patternCols);
 
-            seletedCell = null;
-            MakeCell_Test.Close();
+
+            //Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            //(
+            //    () => {
+            //        MainWindow.doc.Layers.Remove(layer);
+            //        cells.Remove(seletedCell);
+            //        Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+            //        UpdateCanvas();
+            //    },
+            //    () => {
+            //        MainWindow.doc.Layers.Add(layer);
+            //        cells.Add(seletedCell);
+            //        Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+            //        UpdateCanvas();
+            //    },
+            //    () =>
+            //    {
+            //    }
+            //));
+
+            selectedCell = null;
+            SetCell_Test.Close();
         }
 
         public Cell FindCellByName(string name)
