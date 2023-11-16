@@ -54,6 +54,9 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Asset\icon\ExeIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="netDxf, Version=2022.11.2.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
       <HintPath>packages\netDxf.2022.11.2\lib\net45\netDxf.dll</HintPath>
@@ -102,9 +105,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Util\TcpIp.cs" />
-    <Compile Include="CloneEntity.xaml.cs">
-      <DependentUpon>CloneEntity.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\TcpIpLogViewModel.cs" />
     <Compile Include="View\EntityDetails.xaml.cs">
       <DependentUpon>EntityDetails.xaml</DependentUpon>
@@ -124,6 +124,9 @@
     <Compile Include="View\Minimap.xaml.cs">
       <DependentUpon>Minimap.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ProgramInfo.xaml.cs">
+      <DependentUpon>ProgramInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SetCell.xaml.cs">
       <DependentUpon>SetCell.xaml</DependentUpon>
     </Compile>
@@ -139,10 +142,6 @@
     <Compile Include="Util\DelegateCommand.cs" />
     <Compile Include="Util\EntityWrapper.cs" />
     <Compile Include="Util\Mediator.cs" />
-    <Page Include="CloneEntity.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\EntityDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -176,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Minimap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ProgramInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -282,11 +285,6 @@
     <SplashScreen Include="Asset\icon\SplashScreen_small.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\SPD_icon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Asset\icon\AddClause_16x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -298,6 +296,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Asset\icon\SetGlass_32x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\ExeIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\SPD_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

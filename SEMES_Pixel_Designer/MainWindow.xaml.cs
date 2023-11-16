@@ -34,6 +34,7 @@ using SEMES_Pixel_Designer.Utils;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Threading;
+using SEMES_Pixel_Designer.View;
 
 namespace SEMES_Pixel_Designer
 {
@@ -90,7 +91,6 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.DrawLine", DrawLine);
             Utils.Mediator.Register("MainWindow.DrawRectangle", DrawRectangle);
             Utils.Mediator.Register("MainWindow.DrawPolygon", DrawPolygon);
-            Utils.Mediator.Register("MainWindow.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainWindow.MoveEntities", MoveEntities);
             Utils.Mediator.Register("MainWindow.ZoomIn", ZoomIn);
             Utils.Mediator.Register("MainWindow.ZoomOut", ZoomOut);
@@ -114,6 +114,8 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.MakeNewcell", MakeNewcell);
             Utils.Mediator.Register("MainWindow.SetGlass", SetGlass);
             Utils.Mediator.Register("MainWindow.SetCell", SetCell);
+
+            Utils.Mediator.Register("MainWindow.OpenInfo", OpenInfo);
 
             // TcpIp 연결 항시 대기
             tt = new TcpIp();
@@ -334,14 +336,6 @@ namespace SEMES_Pixel_Designer
 
         }
 
-        // 선택 도형 N*M개 복제
-        public void CloneEntities(object obj)
-        {
-            //TODO : 구현
-            Mediator.NotifyColleagues("MainDrawer.CloneEntities", null);
-
-        }
-
         // 선택 도형 이동
         public void MoveEntities(object obj)
         {
@@ -472,11 +466,16 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.NotifyColleagues("MainDrawer.DrawCanvas", null);
 
         }
-
+        public void OpenInfo(object obj)
+        {
+            new ProgramInfo().Show();
+        }
         #endregion
 
 
         #region 상세정보 출력 관련 함수들
+
+
 
         // 엔티티 종류 보기
         public void ShowEntityTypes(object obj)
