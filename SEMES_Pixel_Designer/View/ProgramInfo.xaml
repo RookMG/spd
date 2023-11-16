@@ -40,12 +40,12 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1.5*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Margin="10,20,0,0">SEMES Pixel Designer는 SEMES의 디스플레이 장비에 활용하는 소프트웨어이다.</TextBlock>
-            <TextBlock Grid.Row="1" Margin="10,0,0,0">이 프로그램은 디스플레이 원장의 Cell 정보와 Pixel 정보를 시각화 하고, 편집할 수 있는 환경을 제공한다.<LineBreak/>
-                특히 CAD 확장자인 dxf를 활용하여 파일 입출력이 가능해 사용자에게 효과적인 환경을 제공한다.
+            <TextBlock Grid.Row="0" Margin="10,20,0,0">SEMES Pixel Designer는 SEMES의 디스플레이 장비에 활용하는 소프트웨어입니다.</TextBlock>
+            <TextBlock Grid.Row="1" Margin="10,0,0,0">이 프로그램은 디스플레이 원장의 Cell 정보와 Pixel 정보를 시각화 하고, 편집할 수 있는 환경을 제공합니다.<LineBreak/>
+                특히 CAD 확장자인 dxf를 활용하여 파일 입출력이 가능해 다른 CAD 편집 툴과 호환성을 높였습니다.
             </TextBlock>
             <TextBlock Grid.Row="2" Margin="10,0,0,0">
-                SEMES Pixel Designer를 활용하여 Pixel을 편리하게 확인하고 장비의 안정적인 운용에 도움이 되길 바란다.
+                SEMES Pixel Designer를 활용하여 Pixel을 편리하게 확인하고 장비의 안정적인 운용에 도움이 되길 바랍니다.
             </TextBlock>
             <TextBlock Grid.Row="3" Margin="10,0,0,0">
                 사용 라이브러리<LineBreak/><LineBreak/> 1. netDxf : Copyright(C) 2009-2023 Daniel Carvajal, licensed under MIT License

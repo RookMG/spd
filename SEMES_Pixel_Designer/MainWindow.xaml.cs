@@ -151,6 +151,7 @@ namespace SEMES_Pixel_Designer
             if (!ConfirmSave("새 파일")) return;
 
             doc = new DxfDocument();
+            doc.Layers["0"].Description = Coordinates.glassRight + "," + Coordinates.glassTop;
             DrawCanvas(null);
             fileName = null;
             Mediator.FileChangeCount = 0;
