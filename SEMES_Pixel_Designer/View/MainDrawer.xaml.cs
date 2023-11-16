@@ -99,7 +99,7 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainDrawer.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainDrawer.Zoom", Zoom);
             Utils.Mediator.Register("MainDrawer.Paste", Paste);
-            Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
+            //Utils.Mediator.Register("MainDrawer.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainDrawer.DeleteEntities", (obj) => {
                 DeleteEntities(selectedEntities);
             });
@@ -538,7 +538,7 @@ namespace SEMES_Pixel_Designer
             List<PolygonEntity> pasted = new List<PolygonEntity>();
             foreach (CopyData data in clipboard)
             {
-                EntityObject entity = data.GetEntityObject();
+                EntityObject entity = data.CreateEntityObject();
                 entity.TransformBy(Matrix3.Identity, new Vector3(c.patternLeft, c.patternBottom, 0) - data.offset);
                 if (data.type == PolygonEntityType.LINE)
                 {
@@ -584,75 +584,75 @@ namespace SEMES_Pixel_Designer
             pasteCount++;
         }
 
-        public void CloneEntities(object obj)
-        {
-            //Window.GetWindow(this).Close();
-            var param = (Tuple<int, int, double, double>)obj;
-            int R = param.Item1;
-            int C = param.Item2;
-            double intervalX = param.Item4;
-            double intervalY = -param.Item3;
+        //public void CloneEntities(object obj)
+        //{
+        //    //Window.GetWindow(this).Close();
+        //    var param = (Tuple<int, int, double, double>)obj;
+        //    int R = param.Item1;
+        //    int C = param.Item2;
+        //    double intervalX = param.Item4;
+        //    double intervalY = -param.Item3;
 
-            //int R = 30, C = 30;
-            //double intervalX = 100, intervalY = -100;
+        //    //int R = 30, C = 30;
+        //    //double intervalX = 100, intervalY = -100;
 
-            List<CopyData> clipboardBackup = new List<CopyData>();
-            foreach (CopyData copyData in clipboard) clipboardBackup.Add(copyData);
-            CopySelected();
+        //    List<CopyData> clipboardBackup = new List<CopyData>();
+        //    foreach (CopyData copyData in clipboard) clipboardBackup.Add(copyData);
+        //    CopySelected();
 
-            List<PolygonEntity> cloned = new List<PolygonEntity>();
-            foreach (CopyData data in clipboard)
-            {
-                for (int r = 0; r < R; r++)
-                {
-                    for (int c = 0; c < C; c++)
-                    {
-                        if (r == 0 && c == 0) continue;
+        //    List<PolygonEntity> cloned = new List<PolygonEntity>();
+        //    foreach (CopyData data in clipboard)
+        //    {
+        //        for (int r = 0; r < R; r++)
+        //        {
+        //            for (int c = 0; c < C; c++)
+        //            {
+        //                if (r == 0 && c == 0) continue;
 
-                        EntityObject entity = data.GetEntityObject(); ;
-                        entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
-                        MainWindow.doc.Entities.Add(entity);
-                        if (data.type == PolygonEntityType.LINE)
-                        {
-                            cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as netDxf.Entities.Line));
-                        }
-                        else if (data.type == PolygonEntityType.POLYLINE)
-                        {
-                            cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as Polyline2D));
-                        }
-                    }
-                }
-            }
-            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-            (
-                () => {
-                    foreach (PolygonEntity entity in cloned)
-                    {
-                        DrawingEntities.Add(entity);
-                    }
-                },
-                () => {
-                    foreach (PolygonEntity entity in cloned)
-                    {
-                        DrawingEntities.Remove(entity);
-                        entity.Delete();
-                    }
-                },
-                () =>
-                {
-                    foreach (PolygonEntity entity in cloned)
-                    {
-                        DrawingEntities.Add(entity);
-                        entity.Restore();
-                    }
-                },
-                () =>
-                {
-                    foreach (PolygonEntity entity in cloned) entity.Remove();
-                }
-            ));
-            clipboard = clipboardBackup;
-        }
+        //                EntityObject entity = data.CreateEntityObject(); ;
+        //                entity.TransformBy(Matrix3.Identity, new Vector3(r*intervalX, c*intervalY, 0));
+        //                MainWindow.doc.Entities.Add(entity);
+        //                if (data.type == PolygonEntityType.LINE)
+        //                {
+        //                    cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as netDxf.Entities.Line));
+        //                }
+        //                else if (data.type == PolygonEntityType.POLYLINE)
+        //                {
+        //                    cloned.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as Polyline2D));
+        //                }
+        //            }
+        //        }
+        //    }
+        //    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+        //    (
+        //        () => {
+        //            foreach (PolygonEntity entity in cloned)
+        //            {
+        //                DrawingEntities.Add(entity);
+        //            }
+        //        },
+        //        () => {
+        //            foreach (PolygonEntity entity in cloned)
+        //            {
+        //                DrawingEntities.Remove(entity);
+        //                entity.Delete();
+        //            }
+        //        },
+        //        () =>
+        //        {
+        //            foreach (PolygonEntity entity in cloned)
+        //            {
+        //                DrawingEntities.Add(entity);
+        //                entity.Restore();
+        //            }
+        //        },
+        //        () =>
+        //        {
+        //            foreach (PolygonEntity entity in cloned) entity.Remove();
+        //        }
+        //    ));
+        //    clipboard = clipboardBackup;
+        //}
 
         public void Zoom(object scaleFactor)
         {

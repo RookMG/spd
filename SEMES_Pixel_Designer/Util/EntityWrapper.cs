@@ -731,18 +731,20 @@ namespace SEMES_Pixel_Designer.Utils
             public PointCollection dxfCoords { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
-
-            public EntityObject GetEntityObject()
+            public AciColor aciColor { get; set; }
+            public EntityObject CreateEntityObject()
             {
                 if (type == PolygonEntityType.LINE)
                 {
                     netDxf.Entities.Line line = new netDxf.Entities.Line(new Vector2(dxfCoords[0].X, dxfCoords[0].Y), new Vector2(dxfCoords[1].X, dxfCoords[1].Y));
+                    line.Color = aciColor;
                     return line;
                 }
                 else if (type == PolygonEntityType.POLYLINE)
                 {
                     Polyline2D polyline = new Polyline2D();
                     foreach (System.Windows.Point p in dxfCoords) polyline.Vertexes.Add(new Polyline2DVertex(p.X, p.Y));
+                    polyline.Color = aciColor;
                     return polyline;
                 }
 
@@ -851,7 +853,8 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     dxfCoords = entity.dxfCoords.Clone(),
                     type = entity.entityType,
-                    offset = new Vector3(entity.cell.patternLeft, entity.cell.patternBottom, 0)
+                    offset = new Vector3(entity.cell.patternLeft, entity.cell.patternBottom, 0),
+                    aciColor = entity.entityObject.Color,
                 });
             }
         }
