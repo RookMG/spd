@@ -544,20 +544,27 @@ namespace SEMES_Pixel_Designer
 
         public void Paste(object obj)
         {
+            if (clipboard.Count == 0) return;
+            Cell c = Coordinates.GetCurrentCell();
+            if(c == null)
+            {
+                MessageBox.Show("셀 밖으로는 도형을 복사할 수 없습니다");
+                return;
+            }
             double offset = pasteCount * PASTE_OFFSET / Coordinates.ratio;
             List<PolygonEntity> pasted = new List<PolygonEntity>();
             foreach (CopyData data in clipboard)
             {
                 EntityObject entity = data.GetEntityObject();
-                entity.TransformBy(Matrix3.Identity, new Vector3(Coordinates.minX + offset, Coordinates.minY - offset, 0) - data.offset);
+                entity.TransformBy(Matrix3.Identity, new Vector3(c.patternLeft, c.patternBottom, 0) - data.offset);
                 MainWindow.doc.Entities.Add(entity);
                 if (data.type == PolygonEntityType.LINE)
                 {
-                    pasted.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as netDxf.Entities.Line));
+                    pasted.Add(new PolygonEntity(c, entity as netDxf.Entities.Line));
                 }
                 else if (data.type == PolygonEntityType.POLYLINE)
                 {
-                    pasted.Add(new PolygonEntity(FindCellByName(entity.Layer.Name), entity as Polyline2D));
+                    pasted.Add(new PolygonEntity(c, entity as Polyline2D));
                 }
 
             }

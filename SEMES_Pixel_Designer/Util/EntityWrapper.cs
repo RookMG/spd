@@ -900,7 +900,7 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     dxfCoords = entity.dxfCoords.Clone(),
                     type = entity.entityType,
-                    offset = new Vector3(Coordinates.minX, Coordinates.minY, 0)
+                    offset = new Vector3(entity.cell.patternLeft, entity.cell.patternBottom, 0)
                 });
             }
         }
@@ -941,6 +941,7 @@ namespace SEMES_Pixel_Designer.Utils
             geometry.FillRule = FillRule.EvenOdd;
             path.Data = geometry;
             selectArea.Data = geometry;
+
             for (int idx = 0; idx < dxfCoords.Count; idx++)
             {
                 points.Add(new PointEntity(cell, dxfCoords[idx].X, dxfCoords[idx].Y, this, idx));
@@ -981,10 +982,6 @@ namespace SEMES_Pixel_Designer.Utils
 
 
             }
-            geometry.FillRule = FillRule.EvenOdd;
-            path.Data = geometry;
-            selectArea.Data = geometry;
-
             if (!selected) return;
             foreach (PointEntity p in points) p.ReDraw();
 
