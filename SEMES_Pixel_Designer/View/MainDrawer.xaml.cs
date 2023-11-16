@@ -216,12 +216,14 @@ namespace SEMES_Pixel_Designer
                     cells.Remove(c);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
+                    c.CountChange(false);
                 },
                 () => {
                     MainWindow.doc.Layers.Add(layer);
                     cells.Add(c);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
+                    c.CountChange(true);
                 },
                 () =>
                 {
@@ -389,11 +391,13 @@ namespace SEMES_Pixel_Designer
             (
                 "셀 수정",
                 () => {
+                    FindCellByName(toName).CountChange(false);
                     FindCellByName(toName).changeCell(fromName, fromLeft, fromBottom, fromWidth, fromHeight,fromRows, fromCols);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
                 },
                 () => {
+                    FindCellByName(fromName).CountChange(true);
                     FindCellByName(fromName).changeCell(toName, toLeft, toBottom, toWidth, toHeight, toRows, toCols);
                     Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
                     UpdateCanvas();
@@ -697,10 +701,18 @@ namespace SEMES_Pixel_Designer
             (
                 "도형 삭제",
                 () => {
-                    foreach (PolygonEntity entity in target) entity.Restore();
+                    foreach (PolygonEntity entity in target)
+                    {
+                        entity.cell.CountChange(false);
+                        entity.Restore();
+                    }
                 },
                 () => {
-                    foreach (PolygonEntity entity in target) entity.Delete();
+                    foreach (PolygonEntity entity in target)
+                    {
+                        entity.cell.CountChange(true);
+                        entity.Delete();
+                    }
                 },
                 () => {
                     foreach (PolygonEntity entity in target) entity.Remove();
@@ -1044,14 +1056,17 @@ namespace SEMES_Pixel_Designer
                 (
                 "선 그리기",
                     () => {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                     },
                     () => {
+                        matchingCell.CountChange(false);
                         DrawingEntities.Remove(polygonEntity);
                         polygonEntity.Delete();
                     },
                     () =>
                     {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                         polygonEntity.Restore();
                     },
@@ -1153,14 +1168,17 @@ namespace SEMES_Pixel_Designer
                 (
                 "직사각형 그리기",
                     () => {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                     },
                     () => {
+                        matchingCell.CountChange(false);
                         DrawingEntities.Remove(polygonEntity);
                         polygonEntity.Delete();
                     },
                     () =>
                     {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                         polygonEntity.Restore();
                     },
@@ -1269,14 +1287,17 @@ namespace SEMES_Pixel_Designer
                 (
                     "폴리곤 그리기",
                     () => {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                     },
                     () => {
+                        matchingCell.CountChange(false);
                         DrawingEntities.Remove(polygonEntity);
                         polygonEntity.Delete();
                     },
                     () =>
                     {
+                        matchingCell.CountChange(true);
                         DrawingEntities.Add(polygonEntity);
                         polygonEntity.Restore();
                     },

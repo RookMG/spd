@@ -24,6 +24,7 @@ namespace SEMES_Pixel_Designer.Utils
         public List<PolygonEntity> children;
         public bool expanded;
         public TextBlock textBlock;
+        public int changeCount;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -41,6 +42,7 @@ namespace SEMES_Pixel_Designer.Utils
             expanded = false;
             textBlock = new TextBlock();
             textBlock.Text = Name;
+            changeCount = 0;
         }
 
         public string Name
@@ -48,8 +50,20 @@ namespace SEMES_Pixel_Designer.Utils
             get { return name; }
             set { 
                 name = value;
-                textBlock.Text = Name;
+                setText();
             }
+        }
+
+        public void CountChange(bool increase)
+        {
+            if (increase) changeCount++;
+            else changeCount--;
+            setText();
+        }
+        private void setText()
+        {
+            textBlock.Text = Name + (changeCount != 0 ? " *" : "");
+            textBlock.Foreground = changeCount != 0?Brushes.Red:Brushes.Black;
         }
 
         public List<PolygonEntity> Children
@@ -631,10 +645,12 @@ namespace SEMES_Pixel_Designer.Utils
                 "도형 모양 변경",
                 () =>
                 {
+                    cell.CountChange(false);
                     UpdatePosition(from.X, from.Y);
                 },
                 () =>
                 {
+                    cell.CountChange(true);
                     UpdatePosition(to.X, to.Y);
                 },
                 () =>
@@ -1204,8 +1220,8 @@ namespace SEMES_Pixel_Designer.Utils
                         || (Coordinates.glassBottom > newY);
                     Console.WriteLine(string.Format("{0},{1}",newX, newY));
                 }
-                forward.Add(() => { selectedEntity.UpdatePoint(to); selectedEntity.ReDraw(); });
-                backward.Add(() => { selectedEntity.UpdatePoint(from); selectedEntity.ReDraw(); });
+                forward.Add(() => { selectedEntity.UpdatePoint(to); selectedEntity.ReDraw(); selectedEntity.cell.CountChange(true); });
+                backward.Add(() => { selectedEntity.UpdatePoint(from); selectedEntity.ReDraw(); selectedEntity.cell.CountChange(false); });
             }
             if (glassOut)
             {

@@ -89,7 +89,9 @@ namespace SEMES_Pixel_Designer
             EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
             if (selectedEntities.Count > 0)
             {
-                ColorComboBox.SelectedIndex = 2 - int.Parse(selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString()) / 2;
+                string colorStr = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString();
+                if("1".Equals(colorStr)|| "3".Equals(colorStr)|| "5".Equals(colorStr))
+                ColorComboBox.SelectedIndex = 2 - int.Parse(colorStr) / 2;
             }
             ShowEntityProperties(null);
         }
@@ -231,11 +233,13 @@ namespace SEMES_Pixel_Designer
                 "도형 모양 변경",
                 () => {
                     propertyEntity.UpdatePoint(from, propertyEntity.dxfCoords[index].Y, index, true);
-                    propertyEntity.ReDraw();
+                    propertyEntity.ReDraw(); 
+                    propertyEntity.cell.CountChange(false);
                 },
                 () => {
                     propertyEntity.UpdatePoint(to, propertyEntity.dxfCoords[index].Y, index, true);
                     propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(true);
                 },
                 () =>
                 {
@@ -253,10 +257,12 @@ namespace SEMES_Pixel_Designer
                 () => {
                     propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, from, index, true);
                     propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(false);
                 },
                 () => {
                     propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, to, index, true);
                     propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(true);
                 },
                 () =>
                 {
