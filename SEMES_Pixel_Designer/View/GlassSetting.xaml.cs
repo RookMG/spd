@@ -50,7 +50,7 @@ namespace SEMES_Pixel_Designer.View
         }
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-            Regex _regex = new Regex("^[0-9]+(.[0-9]+)?$");
+            Regex _regex = new Regex("/^[0-9]+(.[0-9]+)?$/");
             e.Handled = _regex.IsMatch(e.Text);
         }
     }

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -57,7 +56,7 @@ namespace SEMES_Pixel_Designer
         public int zoomCount = 0;
 
         SEMES_Pixel_Designer.View.MakeCell MakeCell_Test;
-        SEMES_Pixel_Designer.View.GlassSetting SetGlass_Test;
+        SEMES_Pixel_Designer.View.GlassSetting SetGlass;
         SEMES_Pixel_Designer.View.SetCell SetCell_Test;
         private Cell seletedCell;
 
@@ -202,39 +201,39 @@ namespace SEMES_Pixel_Designer
 
         public void SetGlass_Input(object obj)
         {
-            SetGlass_Test = new SEMES_Pixel_Designer.View.GlassSetting();
-            SetGlass_Test.ShowDialog();
+            SetGlass = new SEMES_Pixel_Designer.View.GlassSetting();
+            SetGlass.ShowDialog();
         }
 
         public void SetGlass_Clicked(object obj)
         {
-            string glass_size = SetGlass_Test.glass_size.Text;
+            string glass_size = SetGlass.glass_size.Text;
             double width, height;
 
-            if (glass_size=="사용자 지정")
+            if (glass_size=="사용자 지정" || (SetGlass.glass_width.Text!="" && SetGlass.glass_height.Text!=""))
             {
-                if (!double.TryParse(SetGlass_Test.glass_width.Text, out width))
+                if (!double.TryParse(SetGlass.glass_width.Text, out width))
                 {
                     MessageBox.Show("글라스 너비를 숫자로 입력해주세요");
                     return;
                 }
-                if (!double.TryParse(SetGlass_Test.glass_height.Text, out height))
+                if (!double.TryParse(SetGlass.glass_height.Text, out height))
                 {
                     MessageBox.Show("글라스 높이를 숫자로 입력해주세요");
                     return;
                 }
-                // width, height 값을 어떻게 써먹는가..
             }
             else
             {
-                string[] xy = SetGlass_Test.glass_size.Text.Split('x');
+                string[] xy = SetGlass.glass_size.Text.Split('x');
                 width = (Double.Parse(xy[0]));
                 height = (Double.Parse(xy[1]));
-                // width, height 값을 어떻게 써먹는가..
             }
-            
 
-            SetGlass_Test.Close();
+            Coordinates.glassRight = width*1000;
+            Coordinates.glassTop = height*1000;
+   
+            SetGlass.Close();
         }
 
         public void SetCell_Input(object obj)

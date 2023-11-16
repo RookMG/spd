@@ -49,6 +49,9 @@
                 <Image Source="../Asset/icon/OpenMinimap.png" />
             </Button>
             <Separator/>
+            <Button CommandParameter="MainWindow.SetGlass" Style="{StaticResource ImgBtnStyle}" ToolTip="글라스 크기 설정" Click="Button_Click">
+                <Image Source="../Asset/icon/SetGlass_32x.png" />
+            </Button>
             <Button CommandParameter="MainWindow.MakeNewcell" Style="{StaticResource ImgBtnStyle}" ToolTip="새 셀 추가">
                 <Image Source="../Asset/icon/AddClause_16x.png" />
             </Button>
