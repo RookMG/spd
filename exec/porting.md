@@ -5,8 +5,8 @@
 - download [VS 2019](https://my.visualstudio.com/Downloads?q=visual%20studio%202019&wt.mc_id=o~msft~vscom~older-downloads)
 - install C# .NET framwork 4.8
 - install netdxf on nuget (MIT LICENSE)
-<img src="./image/install_nuget.PNG" width="400"/>
-<img src="./image/install_nuget2.PNG" width="400"/>
+<img src="./image/install_nuget.PNG" width="500"/>
+<img src="./image/install_nuget2.PNG" />
 
 ## Clone to Run
 
