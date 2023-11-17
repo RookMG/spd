@@ -471,6 +471,7 @@ namespace SEMES_Pixel_Designer
 
             foreach (var layer in MainWindow.doc.Layers)
             {
+                Console.WriteLine(layer.Name + " | "+layer.Description);
                 string[] args = layer.Description.Split(',');
                 if (layer.Name.Equals("0"))
                 {
@@ -492,6 +493,18 @@ namespace SEMES_Pixel_Designer
             foreach (netDxf.Entities.Line line in MainWindow.doc.Entities.Lines)
             {
                 Cell c = FindCellByName(line.Layer.Name);
+                if (c == null || c.Name.Equals("0"))
+                {
+                    foreach (Cell nc in cells)
+                    {
+                        if (nc.name.Equals("0")) continue;
+
+                        if (!nc.Contains(line)) continue;
+
+                        c = nc;
+                        break;
+                    }
+                }
                 if (!c.Contains(line)) continue;
                 DrawingEntities.Add(new PolygonEntity(c, line));
             }
@@ -499,6 +512,18 @@ namespace SEMES_Pixel_Designer
             foreach (Polyline2D polyline in MainWindow.doc.Entities.Polylines2D)
             {
                 Cell c = FindCellByName(polyline.Layer.Name);
+                if (c==null || c.Name.Equals("0"))
+                {
+                    foreach (Cell nc in cells)
+                    {
+                        if (nc.name.Equals("0")) continue;
+
+                        if (!nc.Contains(polyline)) continue;
+
+                        c = nc;
+                        break;
+                    }
+                }
                 if (!c.Contains(polyline)) continue;
                 DrawingEntities.Add(new PolygonEntity(c, polyline));
             }
