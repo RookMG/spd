@@ -329,7 +329,7 @@ namespace SEMES_Pixel_Designer
         {
 
             Button button = (Button)sender;
-            StackPanel stackPanel = (StackPanel)button.Parent;
+            Grid stackPanel = (Grid)button.Parent;
             Cell cell = (Cell)stackPanel.DataContext;
             int idx = Coordinates.CanvasRef.cells.IndexOf(cell);
             Layer layer = MainWindow.doc.Layers[cell.Name];
