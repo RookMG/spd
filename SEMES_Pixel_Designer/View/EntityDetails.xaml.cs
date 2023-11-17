@@ -320,7 +320,7 @@ namespace SEMES_Pixel_Designer
         private void SetCellClick(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            StackPanel stackPanel = (StackPanel)button.Parent;
+            Grid stackPanel = (Grid)button.Parent;
             Cell dataContext = (Cell)stackPanel.DataContext;
             Mediator.NotifyColleagues("MainWindow.SetCell", dataContext);
         }
