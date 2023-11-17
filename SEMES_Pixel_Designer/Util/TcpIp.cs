@@ -267,7 +267,7 @@ namespace SEMES_Pixel_Designer
                 m_ServerSocket.Close();
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    TcpIpLogViewModel.Instance.LogMessageList.Add("연경 종료됨");
+                    TcpIpLogViewModel.Instance.LogMessageList.Add("연결 종료.");
                 });
                 TcpConnection(null);
                 return;
