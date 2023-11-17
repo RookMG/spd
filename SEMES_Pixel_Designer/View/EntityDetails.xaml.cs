@@ -18,6 +18,8 @@ using netDxf.Collections;
 using netDxf.Entities;
 using static SEMES_Pixel_Designer.Utils.PolygonEntity;
 using netDxf.Tables;
+using System.Reflection;
+using System.Windows.Markup;
 
 namespace SEMES_Pixel_Designer
 {
@@ -27,147 +29,295 @@ namespace SEMES_Pixel_Designer
     public partial class EntityDetails : Page
     {
         Dictionary<string, PolygonEntity> entityDictionary;
+        Dictionary<Cell, TreeViewItem> cellDictionary;
 
         private EntityObject propertyEntityObject = null;
+        private PolygonEntity propertyEntity = null;
 
+        public class CoordInfo
+        {
+            public int idx { get; set; }
+            public double X { get; set; }
+            public double Y { get; set; }
+            public CoordInfo(int idx, System.Windows.Point p)
+            {
+                this.idx = idx;
+                X = p.X;
+                Y = p.Y;
+            }
+        }
         public EntityDetails()
         {
             InitializeComponent();
 
             entityDictionary = new Dictionary<string, PolygonEntity>();
+            cellDictionary = new Dictionary<Cell, TreeViewItem>();
 
-
-            Utils.Mediator.Register("EntityDetails.ShowEntityTypes", ShowEntityTypes);
             Utils.Mediator.Register("EntityDetails.ShowEntityComboBox", ShowEntityComboBox);
-            Utils.Mediator.Register("EntityDetails.ShowEntityPropertyDetail", ShowEntityPropertyDetail);
+            Utils.Mediator.Register("EntityDetails.ShowEntityProperties", ShowEntityProperties);
+            Utils.Mediator.Register("EntityDetails.ShowCells", ShowCells);
 
+            ColorComboBox.Items.Clear();
+            ColorComboBox.ItemsSource = typeof(Colors).GetProperties().Where(p => p.PropertyType == typeof(Color) && (p.Name == "Red" || p.Name == "Blue" || p.Name == "Green")).ToList();
+            AddCellButton.DataContext = new CommandDataContext();
+            //SetCellButton.DataContext = new CommandDataContext();
         }
-
-
-        public void ShowEntityTypes(object obj)
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            TreeViewItem entities = new TreeViewItem();
-
-
-            foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+            if (e.Key == Key.Enter)
             {
-                CheckBox checkBox = new CheckBox { };
-
-                checkBox.Content = PolygonTypeToString(entity);
-
-                if (checkBox.Content == null)
-                    continue;
-
-                Binding binding = new Binding("Selected")
-                {
-                    Source = entity,
-                    Mode = BindingMode.TwoWay
-                };
-
-
-                checkBox.SetBinding(CheckBox.IsCheckedProperty, binding);
-                entities.Items.Add(checkBox);
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
             }
-
-            EntityTreeView.Items.Clear();
-
-            if (entities.Items.Count != 0)
-                entities.Header = "Entities";
-
-            EntityTreeView.Items.Add(entities);
-
         }
+
+        public void ShowCells(object obj)
+        {
+            CellListView.ItemsSource = null;
+            CellListView.ItemsSource = Coordinates.CanvasRef.cells;
+            
+        }
+
 
         public void ShowEntityComboBox(object obj)
         {
-            EntityDetailComboBox.Items.Clear();
+            // ch_test
+            ShowCells(null);
+            EntityDetailComboBox.ItemsSource = null;
+            EntityDetailComboBox.ItemsSource = selectedEntities;
 
-            foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+            EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
+            if (selectedEntities.Count > 0)
             {
-                if (entity.Selected == false) continue;
-
-
-                ComboBoxItem item = new ComboBoxItem(
-
-                    );
-                item.Content = entity.GetEntityObject().Handle;
-
-
-                propertyEntityObject = entity.GetEntityObject();
-                //entityDictionary.Add(entity., entity);
-                //entity.debug_ch();
-
-                EntityDetailComboBox.Items.Add(item);
+                //string colorStr = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString();
+                //if ("1".Equals(colorStr) || "3".Equals(colorStr) || "5".Equals(colorStr))
+                //    ColorComboBox.SelectedIndex = 2 - int.Parse(colorStr) / 2;
+                //else ColorComboBox.SelectedIndex = -1;
+                byte colorR = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.R;
+                byte colorG = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.G;
+                byte colorB = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.B;
+                if (colorR == 255 && colorG == 0 && colorB == 0)
+                {
+                    ColorComboBox.SelectedIndex = 2;
+                }
+                else if (colorR == 0 && colorG == 255 && colorB == 0)
+                {
+                    ColorComboBox.SelectedIndex = 1;
+                }
+                else if (colorR == 0 && colorG == 0 && colorB == 255)
+                {
+                    ColorComboBox.SelectedIndex = 0;
+                }
+                else
+                {
+                    ColorComboBox.SelectedIndex = -1;
+                }
             }
-
+            else
+            {
+                ColorComboBox.SelectedIndex = -1;
+            }
+            ShowEntityProperties(null);
         }
 
-        private void ShowEntityProperties(object obj, SelectionChangedEventArgs e)
+        private void ColorChange(object obj, SelectionChangedEventArgs e)
         {
-            //PropertyStackPanel.Children.Clear();
-
-            if (EntityDetailComboBox.SelectedItem != null)
+            if (propertyEntity != null && ColorComboBox.SelectedItem != null)
             {
-                string selectedItem = ((ComboBoxItem)EntityDetailComboBox.SelectedItem).Content.ToString();
-
-                PolygonEntity propertyEntity = null;
-                foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+                if (ColorComboBox.SelectedItem is PropertyInfo selectedColor)
                 {
-                    if (entity.GetEntityObject().Handle != selectedItem) continue;
+                    string selectedColorName = selectedColor.Name;
 
-                    propertyEntity = entity;
-                    propertyEntityObject = entity.GetEntityObject();
-
+                    if(selectedColorName == "Red")
+                    {
+                        AciColor myColor = new AciColor(255, 0, 0);
+                        propertyEntity.Color_type = myColor;
+                        propertyEntity.path.Fill = Brushes.Red;
+                    }
+                    else if (selectedColorName == "Green")
+                    {
+                        AciColor myColor = new AciColor(0, 255, 0);
+                        propertyEntity.Color_type = myColor;
+                        propertyEntity.path.Fill = Brushes.Green;
+                    }
+                    else if (selectedColorName == "Blue")
+                    {
+                        AciColor myColor = new AciColor(0, 0, 255);
+                        propertyEntity.Color_type = myColor;
+                        propertyEntity.path.Fill = Brushes.Blue;
+                    }
                 }
-
-                Color.Text = "R:" + propertyEntityObject.Color.R.ToString() + " G:" + propertyEntityObject.Color.G.ToString() + " B:"
-                    + propertyEntityObject.Color.B.ToString();
-
-                Color_type.Text = propertyEntityObject.Color.ToString();
-
-                Handle.Text = propertyEntityObject.Handle;
-
-                Layer.Text = propertyEntityObject.Layer.Name;
-
-                Line_type.Text = propertyEntityObject.Linetype.Name;
-
-                Line_weight.Text = propertyEntityObject.Lineweight.ToString();
-
-                Line_Type_scale.Text = propertyEntityObject.LinetypeScale.ToString();
-
-                Name.Text = propertyEntityObject.CodeName;
-
-                List<string> indexdxfCoords = new List<string>();
-                for (int i = 0; i < propertyEntity.dxfCoords.Count; i++)
-                {
-                    indexdxfCoords.Add(i.ToString());
-                }
-
-                VertexesIndexListView.ItemsSource = indexdxfCoords;
-                VertexesListView.ItemsSource = propertyEntity.dxfCoords;
-
-                /*
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = "Name";
-                textBlock.Background = Brushes.White;
-                textBlock.Margin = new Thickness(1);
-
-                TextBlock textBlock2  = new TextBlock();
-                textBlock2.Text = "Color";
-                textBlock2.Background = Brushes.White;
-                //PropertyStackPanel.Children.Add();
-                //textBlock.Text = "Color";
-                //PropertyStackPanel.Children.Add(textBlock);
-                //PropertyStackPanel.Children.Add(textBlock2);
-                //entityDictionary[selectedItem];*/
             }
         }
-
-
-        public void ShowEntityPropertyDetail(object obj)
+        public void ShowEntityProperties(object obj)
         {
+           
+
+            if(propertyEntity == null)
+            {
+                VertexesListView.ItemsSource = null;
+                return;
+            }
+
+            List<CoordInfo> dxfCoordsInfo = new List<CoordInfo>();
+            for (int i = 0; i < propertyEntity.dxfCoords.Count; i++)
+            {
+                dxfCoordsInfo.Add(new CoordInfo(i, propertyEntity.dxfCoords[i]));
+            }
+
+            VertexesListView.ItemsSource = dxfCoordsInfo;
         }
 
+
+
+        public void ClearEntityProperties(object obj)
+        {
+
+        }
+
+
+        private void SelectEntityProperties(object sender, SelectionChangedEventArgs e)
+        {
+            CommonValueStackPanel.DataContext = propertyEntity = (PolygonEntity)(sender as ComboBox).SelectedItem;
+
+
+            ShowEntityProperties(null);
+        }
+        
+        private void XTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            Keyboard.ClearFocus();
+            EditCoordi(sender, true);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+        }
+
+        private void YTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            Keyboard.ClearFocus();
+            EditCoordi(sender, false);
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+        }
+
+        private void XTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                e.Handled = EditCoordi(sender, true);
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
+            }
+        }
+
+        private void YTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                e.Handled = EditCoordi(sender, false);
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope((TextBox)sender), null);
+                Keyboard.ClearFocus();
+            }
+        }
+
+
+        private bool EditCoordi(object sender, bool isX)
+        {
+            if (sender is TextBox textBox && textBox.DataContext is CoordInfo coord)
+            {
+
+                ListViewItem listViewItem = FindParent<ListViewItem>(textBox);
+
+                ListView listView = FindParent<ListView>(listViewItem);
+                string coordiString = textBox.Text;
+                double coordiReal;
+                if (double.TryParse(coordiString, out coordiReal))
+                {
+                    if (isX == true)
+                        EditCoordiX(coord.idx, coordiReal);
+                    else
+                        EditCoordiY(coord.idx, coordiReal);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show("소수 형태의 좌표를 입력하세요");
+                    return false;
+                }
+
+            }
+            return false;
+        }
+
+
+        private void EditCoordiX(int index, double coordiReal)
+        {
+            double from = propertyEntity.dxfCoords[index].X, to = coordiReal;
+            if (from == to) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                "도형 모양 변경",
+                () => {
+                    propertyEntity.UpdatePoint(from, propertyEntity.dxfCoords[index].Y, index, true);
+                    propertyEntity.ReDraw(); 
+                    propertyEntity.cell.CountChange(false);
+                },
+                () => {
+                    propertyEntity.UpdatePoint(to, propertyEntity.dxfCoords[index].Y, index, true);
+                    propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(true);
+                },
+                () =>
+                {
+                }
+            ));
+        }
+
+        private void EditCoordiY(int index, double coordiReal)
+        {
+            double from = propertyEntity.dxfCoords[index].Y, to = coordiReal;
+            if (from == to) return;
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                "도형 모양 변경",
+                () => {
+                    propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, from, index, true);
+                    propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(false);
+                },
+                () => {
+                    propertyEntity.UpdatePoint(propertyEntity.dxfCoords[index].X, to, index, true);
+                    propertyEntity.ReDraw();
+                    propertyEntity.cell.CountChange(true);
+                },
+                () =>
+                {
+                }
+            ));
+        }
+
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+
+            if (parentObject == null)
+            {
+                return null;
+            }
+
+            T parent = parentObject as T;
+            return parent ?? FindParent<T>(parentObject);
+        }
+        
+        private void CellTextBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TextBox textBox = (TextBox)sender;
+
+                textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+
+                e.Handled = true;
+            }
+        }
         private string PolygonTypeToString(PolygonEntity entity)
         {
             if (entity.GetPolygonType() == PolygonEntityType.DOT)
@@ -185,5 +335,68 @@ namespace SEMES_Pixel_Designer
             else
                 return null;
         }
+
+        private void SetCellClick(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            Grid stackPanel = (Grid)button.Parent;
+            Cell dataContext = (Cell)stackPanel.DataContext;
+            Mediator.NotifyColleagues("MainWindow.SetCell", dataContext);
+        }
+
+        private void DeleteCellClick(object sender, RoutedEventArgs e)
+        {
+
+            Button button = (Button)sender;
+            Grid stackPanel = (Grid)button.Parent;
+            Cell cell = (Cell)stackPanel.DataContext;
+            int idx = Coordinates.CanvasRef.cells.IndexOf(cell);
+            Layer layer = MainWindow.doc.Layers[cell.Name];
+            List<PolygonEntity> childrenEntities = new List<PolygonEntity>();
+            foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+            {
+                if (entity.cell == cell) childrenEntities.Add(entity);
+            }
+            if (childrenEntities.Count > 0)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("셀 삭제시 셀 안의 도형이 같이 삭제됩니다. 정말 삭제하시겠습니까?", "셀 삭제", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.No) return;
+            }
+            Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
+            (
+                "셀 삭제",
+                () => {
+                    MainWindow.doc.Layers.Add(layer);
+                    cell.Restore();
+                    foreach (PolygonEntity entity in childrenEntities)
+                    {
+                        entity.Restore();
+                        Coordinates.CanvasRef.DrawingEntities.Add(entity);
+                    }
+                    Coordinates.CanvasRef.cells.Insert(idx, cell);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    Coordinates.CanvasRef.UpdateCanvas();
+                },
+                () => {
+                    Console.WriteLine(MainWindow.doc.Layers.Count);
+                    cell.Delete();
+                    foreach (PolygonEntity entity in childrenEntities)
+                    {
+                        entity.Delete();
+                        Coordinates.CanvasRef.DrawingEntities.Remove(entity);
+                    }
+                    Coordinates.CanvasRef.cells.Remove(cell);
+                    MainWindow.doc.Layers.Remove(layer);
+                    Mediator.NotifyColleagues("EntityDetails.ShowEntityComboBox", null);
+                    Coordinates.CanvasRef.UpdateCanvas();
+                    Console.WriteLine(MainWindow.doc.Layers.Count);
+                },
+                () =>
+                {
+                    cell.Remove();
+                }
+            ));
+        }
+
     }
 }

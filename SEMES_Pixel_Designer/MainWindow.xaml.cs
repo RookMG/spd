@@ -34,6 +34,7 @@ using SEMES_Pixel_Designer.Utils;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Threading;
+using SEMES_Pixel_Designer.View;
 
 namespace SEMES_Pixel_Designer
 {
@@ -68,6 +69,9 @@ namespace SEMES_Pixel_Designer
 
             Utils.Mediator.Register("MainWindow.SaveAsDxf", SaveAsDxf);
             Utils.Mediator.Register("MainWindow.SaveBackupDxf", SaveBackupDxf);
+            Utils.Mediator.Register("MainWindow.ExportDxf", ExportDxf);
+
+            
             Utils.Mediator.Register("MainWindow.Undo", Undo);
             InputBindings.Add(new KeyBinding(new DelegateCommand(Undo), new KeyGesture(Key.Z, ModifierKeys.Control)));
 
@@ -90,15 +94,16 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.DrawLine", DrawLine);
             Utils.Mediator.Register("MainWindow.DrawRectangle", DrawRectangle);
             Utils.Mediator.Register("MainWindow.DrawPolygon", DrawPolygon);
-            Utils.Mediator.Register("MainWindow.CloneEntities", CloneEntities);
             Utils.Mediator.Register("MainWindow.MoveEntities", MoveEntities);
             Utils.Mediator.Register("MainWindow.ZoomIn", ZoomIn);
             Utils.Mediator.Register("MainWindow.ZoomOut", ZoomOut);
             Utils.Mediator.Register("MainWindow.MoveScreen", MoveScreen);
             Utils.Mediator.Register("MainWindow.FitScreen", FitScreen);
+            Utils.Mediator.Register("MainWindow.OpenMinimap", OpenMinimap);
             Utils.Mediator.Register("MainWindow.ColorScreen", ColorScreen);
             Utils.Mediator.Register("MainWindow.ColorBackground", ColorBackground);
             Utils.Mediator.Register("MainWindow.ToggleGrid", ToggleGrid);
+            InputBindings.Add(new KeyBinding(new DelegateCommand(ToggleGrid), new KeyGesture(Key.G, ModifierKeys.Control)));
             Utils.Mediator.Register("MainWindow.ToggleLineWidth", ToggleLineWidth);
             Utils.Mediator.Register("MainWindow.ShowLayers", ShowLayers);
             Utils.Mediator.Register("MainWindow.ChangeLayer", ChangeLayer);
@@ -109,15 +114,21 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.Register("MainWindow.ShowMousePosition", ShowMousePosition);
             Utils.Mediator.Register("MainWindow.ShowEntitiesPosition", ShowEntitiesPosition);
             Utils.Mediator.Register("MainWindow.Exit", Exit);
+            Utils.Mediator.Register("MainWindow.MakeNewcell", MakeNewcell);
+            Utils.Mediator.Register("MainWindow.SetGlass", SetGlass);
+            Utils.Mediator.Register("MainWindow.SetCell", SetCell);
+
+            Utils.Mediator.Register("MainWindow.OpenInfo", OpenInfo);
 
             // TcpIp 연결 항시 대기
-            TcpIp tt = new TcpIp();
+            tt = new TcpIp();
             Utils.Mediator.NotifyColleagues("TcpIp.TcpConnection", null);
             /*Utils.Mediator.Register("MainWindow.TcpIp_to_MainWindow", TcpIp_to_MainWindow);
             Utils.Mediator.Register("MainWindow.forCall_SaveDxf_on_MainWindow", forCall_SaveDxf_on_MainWindow);*/
 
             #endregion
-
+            doc = new DxfDocument();
+            doc.Layers["0"].Description = Coordinates.glassRight + "," + Coordinates.glassTop;
         }
 
         // 현재 편집 중인 문서
@@ -125,12 +136,12 @@ namespace SEMES_Pixel_Designer
         // MainWindow.doc
         // 예시)
         // foreach (var line in MainWindow.doc.Entities.Lines) {...}
-        public static DxfDocument doc = new DxfDocument();
+        public static DxfDocument doc;
         public static string fileName = null;
 
         public static bool chk_file = false;
         public static int file_num = 1;
-
+        TcpIp tt;
 
         // 기능 명세서 참고
         // https://pattern-ounce-358.notion.site/a56b400c29784dc18bbf978384464316?pvs=4
@@ -143,9 +154,11 @@ namespace SEMES_Pixel_Designer
             if (!ConfirmSave("새 파일")) return;
 
             doc = new DxfDocument();
+            doc.Layers["0"].Description = Coordinates.glassRight + "," + Coordinates.glassTop;
             DrawCanvas(null);
             fileName = null;
             Mediator.FileChangeCount = 0;
+            SetGlass(null);
         }
 
         // 파일 저장 확인
@@ -165,7 +178,10 @@ namespace SEMES_Pixel_Designer
 
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
             dlgOpenFile.Filter = "dxf files (*.dxf) | *.dxf";
-            dlgOpenFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
+            if (TcpIp.iniData.TryGetValue("default_path", out string value))
+            {
+                dlgOpenFile.InitialDirectory = value;
+            }            
 
             if (dlgOpenFile.ShowDialog().ToString() == "OK")
             {
@@ -189,6 +205,7 @@ namespace SEMES_Pixel_Designer
 
                 DrawCanvas(null);
 
+
                 Mediator.NotifyColleagues("EntityDetails.ShowEntityTypes", null);
 
             }
@@ -208,8 +225,11 @@ namespace SEMES_Pixel_Designer
         {
             SaveFileDialog dlgSaveAsFile = new SaveFileDialog();
             dlgSaveAsFile.Title = "파일 저장";
-            dlgSaveAsFile.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "CadFile\\TEMPTYPE"));
-            dlgSaveAsFile.Filter = "dxf files (*.dxf) | *.dxf";
+            if (TcpIp.iniData.TryGetValue("default_path", out string value))
+            {
+                dlgSaveAsFile.InitialDirectory = value;
+            }
+            dlgSaveAsFile.Filter = "dxf file (*.dxf) | *.dxf";
 
             // 파일 번호 관리
             dlgSaveAsFile.FileName = DateTime.Now.ToString("yyMMdd_HHmmss");
@@ -233,7 +253,10 @@ namespace SEMES_Pixel_Designer
             backupName = backupName.Substring(0, backupName.Length - 3) + "bak";
             doc.Save(backupName);
         }
-
+        public void ExportDxf(object obj)
+        {
+            new ExportFile().ShowDialog();
+        }
         #endregion
 
 
@@ -321,20 +344,27 @@ namespace SEMES_Pixel_Designer
 
         }
 
-        // 선택 도형 N*M개 복제
-        public void CloneEntities(object obj)
-        {
-            //TODO : 구현
-            Mediator.NotifyColleagues("MainDrawer.CloneEntities", null);
-
-        }
-
         // 선택 도형 이동
         public void MoveEntities(object obj)
         {
 
             //TODO : 구현
 
+        }
+
+        // 셀 만들기
+        public void MakeNewcell(object obj)
+        {
+            Mediator.NotifyColleagues("MainDrawer.MakeNewcell", null);
+        }
+
+        public void SetGlass(object obj)
+        {
+            Mediator.NotifyColleagues("MainDrawer.SetGlass", null);
+        }
+        public void SetCell(object obj)
+        {
+            Mediator.NotifyColleagues("MainDrawer.SetCell", obj);
         }
 
         #endregion
@@ -374,6 +404,13 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.NotifyColleagues("MainDrawer.FitScreen", null);
 
         }
+        public void OpenMinimap(object obj)
+        {
+
+            //TODO : 구현
+            Utils.Mediator.NotifyColleagues("MainDrawer.OpenMinimap", null);
+
+        }
 
         // 컬러 도면 보기, 흑백 도면 보기
         public void ColorScreen(object obj)
@@ -401,6 +438,8 @@ namespace SEMES_Pixel_Designer
         {
 
             //TODO : 구현
+            Coordinates.drawGrid = !Coordinates.drawGrid;
+            Coordinates.CanvasRef.UpdateCanvas();
 
         }
 
@@ -435,11 +474,16 @@ namespace SEMES_Pixel_Designer
             Utils.Mediator.NotifyColleagues("MainDrawer.DrawCanvas", null);
 
         }
-
+        public void OpenInfo(object obj)
+        {
+            new ProgramInfo().Show();
+        }
         #endregion
 
 
         #region 상세정보 출력 관련 함수들
+
+
 
         // 엔티티 종류 보기
         public void ShowEntityTypes(object obj)
@@ -494,13 +538,20 @@ namespace SEMES_Pixel_Designer
         // 프로그램 종료
         public void Exit(object sender)
         {
-            if (!ConfirmSave("프로그램 종료")) this.Close();
+            if (!ConfirmSave("프로그램 종료")){
+                Mediator.NotifyColleagues("Minimap.Close", null);
+                this.Close();
+            }
         }
 
 
         public void ExitHandler(object sender, CancelEventArgs e)
         {
-            e.Cancel = !ConfirmSave("프로그램 종료");
+            if(!(e.Cancel = !ConfirmSave("프로그램 종료")))
+            {
+                Mediator.NotifyColleagues("Minimap.Close", null);
+            }
+            
         }
 
         #endregion

@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SEMES_Pixel_Designer.ViewModel;
 
 namespace SEMES_Pixel_Designer
 {
@@ -25,12 +26,7 @@ namespace SEMES_Pixel_Designer
         {
             InitializeComponent();
             DataContext = new CommandDataContext();
-        }
-
-        private void Clone_Button_Click(object sender, RoutedEventArgs e)
-        {
-            SEMES_Pixel_Designer.CloneEntity setCloneWindow = new SEMES_Pixel_Designer.CloneEntity();
-            setCloneWindow.ShowDialog();
+            Coordinates.CurrentCellInfo = CurrentCellInfo;
         }
     }
 }

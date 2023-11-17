@@ -54,16 +54,17 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Asset\icon\ExeIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="netDxf, Version=2022.11.2.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
       <HintPath>packages\netDxf.2022.11.2\lib\net45\netDxf.dll</HintPath>
     </Reference>
-    <Reference Include="netDxfLib">
-      <HintPath>..\..\..\..\Documents\netDxfLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing.Common, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Drawing.Common.7.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
     </Reference>
@@ -105,14 +106,21 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Util\TcpIp.cs" />
-    <Compile Include="CloneEntity.xaml.cs">
-      <DependentUpon>CloneEntity.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="ViewModel\TcpIpLogViewModel.cs" />
     <Compile Include="View\EntityDetails.xaml.cs">
       <DependentUpon>EntityDetails.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ExportFile.xaml.cs">
+      <DependentUpon>ExportFile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GlassSetting.xaml.cs">
+      <DependentUpon>GlassSetting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MainDrawer.xaml.cs">
       <DependentUpon>MainDrawer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MakeCell.xaml.cs">
+      <DependentUpon>MakeCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MenuBar.xaml.cs">
       <DependentUpon>MenuBar.xaml</DependentUpon>
@@ -120,8 +128,17 @@
     <Compile Include="View\Minimap.xaml.cs">
       <DependentUpon>Minimap.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ProgramInfo.xaml.cs">
+      <DependentUpon>ProgramInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SetCell.xaml.cs">
+      <DependentUpon>SetCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TcpIpLog.xaml.cs">
+      <DependentUpon>TcpIpLog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
@@ -129,13 +146,17 @@
     <Compile Include="Util\DelegateCommand.cs" />
     <Compile Include="Util\EntityWrapper.cs" />
     <Compile Include="Util\Mediator.cs" />
-    <Page Include="CloneEntity.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\EntityDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ExportFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GlassSetting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\MainDrawer.xaml">
       <SubType>Designer</SubType>
@@ -153,6 +174,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\MakeCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MenuBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -161,7 +186,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ProgramInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SetCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\StatusBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TcpIpLog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -188,6 +225,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="bin\x64\Debug\system.ini" />
+    <None Include="bin\x64\Release\system.ini" />
     <None Include="packages.config" />
     <None Include="View\packages.config" />
     <None Include="Properties\Settings.settings">
@@ -200,8 +239,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="obj\Debug\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Asset\icon\AddDocument_16x.png">
@@ -253,10 +290,49 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Asset\icon\SplashScreen_small.png" />
+    <SplashScreen Include="Asset\icon\SplashScreen_small.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </SplashScreen>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Asset\icon\SPD_icon.ico" />
+    <Resource Include="Asset\icon\AddClause_16x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\OpenMinimap.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\SetGlass_32x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\ExeIcon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\SPD_icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\ExportFile_16x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\Cancel_16x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Asset\icon\Edit_16x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,8 +8,8 @@
       d:DesignHeight="54" d:DesignWidth="800"
       Title="ToolBar">
 
-    <ToolBarTray Background="White">
-        <ToolBar Band="1" BandIndex="1">
+    <ToolBarTray Background="WhiteSmoke">
+        <ToolBar Band="1" BandIndex="1" Background="WhiteSmoke">
             <ToolBar.Resources>
                 <Style TargetType="{x:Type Button}" x:Key="ImgBtnStyle">
                     <Setter Property="Width" Value="23"/>
@@ -20,58 +20,65 @@
                     <Setter Property="Command" Value="{Binding DelCommand}"/>
                 </Style>
             </ToolBar.Resources>
-            <Button CommandParameter="MainWindow.NewDxf" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.NewDxf" Style="{StaticResource ImgBtnStyle}" ToolTip="새 파일 만들기">
                 <Image Source="../Asset/icon/AddDocument_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.OpenDxf" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.OpenDxf" Style="{StaticResource ImgBtnStyle}" ToolTip="파일 열기">
                 <Image Source="../Asset/icon/OpenFolder_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.SaveDxf" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.SaveDxf" Style="{StaticResource ImgBtnStyle}" ToolTip="파일 저장">
                 <Image Source="../Asset/icon/Save_16x.png" />
             </Button>
+            <Button CommandParameter="MainWindow.ExportDxf" Style="{StaticResource ImgBtnStyle}" ToolTip="인쇄용 파일 내보내기">
+                <Image Source="../Asset/icon/ExportFile_16x.png" />
+            </Button> 
             <Separator/>
-            <Button CommandParameter="MainWindow.Undo" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.Undo" Style="{StaticResource ImgBtnStyle}" ToolTip="실행 취소">
                 <Image Source="../Asset/icon/StepBackwards_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.Redo" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.Redo" Style="{StaticResource ImgBtnStyle}" ToolTip="되돌리기">
                 <Image Source="../Asset/icon/StepForward_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.ZoomIn" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.ZoomIn" Style="{StaticResource ImgBtnStyle}" ToolTip="화면 확대">
                 <Image Source="../Asset/icon/ZoomIn_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.ZoomOut" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.ZoomOut" Style="{StaticResource ImgBtnStyle}" ToolTip="화면 축소">
                 <Image Source="../Asset/icon/ZoomOut_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.FitScreen" Style="{StaticResource ImgBtnStyle}" ToolTip="현재 셀 시작 위치로 화면 조정">
                 <Image Source="../Asset/icon/FitToScreen_16x.png" />
             </Button>
-            <Separator/>
-            <Button CommandParameter="MainWindow.DrawDot" Style="{StaticResource ImgBtnStyle}">
-                <Image Source="../Asset/icon/Dot_16x.png" />
+            <Button CommandParameter="MainWindow.OpenMinimap" Style="{StaticResource ImgBtnStyle}" ToolTip="미니맵 열기">
+                <Image Source="../Asset/icon/OpenMinimap.png" />
             </Button>
-            <Button CommandParameter="MainWindow.DrawLine" Style="{StaticResource ImgBtnStyle}">
+            <Separator/>
+            <Button CommandParameter="MainWindow.SetGlass" Style="{StaticResource ImgBtnStyle}" ToolTip="글라스 크기 설정">
+                <Image Source="../Asset/icon/SetGlass_32x.png" />
+            </Button>
+            <Button CommandParameter="MainWindow.MakeNewcell" Style="{StaticResource ImgBtnStyle}" ToolTip="새 셀 추가">
+                <Image Source="../Asset/icon/AddClause_16x.png" />
+            </Button>
+            <!--<Button CommandParameter="MainWindow.DrawDot" Style="{StaticResource ImgBtnStyle}">
+                <Image Source="../Asset/icon/Dot_16x.png" />
+            </Button>-->
+            <Button CommandParameter="MainWindow.DrawLine" Style="{StaticResource ImgBtnStyle}" ToolTip="새 선 그리기">
                 <Image Source="../Asset/icon/Line_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.DrawRectangle" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DrawRectangle" Style="{StaticResource ImgBtnStyle}" ToolTip="새 직사각형 그리기">
                 <Image Source="../Asset/icon/Rectangle_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.DrawPolygon" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DrawPolygon" Style="{StaticResource ImgBtnStyle}" ToolTip="새 폴리곤 그리기">
                 <Image Source="../Asset/icon/Polygon_16x.png" />
             </Button>
-            <Button CommandParameter="MainWindow.DeleteEntities" Style="{StaticResource ImgBtnStyle}">
+            <Button CommandParameter="MainWindow.DeleteEntities" Style="{StaticResource ImgBtnStyle}" ToolTip="선택한 도형 삭제">
                 <Image Source="../Asset/icon/Trash_16x.png" />
-            </Button>
-            <Button Click="Clone_Button_Click" Style="{StaticResource ImgBtnStyle}">
-                <Image Source="../Asset/icon/EditLayoutTable_16x.png" />
             </Button>
         </ToolBar>
 
-        <ToolBar Band="1" BandIndex="2">
-            <StackPanel Orientation="Horizontal" Height="20" Margin="2">
-                <TextBlock Text="Layouts" VerticalAlignment="Center" Margin="10,0,80,0" />
-                <ComboBox Width="150">
-                    <ComboBoxItem Content="Model" IsSelected="True"/>
-                </ComboBox>
+        <ToolBar Band="1" BandIndex="2" Background="WhiteSmoke">
+            <StackPanel Orientation="Horizontal" Height="25">
+                <TextBlock Text="현재 셀" VerticalAlignment="Center" Margin="10,0,10,0" />
+                <Label x:Name="CurrentCellInfo" Background="White" Width="200" Content="0"/>
             </StackPanel>
         </ToolBar>
     </ToolBarTray>

@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SEMES_Pixel_Designer"
-     mc:Ignorable="d" 
+      mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="200"
       Title="EntityDetails">
 
@@ -13,104 +13,165 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="3*" />
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-		<TreeView x:Name="EntityTreeView"/>
-		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-		<StackPanel Grid.Row="2" VerticalAlignment="Top">
-			<ComboBox x:Name="EntityDetailComboBox" SelectionChanged="ShowEntityProperties">
-			</ComboBox>
+        <Button Grid.Row="0" x:Name="AddCellButton" Command="{Binding DelCommand}" CommandParameter="MainWindow.MakeNewcell" >
+            <TextBlock>새 셀 추가</TextBlock>
+        </Button>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Width="{Binding
+                                                          RelativeSource={RelativeSource
+                                                          Mode=FindAncestor,
+                                                          AncestorType={x:Type Page}},
+                                                          Path=ActualWidth}">
+
+            <ListView x:Name="CellListView" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.PanningMode="VerticalOnly">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" >
+                            <Expander  IsExpanded="{Binding Expanded}" >
+                                <Expander.Resources>
+                                    <Style TargetType="{x:Type Button}" x:Key="ImgBtnStyle">
+                                        <Setter Property="Width" Value="20"/>
+                                        <Setter Property="Height" Value="20"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                    </Style>
+                                </Expander.Resources>
+                                <Expander.Header>
+                                    <Grid Width="Auto">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" />
+                                        <Button Grid.Row="0" Grid.Column="1"  x:Name="SetCellButton" Click="SetCellClick"
+									             Style="{StaticResource ImgBtnStyle}" Background="Transparent">
+                                            <Image Source="../Asset/icon/Edit_16x.png" />
+                                        </Button>
+                                        <Button Grid.Row="0" Grid.Column="2"  x:Name="DeleteCellButton" Click="DeleteCellClick"
+									             Style="{StaticResource ImgBtnStyle}" Background="Transparent">
+                                            <Image Source="../Asset/icon/Cancel_16x.png" />
+                                        </Button>
+                                    </Grid>
+                                </Expander.Header>
+                                <TreeView ItemsSource="{Binding Children}" >
+
+                                    <TreeView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding Selected}"></CheckBox>
+                                                <TextBlock Text="{Binding Name}" Foreground="{Binding ColorBrush}"></TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </TreeView.ItemTemplate>
+                                </TreeView>
+                            </Expander>
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3" Background="Gray" />
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="5*" />
+            </Grid.RowDefinitions>
+            <ComboBox Grid.Row="0" x:Name="EntityDetailComboBox" SelectionChanged="SelectEntityProperties" >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+
+                <StackPanel Orientation="Vertical">
+
+                    <Grid Background="White">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
 
 
-			<ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <Border Grid.Column="0">
+                                <StackPanel Orientation="Vertical" x:Name="CommonStackPanel">
+                                <TextBlock Text="Color" VerticalAlignment="Center" Height="20" Margin="5"/>
+                                    <!--<TextBlock Text="Color_type" Height="20"/>-->
+                                <TextBlock Text="Handle" VerticalAlignment="Center" Height="20" Margin="5"/>
+                                <TextBlock Text="Layer" VerticalAlignment="Center" Height="20" Margin="5"/>
+                                    <!--<TextBlock Text="Line_type" Height="20"/>
+                                    <TextBlock Text="Line_weight" Height="20"/>
+                                <TextBlock Text="Line_Type_scale" Height="20"/>-->
+                            </StackPanel>
+                            </Border>
 
-				<StackPanel Orientation="Vertical">
-					<Expander Header="Common">
+                            <GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
 
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="2*" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="2*" />
-							</Grid.ColumnDefinitions>
-
-
-							<Border Grid.Column="0">
-								<StackPanel Orientation="Vertical" x:Name="CommonStackPanel">
-									<TextBlock Text="Color"/>
-									<TextBlock Text="Color_type"/>
-									<TextBlock Text="Handle"/>
-									<TextBlock Text="Layer"/>
-									<TextBlock Text="Line_type"/>
-									<TextBlock Text="Line_weight"/>
-									<TextBlock Text="Line_Type_scale"/>
-									<TextBlock Text="Name"/>
-								</StackPanel>
-							</Border>
-
-							<GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
-
-							<Border Grid.Column="2">
-								<StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel">
-									<TextBlock x:Name="Color"/>
-									<TextBlock x:Name="Color_type"/>
-									<TextBlock x:Name="Handle"/>
-									<TextBlock x:Name="Layer"/>
-									<TextBlock x:Name="Line_type"/>
-									<TextBlock x:Name="Line_weight"/>
-									<TextBlock x:Name="Line_Type_scale"/>
-									<TextBlock x:Name="Name"/>
-								</StackPanel>
-							</Border>
-						</Grid>
-					</Expander>
-					<Expander Header="Geometry">
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="2*" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="2*" />
-							</Grid.ColumnDefinitions>
-
-
-							<Border Grid.Column="0">
-								<ListView x:Name="VertexesIndexListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-									<ListView.View>
-										<GridView>
-											<GridViewColumn Header="Vertexes" DisplayMemberBinding="{Binding}" />
-										</GridView>
-									</ListView.View>
-								</ListView>
-							</Border>
-
-							<GridSplitter Grid.Column="1" Width="2" ResizeBehavior="PreviousAndNext" Background="Gray" />
-
-							<Border Grid.Column="2">
-
-									<ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-										<ListView.View>
-											<GridView>
-												<GridViewColumn Header="X" DisplayMemberBinding="{Binding X}" />
-												<GridViewColumn Header="Y" DisplayMemberBinding="{Binding Y}" />
-											</GridView>
-										</ListView.View>
-									</ListView>
-								<!--<StackPanel Orientation="Vertical" x:Name="GeometryValueStackPanel">
-								</StackPanel>-->
-							</Border>
-						</Grid>
-					</Expander>
-				</StackPanel>
-			</ScrollViewer>
-		</StackPanel>
+                            <Border Grid.Column="2">
+                                <StackPanel Orientation="Vertical" x:Name="CommonValueStackPanel" >
+                                <ComboBox x:Name="ColorComboBox" SelectionChanged="ColorChange" Height="20" Margin="5">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                <Rectangle VerticalAlignment="Center" Fill="{Binding Name}" Width="12" Height="12" />
+                                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <!--<TextBlock Text="{Binding Color_type}" Height="20"/>-->
+                                <TextBlock Text="{Binding Handle}" VerticalAlignment="Center" Height="20" Margin="5"/>
+                                <TextBlock Text="{Binding Layer}" VerticalAlignment="Center" Height="20" Margin="5"/>
+                                    <!--<TextBlock Text="{Binding Line_type}" Height="20"/>
+                                    <TextBlock Text="{Binding Line_weight}" Height="20"/>
+                                    <TextBlock Text="{Binding Line_Type_scale}" Height="20"/>-->
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    <Grid>
+                        <ListView x:Name="VertexesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Index" Width="40">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding idx}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="X" Width="70">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding X}" UndoLimit ="0" LostFocus="XTextBox_LostFocus" PreviewKeyDown="XTextBox_PreviewKeyDown"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Y" Width="70">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding Y}" UndoLimit ="0" LostFocus="YTextBox_LostFocus" PreviewKeyDown="YTextBox_PreviewKeyDown"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
 
 
-		<GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Height="3"/>
-		<TextBlock Grid.Row="4" Text="엔티티 속성 상세" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+        </Grid>
     </Grid>
 </Page>

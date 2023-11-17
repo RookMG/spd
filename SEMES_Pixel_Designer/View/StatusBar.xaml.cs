@@ -32,13 +32,14 @@ namespace SEMES_Pixel_Designer
         public void PrintMousePosition(object obj)
         {
             Point p = (Point)obj;
-            positionText.Text = string.Format("Mouse Position : ( {0:F4}, {1:F4} )", p.X, p.Y);
+            positionText.Text = string.Format("Mouse Position : [{0:F8}, {1:F8}]", p.X, p.Y);
         }
 
         public void PrintFilepath(object obj)
         {
             string path = (string)obj;
-            filePathText.Text = "File Directory : "+(path==null?"새 파일":path);
+            filePathText.Text = path == null ? "새 파일" : path;
+            filePathText.ToolTip = path == null ? "새 파일" : path;
         }
 
             /*public void PrintEntityPosition(object obj)
