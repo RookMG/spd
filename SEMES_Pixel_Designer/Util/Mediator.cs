@@ -22,7 +22,7 @@ namespace SEMES_Pixel_Designer.Utils
         {
             if (callback_dict.ContainsKey(token))
             {
-                MessageBox.Show("Debug : " + token + " 이미 등록됨");
+                // MessageBox.Show("Debug : " + token + " 이미 등록됨");
                 callback_dict.Remove(token);
             }
             callback_dict.Add(token, callback);
@@ -92,17 +92,19 @@ namespace SEMES_Pixel_Designer.Utils
             public Action UndoAction { get; set; }
             public Action RedoAction { get; set; }
             public Action PopAction { get; set; }
+            public String Description { get; set; }
 
 
-            public UndoableAction(Action initAction, Action undoAction, Action redoAction, Action popAction)
+            public UndoableAction(String description, Action initAction, Action undoAction, Action redoAction, Action popAction)
             {
                 InitAction = initAction;
                 UndoAction = undoAction;
                 RedoAction = redoAction;
                 PopAction = popAction;
+                Description = description;
             }
 
-            public UndoableAction(Action undoAction, Action redoAction, Action popAction) : this(redoAction, undoAction, redoAction, popAction)
+            public UndoableAction(String description, Action undoAction, Action redoAction, Action popAction) : this(description, redoAction, undoAction, redoAction, popAction)
             {
             }
 

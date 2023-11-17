@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SEMES_Pixel_Designer.View"
         mc:Ignorable="d"
-        Title="SetCell" Height="300" Width="400">
+        Title="셀 편집" Height="300" Width="400">
     <Grid>
-        <TextBox x:Name="left_init" HorizontalAlignment="Left" Height="20" Margin="122,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
-        <TextBox x:Name="bottom_init" HorizontalAlignment="Left" Height="20" Margin="122,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
-        <TextBox x:Name="width_init" HorizontalAlignment="Left" Height="20" Margin="122,118,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
-        <TextBox x:Name="height_init" HorizontalAlignment="Left" Height="20" Margin="122,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
-        <TextBox x:Name="col_init" HorizontalAlignment="Left" Height="20" Margin="122,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
-        <TextBox x:Name="row_init" HorizontalAlignment="Left" Height="20" Margin="122,228,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
+        <TextBlock x:Name="left_init" HorizontalAlignment="Left" Height="20" Margin="124,42,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
+        <TextBlock x:Name="bottom_init" HorizontalAlignment="Left" Height="20" Margin="124,80,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
+        <TextBlock x:Name="width_init" HorizontalAlignment="Left" Height="20" Margin="124,118,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
+        <TextBlock x:Name="height_init" HorizontalAlignment="Left" Height="20" Margin="124,154,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
+        <TextBlock x:Name="col_init" HorizontalAlignment="Left" Height="20" Margin="124,192,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
+        <TextBlock x:Name="row_init" HorizontalAlignment="Left" Height="20" Margin="124,228,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
 
         <TextBox x:Name="left_info" HorizontalAlignment="Left" Height="20" Margin="232,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
         <TextBox x:Name="bottom_info" HorizontalAlignment="Left" Height="20" Margin="232,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
@@ -31,7 +31,7 @@
         <TextBlock x:Name="textBlock_Copy7" HorizontalAlignment="Left" TextWrapping="Wrap" Text="반복 횟수" VerticalAlignment="Top" Margin="11,212,0,0" Height="14"/>
         <Button x:Name="button" IsDefault="True" Content="수정" HorizontalAlignment="Left" Margin="306,119,0,0" VerticalAlignment="Top" Width="75" Click="CellModify"/>
         <Button x:Name="button_Copy" IsCancel="True" Content="취소" HorizontalAlignment="Left" Margin="306,150,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox x:Name="cell_name_init" HorizontalAlignment="Left" Height="20" Margin="123,8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
+        <TextBlock x:Name="cell_name_init" HorizontalAlignment="Left" Height="20" Margin="126,8,0,0" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Top" Width="102"/>
         <TextBox x:Name="cell_name_info" HorizontalAlignment="Left" Height="20" Margin="232,8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
         <TextBlock x:Name="textBlock_Copy8" HorizontalAlignment="Left" TextWrapping="Wrap" Text="셀 이름" VerticalAlignment="Top" Margin="33,10,0,0" Height="14" Width="66"/>
 

@@ -30,6 +30,7 @@ namespace SEMES_Pixel_Designer.View
         }
         public void ExitHandler(object sender, CancelEventArgs e)
         {
+            Coordinates.MinimapRef.Children.Clear();
             Coordinates.MinimapRef = null;
         }
     }
@@ -74,6 +75,9 @@ namespace SEMES_Pixel_Designer.View
             MouseRightButtonUp += Move_MouseRightButtonUp;
             MouseLeftButtonDown += Drag_MouseLeftButtonDown;
             MouseWheel += Zoom_MouseWheel;
+
+            Loaded += (obj, e) => { AdjustRatio(); };
+            
 
         }
         public void ResizeWindow(object sender, SizeChangedEventArgs e)

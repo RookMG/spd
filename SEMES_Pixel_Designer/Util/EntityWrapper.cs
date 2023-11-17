@@ -24,6 +24,7 @@ namespace SEMES_Pixel_Designer.Utils
         public List<PolygonEntity> children;
         public bool expanded;
         public TextBlock textBlock;
+        public int changeCount;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -41,18 +42,34 @@ namespace SEMES_Pixel_Designer.Utils
             expanded = false;
             textBlock = new TextBlock();
             textBlock.Text = Name;
+            changeCount = 0;
         }
 
         public string Name
         {
             get { return name; }
-            set { name = value; }
+            set { 
+                name = value;
+                setText();
+            }
+        }
+
+        public void CountChange(bool increase)
+        {
+            if (increase) changeCount++;
+            else changeCount--;
+            setText();
+        }
+        private void setText()
+        {
+            textBlock.Text = Name + (changeCount != 0 ? " *" : "");
+            textBlock.Foreground = changeCount != 0?Brushes.Red:Brushes.Black;
         }
 
         public List<PolygonEntity> Children
         {
             get { return children;  }
-            set { }
+            set { children = value; }
         }
 
         public bool Expanded
@@ -66,39 +83,7 @@ namespace SEMES_Pixel_Designer.Utils
             get { return patternLeft; }
             set
             {
-                if (patternLeft != value)
-                {
-                    double from = patternLeft, to = value;
-                    List<PolygonEntity> targetEntities = new List<PolygonEntity>();
-                    foreach(PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
-                    {
-                        if (entity.cell == this) targetEntities.Add(entity);
-                    }
-                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-                    (
-                        () => {
-                            foreach (PolygonEntity entity in targetEntities)
-                            {
-                                entity.Move(from - to, 0);
-                                patternLeft = from;
-                                Coordinates.CanvasRef.UpdateCanvas();
-                                OnPropertyChanged("PatternLeft");
-                            }
-                        },
-                        () => {
-                            foreach (PolygonEntity entity in targetEntities)
-                            {
-                                entity.Move(to - from, 0);
-                                patternLeft = to;
-                                Coordinates.CanvasRef.UpdateCanvas();
-                                OnPropertyChanged("PatternLeft");
-                            }
-                        },
-                        () =>
-                        {
-                        }
-                    ));
-                }
+                patternLeft = value;
             }
         }
         public double PatternBottom
@@ -106,39 +91,7 @@ namespace SEMES_Pixel_Designer.Utils
             get { return patternBottom; }
             set
             {
-                if (patternBottom != value)
-                {
-                    double from = patternBottom, to = value;
-                    List<PolygonEntity> targetEntities = new List<PolygonEntity>();
-                    foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
-                    {
-                        if (entity.cell == this) targetEntities.Add(entity);
-                    }
-                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-                    (
-                        () => {
-                            foreach (PolygonEntity entity in targetEntities)
-                            {
-                                entity.Move(0, from - to);
-                                patternBottom = from;
-                                Coordinates.CanvasRef.UpdateCanvas();
-                                OnPropertyChanged("PatternBottom");
-                            }
-                        },
-                        () => {
-                            foreach (PolygonEntity entity in targetEntities)
-                            {
-                                entity.Move(0, to - from);
-                                patternBottom = to;
-                                Coordinates.CanvasRef.UpdateCanvas();
-                                OnPropertyChanged("PatternBottom");
-                            }
-                        },
-                        () =>
-                        {
-                        }
-                    ));
-                }
+                patternBottom = value;
             }
         }
 
@@ -147,26 +100,7 @@ namespace SEMES_Pixel_Designer.Utils
             get { return patternWidth; }
             set
             {
-                if (patternWidth != value)
-                {
-                    double from = patternWidth, to = value;
-                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-                    (
-                        () => {
-                            patternWidth = from;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternWidth");
-                        },
-                        () => {
-                            patternWidth = to;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternWidth");
-                        },
-                        () =>
-                        {
-                        }
-                    ));
-                }
+                patternWidth = value;
             }
         }
 
@@ -175,26 +109,7 @@ namespace SEMES_Pixel_Designer.Utils
             get { return patternHeight; }
             set
             {
-                if (patternHeight != value)
-                {
-                    double from = patternHeight, to = value;
-                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-                    (
-                        () => {
-                            patternHeight = from;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternHeight");
-                        },
-                        () => {
-                            patternHeight = to;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternHeight");
-                        },
-                        () =>
-                        {
-                        }
-                    ));
-                }
+                patternHeight = value;
             }
         }
 
@@ -203,26 +118,7 @@ namespace SEMES_Pixel_Designer.Utils
             get { return patternRows; }
             set
             {
-                if (patternRows != value)
-                {
-                    int from = patternRows, to = value;
-                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-                    (
-                        () => {
-                            patternRows = from;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternRows");
-                        },
-                        () => {
-                            patternRows = to;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternRows");
-                        },
-                        () =>
-                        {
-                        }
-                    ));
-                }
+                patternRows = value;
             }
         }
 
@@ -231,30 +127,34 @@ namespace SEMES_Pixel_Designer.Utils
             get { return patternCols; }
             set
             {
-                if (patternCols != value)
-                {
-                    int from = patternCols, to = value;
-                    Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
-                    (
-                        () => {
-                            patternCols = from;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternCols");
-                        },
-                        () => {
-                            patternCols = to;
-                            Coordinates.CanvasRef.UpdateCanvas();
-                            OnPropertyChanged("PatternCols");
-                        },
-                        () =>
-                        {
-                        }
-                    ));
-                }
+                patternCols = value;
             }
         }
 
 
+        public void changeCell(string name, double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            // dxf 정보 함께 변경
+            MainWindow.doc.Layers[this.name].Description = string.Format("{0},{1},{2},{3},{4},{5}", patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols);
+            MainWindow.doc.Layers[this.name].Name = name;
+
+            foreach (PolygonEntity entity in Coordinates.CanvasRef.DrawingEntities)
+            {
+                if (entity.cell == this) entity.Move(patternLeft-this.patternLeft,patternBottom-this.patternBottom);
+            }
+
+            Name = name;
+            PatternLeft = patternLeft;
+            PatternBottom = patternBottom;
+            PatternWidth = patternWidth;
+            PatternHeight = patternHeight;
+            PatternRows = patternRows;
+            PatternCols = patternCols;
+
+            Coordinates.minX = Coordinates.maxX = patternLeft;
+            Coordinates.minY = Coordinates.maxY = patternBottom;
+            Coordinates.UpdateRange(null);
+        }
 
         public double GetPatternRight()
         {
@@ -274,6 +174,88 @@ namespace SEMES_Pixel_Designer.Utils
             return row * patternHeight;
         }
 
+        public void Delete()
+        {
+            // TODO: 구현
+        }
+        public void Restore()
+        {
+            // TODO: 구현
+        }
+        public void Remove()
+        {
+            // TODO: 구현
+        }
+
+        public bool Collide(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            StreamGeometry c1 = new StreamGeometry(), c2 = new StreamGeometry();
+            using (StreamGeometryContext ctx = c1.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(this.patternLeft, this.patternBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(this.patternLeft, GetPatternTop()), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(GetPatternRight(), GetPatternTop()), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(GetPatternRight(), this.patternBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            using (StreamGeometryContext ctx = c2.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(patternLeft, patternBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(patternLeft, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            return c1.FillContainsWithDetail(c2) != IntersectionDetail.Empty;
+        }
+
+        public static bool IsInGlass(double patternLeft, double patternBottom, double patternWidth, double patternHeight, int patternRows, int patternCols)
+        {
+            StreamGeometry c1 = new StreamGeometry(), c2 = new StreamGeometry();
+            using (StreamGeometryContext ctx = c1.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(Coordinates.glassLeft, Coordinates.glassBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(Coordinates.glassLeft, Coordinates.glassTop), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(Coordinates.glassRight, Coordinates.glassTop), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(Coordinates.glassRight, Coordinates.glassBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            using (StreamGeometryContext ctx = c2.Open())
+            {
+                ctx.BeginFigure(new System.Windows.Point(patternLeft, patternBottom), true /* is filled */, true /* is closed */);
+                ctx.LineTo(new System.Windows.Point(patternLeft, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom + patternHeight * patternRows), true /* is stroked */, false /* is smooth join */);
+                ctx.LineTo(new System.Windows.Point(patternLeft + patternWidth * patternCols, patternBottom), true /* is stroked */, false /* is smooth join */);
+            }
+            return c1.FillContainsWithDetail(c2) == IntersectionDetail.FullyContains;
+        }
+
+        public bool IsInGlass()
+        {
+            return IsInGlass(patternLeft, patternBottom, patternWidth, patternHeight, patternRows, patternCols);
+        }
+
+        public bool Contains(netDxf.Entities.Line line)
+        {
+            if ((patternLeft + patternWidth < line.StartPoint.X)
+                    || (patternLeft > line.StartPoint.X)
+                    || (patternBottom + patternHeight < line.StartPoint.Y)
+                    || (patternBottom > line.StartPoint.Y)) return false;
+            if ((patternLeft + patternWidth < line.EndPoint.X)
+                    || (patternLeft > line.EndPoint.X)
+                    || (patternBottom + patternHeight < line.EndPoint.Y)
+                    || (patternBottom > line.EndPoint.Y)) return false;
+            return true;
+        }
+        public bool Contains(Polyline2D polyline)
+        {
+            foreach(Polyline2DVertex vertex in polyline.Vertexes)
+            {
+                if ((patternLeft + patternWidth < vertex.Position.X)
+                        || (patternLeft > vertex.Position.X)
+                        || (patternBottom + patternHeight < vertex.Position.Y)
+                        || (patternBottom > vertex.Position.Y)) return false;
+            }
+            return true;
+        }
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -290,6 +272,7 @@ namespace SEMES_Pixel_Designer.Utils
         public static MinimapCanvas MinimapRef = null;
         public static List<System.Windows.Shapes.Line> gridLines = new List<System.Windows.Shapes.Line>();
         public static System.Windows.Controls.TextBlock gridInfoText = new System.Windows.Controls.TextBlock();
+        public static Label CurrentCellInfo = null;
         public static SolidColorBrush gridBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x99, 0x99, 0x99)),
             patternBrush = new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0xFF)),
             defaultColorBrush = Brushes.Black,
@@ -335,6 +318,7 @@ namespace SEMES_Pixel_Designer.Utils
             foreach (Cell c in CanvasRef.cells)
             {
                 if (!(c.patternLeft <= maxX && c.GetPatternRight() >= minX && c.patternBottom <= maxY && c.GetPatternTop() >= minY)) continue;
+                if(CurrentCellInfo!=null) CurrentCellInfo.Content = c.Name;
                 return c;
             }
             return null;
@@ -658,12 +642,15 @@ namespace SEMES_Pixel_Designer.Utils
                 to = new System.Windows.Point(parent.dxfCoords[idx].X, parent.dxfCoords[idx].Y);
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 모양 변경",
                 () =>
                 {
+                    cell.CountChange(false);
                     UpdatePosition(from.X, from.Y);
                 },
                 () =>
                 {
+                    cell.CountChange(true);
                     UpdatePosition(to.X, to.Y);
                 },
                 () =>
@@ -777,6 +764,22 @@ namespace SEMES_Pixel_Designer.Utils
             }
             set { }
         }
+
+        public Brush ColorBrush
+        {
+            get
+            {
+                if (entityObject.Color.Equals(AciColor.Red)) return Brushes.Red;
+                if (entityObject.Color.Equals(AciColor.Green)) return Brushes.Green;
+                if (entityObject.Color.Equals(AciColor.Blue)) return Brushes.Blue;
+                return Brushes.Black;
+            }
+            set
+            {
+
+            }
+        }
+
         private List<Action<double, double>> setDxfCoordAction;
 
         public static List<PolygonEntity> selectedEntities = new List<PolygonEntity>();
@@ -787,18 +790,20 @@ namespace SEMES_Pixel_Designer.Utils
             public PointCollection dxfCoords { get; set; }
             public PolygonEntityType type { get; set; }
             public Vector3 offset { get; set; }
-
-            public EntityObject GetEntityObject()
+            public AciColor aciColor { get; set; }
+            public EntityObject CreateEntityObject()
             {
                 if (type == PolygonEntityType.LINE)
                 {
                     netDxf.Entities.Line line = new netDxf.Entities.Line(new Vector2(dxfCoords[0].X, dxfCoords[0].Y), new Vector2(dxfCoords[1].X, dxfCoords[1].Y));
+                    line.Color = aciColor;
                     return line;
                 }
                 else if (type == PolygonEntityType.POLYLINE)
                 {
                     Polyline2D polyline = new Polyline2D();
                     foreach (System.Windows.Point p in dxfCoords) polyline.Vertexes.Add(new Polyline2DVertex(p.X, p.Y));
+                    polyline.Color = aciColor;
                     return polyline;
                 }
 
@@ -907,7 +912,8 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     dxfCoords = entity.dxfCoords.Clone(),
                     type = entity.entityType,
-                    offset = new Vector3(entity.cell.patternLeft, entity.cell.patternBottom, 0)
+                    offset = new Vector3(entity.cell.patternLeft, entity.cell.patternBottom, 0),
+                    aciColor = entity.entityObject.Color,
                 });
             }
         }
@@ -1126,6 +1132,7 @@ namespace SEMES_Pixel_Designer.Utils
 
         private void MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            if (Coordinates.mouseCaptured) return;
             Coordinates.mouseCaptured = true;
             Coordinates.CanvasRef.MouseLeftButtonDown -= Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
@@ -1194,19 +1201,47 @@ namespace SEMES_Pixel_Designer.Utils
             Coordinates.CanvasRef.MouseLeftButtonUp -= MouseLeftButtonUp;
             Coordinates.CanvasRef.MouseLeftButtonDown += Coordinates.CanvasRef.Select_MouseLeftButtonDown;
             List<Action> forward = new List<Action>(), backward = new List<Action>();
+            bool patternOut = false, glassOut = false;
             foreach (PolygonEntity selectedEntity in selectedEntities)
             {
                 PointCollection from = selectedEntity.dxfOffsets.Clone();
                 List<double[]> to = new List<double[]>();
                 for (int i = 0; i < selectedEntity.dxfCoords.Count; i++)
                 {
-                    to.Add(new double[] { Coordinates.ToDxfX(selectedEntity.mouseOffsets[i].X + e.GetPosition(Coordinates.CanvasRef).X), Coordinates.ToDxfY(selectedEntity.mouseOffsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y) });
+                    double newX = Coordinates.ToDxfX(selectedEntity.mouseOffsets[i].X + e.GetPosition(Coordinates.CanvasRef).X),
+                        newY = Coordinates.ToDxfY(selectedEntity.mouseOffsets[i].Y + e.GetPosition(Coordinates.CanvasRef).Y);
+                    to.Add(new double[] { newX, newY });
+                    patternOut |= (selectedEntity.cell.patternLeft + selectedEntity.cell.patternWidth < newX)
+                        || (selectedEntity.cell.patternLeft > newX)
+                        || (selectedEntity.cell.patternBottom + selectedEntity.cell.patternHeight < newY)
+                        || (selectedEntity.cell.patternBottom > newY);
+                    glassOut |= (Coordinates.glassRight < newX)
+                        || (Coordinates.glassLeft > newX)
+                        || (Coordinates.glassTop < newY)
+                        || (Coordinates.glassBottom > newY);
+                    Console.WriteLine(string.Format("{0},{1}",newX, newY));
                 }
-                forward.Add(() => { selectedEntity.UpdatePoint(to); selectedEntity.ReDraw(); });
-                backward.Add(() => { selectedEntity.UpdatePoint(from); selectedEntity.ReDraw(); });
+                forward.Add(() => { selectedEntity.UpdatePoint(to); selectedEntity.ReDraw(); selectedEntity.cell.CountChange(true); });
+                backward.Add(() => { selectedEntity.UpdatePoint(from); selectedEntity.ReDraw(); selectedEntity.cell.CountChange(false); });
+            }
+            if (glassOut)
+            {
+                MessageBox.Show("글라스 바깥으로는 도형을 이동시킬 수 없습니다.");
+                foreach (Action action in backward) action();
+                return;
+            }
+            if (patternOut)
+            {
+                MessageBoxResult res = MessageBox.Show("패턴 밖으로 도형을 이동하게 됩니다. 정말 이동하시겠습니까? (과도하게 벗어날 경우 오류가 날 수 있습니다)", "패턴 벗어남 감지", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.No)
+                {
+                    foreach (Action action in backward) action();
+                    return;
+                }
             }
             Mediator.ExecuteUndoableAction(new Mediator.UndoableAction
             (
+                "도형 이동",
                 () => {
                     foreach (Action action in backward) action();
                 },

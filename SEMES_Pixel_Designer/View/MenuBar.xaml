@@ -19,6 +19,7 @@
             <MenuItem Header="열기(_O)" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.OpenDxf" InputGestureText="Ctrl+O" />
             <MenuItem Header="저장(_S)" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.SaveDxf" InputGestureText="Ctrl+S" />
             <MenuItem Header="다른 이름으로 저장" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.SaveAsDxf" InputGestureText="" />
+            <MenuItem Header="인쇄용 파일 내보내기(_E)" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.ExportDxf" InputGestureText="" />
             <Separator />
             <MenuItem Header="끝내기(_X)" Style="{StaticResource MenuItemStyle}" CommandParameter="MainWindow.Exit" InputGestureText="Alt+F4" />
         </MenuItem>
