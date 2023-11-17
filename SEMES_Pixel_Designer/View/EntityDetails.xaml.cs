@@ -89,10 +89,29 @@ namespace SEMES_Pixel_Designer
             EntityDetailComboBox.SelectedIndex = EntityDetailComboBox.Items.Count - 1;
             if (selectedEntities.Count > 0)
             {
-                string colorStr = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString();
-                if ("1".Equals(colorStr) || "3".Equals(colorStr) || "5".Equals(colorStr))
-                    ColorComboBox.SelectedIndex = 2 - int.Parse(colorStr) / 2;
-                else ColorComboBox.SelectedIndex = -1;
+                //string colorStr = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.ToString();
+                //if ("1".Equals(colorStr) || "3".Equals(colorStr) || "5".Equals(colorStr))
+                //    ColorComboBox.SelectedIndex = 2 - int.Parse(colorStr) / 2;
+                //else ColorComboBox.SelectedIndex = -1;
+                byte colorR = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.R;
+                byte colorG = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.G;
+                byte colorB = selectedEntities[selectedEntities.Count - 1].GetEntityObject().Color.B;
+                if (colorR == 255 && colorG == 0 && colorB == 0)
+                {
+                    ColorComboBox.SelectedIndex = 2;
+                }
+                else if (colorR == 0 && colorG == 255 && colorB == 0)
+                {
+                    ColorComboBox.SelectedIndex = 1;
+                }
+                else if (colorR == 0 && colorG == 0 && colorB == 255)
+                {
+                    ColorComboBox.SelectedIndex = 0;
+                }
+                else
+                {
+                    ColorComboBox.SelectedIndex = -1;
+                }
             }
             else
             {
