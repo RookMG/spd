@@ -873,7 +873,7 @@ namespace SEMES_Pixel_Designer.Utils
                 {
                     vertexes.Add(new Vector2(point.X, point.Y));
                 }
-                Polyline2D polyline = new Polyline2D(vertexes);
+                Polyline2D polyline = new Polyline2D(vertexes, true);
                 MainWindow.doc.Entities.Add(polyline);
                 entityObject = polyline;
             }

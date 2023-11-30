@@ -1,6 +1,6 @@
 # SPD(SEMES Pixel Design): 셀 단위 픽셀 패턴 디자인
 
-<img src="./docs/Readme_img/image-1.png"/>
+<img src="./docs/Readme_img/last_logo.png"/>
 
 반도체 장비기업 SEMES와 진행한 기업 연계 프로젝트.
 
@@ -42,7 +42,7 @@
 
 ### 1. 픽셀 패턴 기반 셀 관리
 - 공정에서 아래 사진과 같이 한 글라스 내 **패턴 기반으로 그려진 여러 셀**이 존재
-<img src="./docs/Readme_img/cell_info.jpg" width="400"/>
+<img src="./docs/Readme_img/cell_info.jpg" width="500"/>
 
 출처 : https://news.samsungdisplay.com/
 
@@ -50,9 +50,9 @@
 
 - **셀 단위로 패턴 제작이 가능**하며 여러 셀로 관리됨 (셀 범위 밖에서 패턴 생성 불가)
 
-<img src="./docs/Readme_img/pattern.PNG" width="400"/> <br>
-<img src="./docs/Readme_img/cell_img.PNG" width="400"/> <br>
-<img src="./docs/Readme_img/minimap.PNG" width="400" height="300"/>
+<img src="./docs/Readme_img/pattern.PNG" width="500"/> <br>
+<img src="./docs/Readme_img/cell_img.PNG" width="500"/> <br>
+<img src="./docs/Readme_img/minimap.PNG" width="400" />
 
 ①	기존의 dxf 파일을 불러와 각 셀에 패턴 확인. (미니맵을 통해 셀 정보 확인 가능, 셀 내의 패턴 확인 가능)
 
@@ -62,7 +62,7 @@
 
 ### 2. 텍스트, 그래픽 편집
 - 텍스트 기반 **새 셀 제작** 페이지
-<img src="./docs/Readme_img/MakeCell.PNG" width="400"/>
+<img src="./docs/Readme_img/MakeCell.PNG" width="300"/>
 
 ①	새 셀 추가 버튼 클릭.
 
@@ -89,10 +89,10 @@
 
 ### 3. 소켓 통신
 - 타겟 데이터 경로 있을 시 **ACK 메세지**
-<img src="./docs/Readme_img/socket_success.PNG" width="600"/>
+<img src="./docs/Readme_img/socket_success.PNG" width="700"/>
 
 - 타겟 데이터 없을 경우 **NAK 메세지**
-<img src="./docs/Readme_img/socket_fail.PNG" width="600"/>
+<img src="./docs/Readme_img/socket_fail.PNG" width="700"/>
 
 ①	프로그램 실행시 항상 연결 대기 상태
 
